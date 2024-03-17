@@ -52,6 +52,7 @@ const BottomSheet = forwardRef(
           opacity={0.4}
           appearsOnIndex={1}
           disappearsOnIndex={-1}
+          pressBehavior="none"
         />
       ),
       []
