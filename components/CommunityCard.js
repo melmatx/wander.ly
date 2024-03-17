@@ -35,6 +35,7 @@ export const style = {
     height: "70%",
     width: "100%",
     marginVertical: sizes.xxlarge,
+    borderRadius: sizes.large,
   },
 };
 
