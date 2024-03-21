@@ -3,6 +3,8 @@ import { phash } "mo:map/Map";
 import { thash } "mo:map/Map";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
+import Float "mo:base/Float";
+import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
@@ -11,143 +13,84 @@ import Source "mo:uuid/async/SourceV4";
 import UUID "mo:uuid/UUID";
 
 actor Wanderly {
-  type Id = Text;
-
+  // Message
   type MessageResult = {
     message : Text;
   };
 
+  //* TYPES
   type User = {
-    id : Text;
-    firstName : Text;
-    middleName : ?Text;
-    lastName : Text;
-    gender : Text;
-    birthDate : Text;
-    address : Text;
-    departmentCode : Text;
-    branchName : Text;
-  };
-
-  type Teacher = User;
-
-  type Student = User and {
-    sectionCode : Text;
-    programCode : Text;
-    parentsEmail : Text;
-    points : Float;
-  };
-
-  type Section = {
-    id : Text;
-    teacherId : Text;
-    name : Text;
-  };
-
-  type Subject = {
-    id : Text;
-    teacherId : Text;
-    name : Text;
-  };
-
-  type CreateStudentPayload = {
     id : ?Text;
-    firstName : Text;
-    middleName : ?Text;
-    lastName : Text;
-    gender : Text;
-    birthDate : Text;
-    address : Text;
-    parentsEmail : Text;
-    sectionCode : Text;
-    programCode : Text;
-    departmentCode : Text;
-    branchName : Text;
+    nickname : Text;
+    achievementsId : ?Text;
+    points : ?Float;
   };
 
-  type CreateTeacherPayload = {
+  type Achievement = {
+    emoji : Text;
+    title : Text;
+    description : Text;
+    multiplier : Float;
+    tradable : Bool;
+  };
+
+  type Task = {
     id : ?Text;
-    firstName : Text;
-    middleName : ?Text;
-    lastName : Text;
-    gender : Text;
-    birthDate : Text;
-    address : Text;
-    departmentCode : Text;
-    branchName : Text;
-  };
-
-  type Attendance = {
-    studentId : Text;
-    serialized : Text;
-    hashed : Text;
-  };
-
-  stable let students = Map.new<Principal, Student>();
-  stable let teachers = Map.new<Principal, Teacher>();
-  stable let teacherStudents = Map.new<Principal, [Student]>();
-  stable var attendances : [Attendance] = [];
-
-  func isStudent(caller : Principal) : Bool {
-    switch (Map.contains(students, phash, caller)) {
-      case (null) {
-        return false;
-      };
-      case (?student) {
-        return true;
-      };
+    title : Text;
+    description : Text;
+    emoji : Text;
+    timeStart : Text;
+    timeEnd : Text;
+    timeOfDay : {
+      #Morning;
+      #Afternoon;
+      #Evening;
+    };
+    taskType : {
+      #DistanceBased;
+      #StepBased;
+      #TimeBased;
     };
   };
 
-  func isTeacher(caller : Principal) : Bool {
-    switch (Map.contains(teachers, phash, caller)) {
-      case (null) {
-        return false;
-      };
-      case (?teacher) {
-        return true;
-      };
-    };
+  type UserTask = Task and {
+    progress : Float;
+    maxValue : Float;
+    isCompleted : Bool;
   };
 
+  type UserAchievement = {
+    userId : Text;
+    fullName : Text;
+    achievementList : [Achievement];
+  };
+
+  //* UUID Generator
   func generateUUID() : async Text {
     let g = Source.Source();
     return UUID.toText(await g.new());
   };
 
-  public shared (msg) func whoami() : async Principal {
-    msg.caller;
-  };
+  //* STABLE HASH-MAP
+  stable let users = Map.new<Principal, User>();
+  stable let achivementList = Map.new<Text, Achievement>();
+  stable let userAchievements = Map.new<Text, Achievement>();
+  stable let morningTaskList = Map.new<Text, Task>();
+  stable let afternoonTaskList = Map.new<Text, Task>();
+  stable let eveningTaskList = Map.new<Text, Task>();
 
-  public shared ({ caller }) func getRoleAndProfile() : async Result.Result<{ role : Text; profile : Teacher or Student }, MessageResult> {
-    if (isStudent(caller)) {
-      switch (Map.get(students, phash, caller)) {
-        case (null) {};
-        case (?student) {
-          return #ok({ role = "STUDENT"; profile = student });
-        };
-      };
-    };
-
-    if (isTeacher(caller)) {
-      switch (Map.get(teachers, phash, caller)) {
-        case (null) {};
-        case (?teacher) {
-          return #ok({ role = "TEACHER"; profile = teacher });
-        };
-      };
-    };
-
-    return #err({ message = "No role found!" });
-  };
-
-  public shared ({ caller }) func createStudent(payload : CreateStudentPayload) : async Result.Result<MessageResult and { id : Text }, MessageResult> {
+  //* USER
+  public shared ({ caller }) func createUser(payload : User) : async Result.Result<MessageResult and { id : Text }, MessageResult> {
     if (Principal.isAnonymous(caller)) {
       return #err({ message = "Anonymous identity found!" });
     };
 
-    // Generate student id
-    let studentId : Text = do {
+    if (Map.contains(users, phash, caller) != null) {
+      return #err({ message = "User already exist!" });
+    };
+
+    // Generate user id
+    let userId : Text = do {
       switch (payload.id) {
         case (null) {
           await generateUUID();
@@ -158,43 +101,8 @@ actor Wanderly {
       };
     };
 
-    let newStudent : Student = {
-      id = studentId;
-      firstName = payload.firstName;
-      middleName = payload.middleName;
-      lastName = payload.lastName;
-      gender = payload.gender;
-      birthDate = payload.birthDate;
-      address = payload.address;
-      departmentCode = payload.departmentCode;
-      branchName = payload.branchName;
-      sectionCode = payload.sectionCode;
-      programCode = payload.programCode;
-      parentsEmail = payload.parentsEmail;
-      points = 0.0;
-    };
-
-    // Create new student
-    switch (Map.add(students, phash, caller, newStudent)) {
-      case (null) {
-        return #ok({
-          message = "Student account created successfully!";
-          id = studentId;
-        });
-      };
-      case (?student) {
-        return #err({ message = "Student already exists!" });
-      };
-    };
-  };
-
-  public shared ({ caller }) func createTeacher(payload : CreateTeacherPayload) : async Result.Result<MessageResult and { id : Text }, MessageResult> {
-    // if (Principal.isAnonymous(caller)) {
-    //   return #err({ message = "Anonymous identity found!" });
-    // };
-
-    // Generate teacher id
-    let teacherId : Text = do {
+    // Generate user achievements id
+    let achievementsId : Text = do {
       switch (payload.id) {
         case (null) {
           await generateUUID();
@@ -205,69 +113,152 @@ actor Wanderly {
       };
     };
 
-    let newTeacher : Teacher = {
-      id = teacherId;
-      firstName = payload.firstName;
-      middleName = payload.middleName;
-      lastName = payload.lastName;
-      gender = payload.gender;
-      birthDate = payload.birthDate;
-      address = payload.address;
-      departmentCode = payload.departmentCode;
-      branchName = payload.branchName;
+    let newUser : User = {
+      id = ?userId;
+      nickname = payload.nickname;
+      achievementsId = ?achievementsId;
+      points = ?0.0;
     };
 
-    // Add new teacher
-    switch (Map.add(teachers, phash, caller, newTeacher)) {
+    // Create new user
+    switch (Map.add(users, phash, caller, newUser)) {
       case (null) {
         return #ok({
-          message = "Teacher account created successfully!";
-          id = teacherId;
+          message = "User account created successfully!";
+          id = userId;
         });
       };
-      case (?teacher) {
-        return #err({ message = "Teacher already exists!" });
+      case (?user) {
+        return #err({ message = "User already exists!" });
       };
     };
   };
 
-  public shared ({ caller }) func createAttendance(payload : Attendance) : async Result.Result<MessageResult, MessageResult> {
-    if (not isTeacher(caller)) {
-      return #err({ message = "You need to be a teacher to do this!" });
-    };
-
-    let newAttendance = {
-      studentId = payload.studentId;
-      serialized = payload.serialized;
-      hashed = payload.hashed;
-    };
-
-    let attendanceBuffer = Buffer.fromArray<Attendance>(attendances);
-    attendanceBuffer.add(newAttendance);
-    attendances := Buffer.toArray<Attendance>(attendanceBuffer);
-
-    return #ok({ message = "Attendance created successfully!" });
-  };
-
-  public func getStudent(principal : Principal) : async Result.Result<Student, MessageResult> {
-    switch (Map.get(students, phash, principal)) {
+  // Update User nickname
+  public shared ({ caller }) func updateUserNickname(newUsername : User) : async Result.Result<MessageResult, MessageResult> {
+    switch (Map.get(users, phash, caller)) {
       case (null) {
-        return #err({ message = "No student found" });
+        return #err({ message = "user not found" });
       };
-      case (?student) {
-        return #ok(student);
+      case (?user) {
+        let newUserNickname : User = {
+          id = user.id;
+          nickname = newUsername.nickname;
+          achievementsId = user.achievementsId;
+          points = user.points;
+        };
+
+        Map.set(users, phash, caller, newUserNickname);
+        return #ok({ message = "User nickname updated successfully!" });
       };
     };
   };
 
-  public func getTeacher(principal : Principal) : async Result.Result<Teacher, MessageResult> {
-    switch (Map.get(teachers, phash, principal)) {
+  // Get specific user
+  public func getUser(principal : Principal) : async Result.Result<?Text, MessageResult> {
+    switch (Map.get(users, phash, principal)) {
       case (null) {
-        return #err({ message = "No teacher found" });
+        return #err({ message = "No user found" });
       };
-      case (?teacher) {
-        return #ok(teacher);
+      case (?user) {
+        return #ok(?user.nickname);
       };
     };
   };
+
+  // TASK
+  public func createTask(taskKey : Text, taskInfo : Task) : async Result.Result<MessageResult, MessageResult> {
+    // Generating task UUID
+    let taskId : Text = do {
+      switch (taskInfo.id) {
+        case (null) {
+          await generateUUID();
+        };
+        case (?id) {
+          id;
+        };
+      };
+
+    };
+    let newTaskInfo : Task = {
+      id = ?taskId;
+      title = taskInfo.title;
+      description = taskInfo.description;
+      emoji = taskInfo.emoji;
+      timeStart = taskInfo.timeStart;
+      timeEnd = taskInfo.timeEnd;
+      timeOfDay = taskInfo.timeOfDay;
+      taskType = taskInfo.taskType;
+    };
+
+    if (taskInfo.timeOfDay == #Morning) {
+      switch (Map.add(morningTaskList, thash, taskKey, taskInfo)) {
+        case (null) {
+          return #ok({ message = "Task created successfully" });
+        };
+        case (?value) {
+          return #err({ message = "Task created successfully" });
+        };
+      };
+    } else if (taskInfo.timeOfDay == #Afternoon) {
+      switch (Map.add(afternoonTaskList, thash, taskKey, taskInfo)) {
+        case (null) {
+          return #ok({ message = "Task created successfully" });
+        };
+        case (?value) {
+          return #err({ message = "Task created successfully" });
+        };
+      };
+    } else {
+      switch (Map.add(eveningTaskList, thash, taskKey, taskInfo)) {
+        case (null) {
+          return #ok({ message = "Task created successfully" });
+        };
+        case (?value) {
+          return #err({ message = "Task created successfully" });
+        };
+      };
+    };
+
+  };
+
+  public func getMorningTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
+    switch (Map.get(morningTaskList, thash, taskName)) {
+      case (null) {
+        return #err({ message = "No task found" });
+      };
+      case (?morningTask) {
+        return #ok(morningTask);
+      };
+    };
+  };
+  public func getAfternoonTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
+    switch (Map.get(morningTaskList, thash, taskName)) {
+      case (null) {
+        return #err({ message = "No task found" });
+      };
+      case (?afternoonTask) {
+        return #ok(afternoonTask);
+      };
+    };
+  };
+  public func getEveningTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
+    switch (Map.get(morningTaskList, thash, taskName)) {
+      case (null) {
+        return #err({ message = "No task found" });
+      };
+      case (?eveningTask) {
+        return #ok(eveningTask);
+      };
+    };
+  };
+
+  // ACHIEVEMENTS
+     
+  // REWARDS
+
+  // POST
+
+  // POINTS
+  // public func computeDailyPoints();
 };

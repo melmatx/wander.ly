@@ -1,0 +1,19 @@
+// Version: 1.0.0
+type Achievement =
+  {
+    description : Text;
+    emoji : Text;
+    multiplier : Float;
+    title : Text;
+    tradable : Bool
+  };
+type User =
+  {achievementsId : ?Text; id : ?Text; nickname : Text; points : ?Float};
+actor {
+  stable achivementList :
+    [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
+  stable userAchievements :
+    [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
+  stable users :
+    [var ?([var ?Principal], [var ?User], [var Nat], [var Nat32])]
+};

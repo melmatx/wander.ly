@@ -1,40 +1,39 @@
 // Version: 1.0.0
-type Attendance = {hashed : Text; serialized : Text; studentId : Text};
-type Student =
+type Achievement =
   {
-    address : Text;
-    birthDate : Text;
-    branchName : Text;
-    departmentCode : Text;
-    firstName : Text;
-    gender : Text;
-    id : Text;
-    lastName : Text;
-    middleName : ?Text;
-    parentsEmail : Text;
-    points : Float;
-    programCode : Text;
-    sectionCode : Text
+    description : Text;
+    emoji : Text;
+    multiplier : Float;
+    title : Text;
+    tradable : Bool
   };
-type Teacher = User;
+type Task =
+  {
+    description : Text;
+    emoji : Text;
+    id : ?Text;
+    isCompleted : Bool;
+    maxValue : Float;
+    progress : Float;
+    taskType : {#DistanceBased; #StepBased; #TimeBased};
+    timeEnd : Text;
+    timeOfDay : {#Afternoon; #Evening; #Morning};
+    timeStart : Text;
+    title : Text
+  };
 type User =
-  {
-    address : Text;
-    birthDate : Text;
-    branchName : Text;
-    departmentCode : Text;
-    firstName : Text;
-    gender : Text;
-    id : Text;
-    lastName : Text;
-    middleName : ?Text
-  };
+  {achievementsId : ?Text; id : ?Text; nickname : Text; points : ?Float};
 actor {
-  stable var attendances : [Attendance];
-  stable students :
-    [var ?([var ?Principal], [var ?Student], [var Nat], [var Nat32])];
-  stable teacherStudents :
-    [var ?([var ?Principal], [var ?[Student]], [var Nat], [var Nat32])];
-  stable teachers :
-    [var ?([var ?Principal], [var ?Teacher], [var Nat], [var Nat32])]
+  stable achivementList :
+    [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
+  stable afternoonTaskList :
+    [var ?([var ?Text], [var ?Task], [var Nat], [var Nat32])];
+  stable eveningTaskList :
+    [var ?([var ?Text], [var ?Task], [var Nat], [var Nat32])];
+  stable morningTaskList :
+    [var ?([var ?Text], [var ?Task], [var Nat], [var Nat32])];
+  stable userAchievements :
+    [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
+  stable users :
+    [var ?([var ?Principal], [var ?User], [var Nat], [var Nat32])]
 };

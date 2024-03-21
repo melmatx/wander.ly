@@ -1,35 +1,31 @@
-type Teacher = 
+type User = 
  record {
-   address: text;
-   birthDate: text;
-   branchName: text;
-   departmentCode: text;
-   firstName: text;
-   gender: text;
-   id: text;
-   lastName: text;
-   middleName: opt text;
+   achievementsId: opt text;
+   id: opt text;
+   nickname: text;
+   points: opt float64;
  };
-type Student = 
+type Task = 
  record {
-   address: text;
-   birthDate: text;
-   branchName: text;
-   departmentCode: text;
-   firstName: text;
-   gender: text;
-   id: text;
-   lastName: text;
-   middleName: opt text;
-   parentsEmail: text;
-   points: float64;
-   programCode: text;
-   sectionCode: text;
- };
-type Result_4 = 
- variant {
-   err: MessageResult;
-   ok: MessageResult;
+   description: text;
+   emoji: text;
+   id: opt text;
+   isCompleted: bool;
+   maxValue: float64;
+   progress: float64;
+   taskType: variant {
+               DistanceBased;
+               StepBased;
+               TimeBased;
+             };
+   timeEnd: text;
+   timeOfDay: variant {
+                Afternoon;
+                Evening;
+                Morning;
+              };
+   timeStart: text;
+   title: text;
  };
 type Result_3 = 
  variant {
@@ -42,61 +38,25 @@ type Result_3 =
 type Result_2 = 
  variant {
    err: MessageResult;
-   ok: record {
-         profile: Teacher;
-         role: text;
-       };
+   ok: Task;
  };
 type Result_1 = 
  variant {
    err: MessageResult;
-   ok: Student;
+   ok: opt text;
  };
 type Result = 
  variant {
    err: MessageResult;
-   ok: Teacher;
+   ok: MessageResult;
  };
 type MessageResult = record {message: text;};
-type CreateTeacherPayload = 
- record {
-   address: text;
-   birthDate: text;
-   branchName: text;
-   departmentCode: text;
-   firstName: text;
-   gender: text;
-   id: opt text;
-   lastName: text;
-   middleName: opt text;
- };
-type CreateStudentPayload = 
- record {
-   address: text;
-   birthDate: text;
-   branchName: text;
-   departmentCode: text;
-   firstName: text;
-   gender: text;
-   id: opt text;
-   lastName: text;
-   middleName: opt text;
-   parentsEmail: text;
-   programCode: text;
-   sectionCode: text;
- };
-type Attendance = 
- record {
-   hashed: text;
-   serialized: text;
-   studentId: text;
- };
 service : {
-  createAttendance: (Attendance) -> (Result_4);
-  createStudent: (CreateStudentPayload) -> (Result_3);
-  createTeacher: (CreateTeacherPayload) -> (Result_3);
-  getRoleAndProfile: () -> (Result_2);
-  getStudent: (principal) -> (Result_1);
-  getTeacher: (principal) -> (Result);
-  whoami: () -> (principal);
+  createTask: (text, Task) -> (Result);
+  createUser: (User) -> (Result_3);
+  getAfternoonTaskList: (text) -> (Result_2);
+  getEveningTaskList: (text) -> (Result_2);
+  getMorningTaskList: (text) -> (Result_2);
+  getUser: (principal) -> (Result_1);
+  updateUserNickname: (User) -> (Result);
 }

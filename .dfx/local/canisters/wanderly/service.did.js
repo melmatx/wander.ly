@@ -1,80 +1,50 @@
 export const idlFactory = ({ IDL }) => {
-  const Attendance = IDL.Record({
-    'studentId' : IDL.Text,
-    'serialized' : IDL.Text,
-    'hashed' : IDL.Text,
+  const Task = IDL.Record({
+    'id' : IDL.Opt(IDL.Text),
+    'title' : IDL.Text,
+    'isCompleted' : IDL.Bool,
+    'timeStart' : IDL.Text,
+    'description' : IDL.Text,
+    'emoji' : IDL.Text,
+    'taskType' : IDL.Variant({
+      'TimeBased' : IDL.Null,
+      'DistanceBased' : IDL.Null,
+      'StepBased' : IDL.Null,
+    }),
+    'progress' : IDL.Float64,
+    'timeEnd' : IDL.Text,
+    'maxValue' : IDL.Float64,
+    'timeOfDay' : IDL.Variant({
+      'Afternoon' : IDL.Null,
+      'Morning' : IDL.Null,
+      'Evening' : IDL.Null,
+    }),
   });
   const MessageResult = IDL.Record({ 'message' : IDL.Text });
-  const Result_4 = IDL.Variant({ 'ok' : MessageResult, 'err' : MessageResult });
-  const CreateStudentPayload = IDL.Record({
+  const Result = IDL.Variant({ 'ok' : MessageResult, 'err' : MessageResult });
+  const User = IDL.Record({
     'id' : IDL.Opt(IDL.Text),
-    'departmentCode' : IDL.Text,
-    'birthDate' : IDL.Text,
-    'sectionCode' : IDL.Text,
-    'middleName' : IDL.Opt(IDL.Text),
-    'address' : IDL.Text,
-    'gender' : IDL.Text,
-    'programCode' : IDL.Text,
-    'branchName' : IDL.Text,
-    'parentsEmail' : IDL.Text,
-    'lastName' : IDL.Text,
-    'firstName' : IDL.Text,
+    'nickname' : IDL.Text,
+    'achievementsId' : IDL.Opt(IDL.Text),
+    'points' : IDL.Opt(IDL.Float64),
   });
   const Result_3 = IDL.Variant({
     'ok' : IDL.Record({ 'id' : IDL.Text, 'message' : IDL.Text }),
     'err' : MessageResult,
   });
-  const CreateTeacherPayload = IDL.Record({
-    'id' : IDL.Opt(IDL.Text),
-    'departmentCode' : IDL.Text,
-    'birthDate' : IDL.Text,
-    'middleName' : IDL.Opt(IDL.Text),
-    'address' : IDL.Text,
-    'gender' : IDL.Text,
-    'branchName' : IDL.Text,
-    'lastName' : IDL.Text,
-    'firstName' : IDL.Text,
-  });
-  const Teacher = IDL.Record({
-    'id' : IDL.Text,
-    'departmentCode' : IDL.Text,
-    'birthDate' : IDL.Text,
-    'middleName' : IDL.Opt(IDL.Text),
-    'address' : IDL.Text,
-    'gender' : IDL.Text,
-    'branchName' : IDL.Text,
-    'lastName' : IDL.Text,
-    'firstName' : IDL.Text,
-  });
-  const Result_2 = IDL.Variant({
-    'ok' : IDL.Record({ 'role' : IDL.Text, 'profile' : Teacher }),
+  const Result_2 = IDL.Variant({ 'ok' : Task, 'err' : MessageResult });
+  const Result_1 = IDL.Variant({
+    'ok' : IDL.Opt(IDL.Text),
     'err' : MessageResult,
   });
-  const Student = IDL.Record({
-    'id' : IDL.Text,
-    'departmentCode' : IDL.Text,
-    'birthDate' : IDL.Text,
-    'sectionCode' : IDL.Text,
-    'middleName' : IDL.Opt(IDL.Text),
-    'address' : IDL.Text,
-    'gender' : IDL.Text,
-    'programCode' : IDL.Text,
-    'branchName' : IDL.Text,
-    'parentsEmail' : IDL.Text,
-    'lastName' : IDL.Text,
-    'points' : IDL.Float64,
-    'firstName' : IDL.Text,
-  });
-  const Result_1 = IDL.Variant({ 'ok' : Student, 'err' : MessageResult });
-  const Result = IDL.Variant({ 'ok' : Teacher, 'err' : MessageResult });
   return IDL.Service({
-    'createAttendance' : IDL.Func([Attendance], [Result_4], []),
-    'createStudent' : IDL.Func([CreateStudentPayload], [Result_3], []),
-    'createTeacher' : IDL.Func([CreateTeacherPayload], [Result_3], []),
-    'getRoleAndProfile' : IDL.Func([], [Result_2], []),
-    'getStudent' : IDL.Func([IDL.Principal], [Result_1], []),
-    'getTeacher' : IDL.Func([IDL.Principal], [Result], []),
-    'whoami' : IDL.Func([], [IDL.Principal], []),
+    'createTask' : IDL.Func([IDL.Text, Task], [Result], []),
+    'createUser' : IDL.Func([User], [Result_3], []),
+    'getAfternoonTaskList' : IDL.Func([IDL.Text], [Result_2], []),
+    'getEveningTaskList' : IDL.Func([IDL.Text], [Result_2], []),
+    'getMorningTaskList' : IDL.Func([IDL.Text], [Result_2], []),
+    'getUser' : IDL.Func([IDL.Principal], [Result_1], []),
+    'updateUserNickname' : IDL.Func([User], [Result], []),
   });
 };
 export const init = ({ IDL }) => { return []; };
