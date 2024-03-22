@@ -12,9 +12,6 @@ type Task =
     description : Text;
     emoji : Text;
     id : ?Text;
-    isCompleted : Bool;
-    maxValue : Float;
-    progress : Float;
     taskType : {#DistanceBased; #StepBased; #TimeBased};
     timeEnd : Text;
     timeOfDay : {#Afternoon; #Evening; #Morning};

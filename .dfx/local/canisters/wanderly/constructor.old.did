@@ -10,9 +10,6 @@ type Task =
    description: text;
    emoji: text;
    id: opt text;
-   isCompleted: bool;
-   maxValue: float64;
-   progress: float64;
    taskType: variant {
                DistanceBased;
                StepBased;
@@ -55,6 +52,7 @@ service : {
   createTask: (text, Task) -> (Result);
   createUser: (User) -> (Result_3);
   getAfternoonTaskList: (text) -> (Result_2);
+  getAllMorningTaskList: () -> (vec Task);
   getEveningTaskList: (text) -> (Result_2);
   getMorningTaskList: (text) -> (Result_2);
   getUser: (principal) -> (Result_1);

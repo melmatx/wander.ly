@@ -178,8 +178,8 @@ actor Wanderly {
           id;
         };
       };
-
     };
+
     let newTaskInfo : Task = {
       id = ?taskId;
       title = taskInfo.title;
@@ -192,34 +192,46 @@ actor Wanderly {
     };
 
     if (taskInfo.timeOfDay == #Morning) {
-      switch (Map.add(morningTaskList, thash, taskKey, taskInfo)) {
+      switch (Map.add(morningTaskList, thash, taskKey, newTaskInfo)) {
         case (null) {
           return #ok({ message = "Task created successfully" });
         };
         case (?value) {
-          return #err({ message = "Task created successfully" });
+          return #err({ message = "Task already exist" });
         };
       };
     } else if (taskInfo.timeOfDay == #Afternoon) {
-      switch (Map.add(afternoonTaskList, thash, taskKey, taskInfo)) {
+      switch (Map.add(afternoonTaskList, thash, taskKey, newTaskInfo)) {
         case (null) {
           return #ok({ message = "Task created successfully" });
         };
         case (?value) {
-          return #err({ message = "Task created successfully" });
+          return #err({ message = "Task already exist" });
         };
       };
     } else {
-      switch (Map.add(eveningTaskList, thash, taskKey, taskInfo)) {
+      switch (Map.add(eveningTaskList, thash, taskKey, newTaskInfo)) {
         case (null) {
           return #ok({ message = "Task created successfully" });
         };
         case (?value) {
-          return #err({ message = "Task created successfully" });
+          return #err({ message = "Task already exist" });
         };
       };
     };
 
+  };
+
+  public func getAllMorningTasks() : async [(Text, Task)] {
+    return Map.toArray(morningTaskList);
+  };
+
+  public func getAllAfternoonTasks() : async [(Text, Task)] {
+    return Map.toArray(afternoonTaskList);
+  };
+
+  public func getAllEveningTasks() : async [(Text, Task)] {
+    return Map.toArray(eveningTaskList);
   };
 
   public func getMorningTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
@@ -233,7 +245,7 @@ actor Wanderly {
     };
   };
   public func getAfternoonTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
-    switch (Map.get(morningTaskList, thash, taskName)) {
+    switch (Map.get(afternoonTaskList, thash, taskName)) {
       case (null) {
         return #err({ message = "No task found" });
       };
@@ -243,7 +255,7 @@ actor Wanderly {
     };
   };
   public func getEveningTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
-    switch (Map.get(morningTaskList, thash, taskName)) {
+    switch (Map.get(eveningTaskList, thash, taskName)) {
       case (null) {
         return #err({ message = "No task found" });
       };
@@ -254,7 +266,10 @@ actor Wanderly {
   };
 
   // ACHIEVEMENTS
-     
+  
+
+
+
   // REWARDS
 
   // POST

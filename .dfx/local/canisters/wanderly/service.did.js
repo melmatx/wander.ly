@@ -2,7 +2,6 @@ export const idlFactory = ({ IDL }) => {
   const Task = IDL.Record({
     'id' : IDL.Opt(IDL.Text),
     'title' : IDL.Text,
-    'isCompleted' : IDL.Bool,
     'timeStart' : IDL.Text,
     'description' : IDL.Text,
     'emoji' : IDL.Text,
@@ -11,9 +10,7 @@ export const idlFactory = ({ IDL }) => {
       'DistanceBased' : IDL.Null,
       'StepBased' : IDL.Null,
     }),
-    'progress' : IDL.Float64,
     'timeEnd' : IDL.Text,
-    'maxValue' : IDL.Float64,
     'timeOfDay' : IDL.Variant({
       'Afternoon' : IDL.Null,
       'Morning' : IDL.Null,
@@ -41,6 +38,11 @@ export const idlFactory = ({ IDL }) => {
     'createTask' : IDL.Func([IDL.Text, Task], [Result], []),
     'createUser' : IDL.Func([User], [Result_3], []),
     'getAfternoonTaskList' : IDL.Func([IDL.Text], [Result_2], []),
+    'getAllMorningTaskList' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, Task))],
+        [],
+      ),
     'getEveningTaskList' : IDL.Func([IDL.Text], [Result_2], []),
     'getMorningTaskList' : IDL.Func([IDL.Text], [Result_2], []),
     'getUser' : IDL.Func([IDL.Principal], [Result_1], []),
