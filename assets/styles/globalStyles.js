@@ -14,7 +14,7 @@ export const colors = {
   secondary: "#FFCBCB",
   tertiary: "#F6F6F6",
   dark: "#1c1c1e",
-  darkgray: "#2c2c2e",
+  gray: "#aeaeb2",
 };
 
 const globalStyles = StyleSheet.create({

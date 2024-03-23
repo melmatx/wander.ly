@@ -1,40 +1,4 @@
 // Version: 1.0.0
-type Attendance = {hashed : Text; serialized : Text; studentId : Text};
-type Student =
-  {
-    address : Text;
-    birthDate : Text;
-    branchName : Text;
-    departmentCode : Text;
-    firstName : Text;
-    gender : Text;
-    id : Text;
-    lastName : Text;
-    middleName : ?Text;
-    parentsEmail : Text;
-    points : Float;
-    programCode : Text;
-    sectionCode : Text
-  };
-type Teacher = User;
-type User =
-  {
-    address : Text;
-    birthDate : Text;
-    branchName : Text;
-    departmentCode : Text;
-    firstName : Text;
-    gender : Text;
-    id : Text;
-    lastName : Text;
-    middleName : ?Text
-  };
 actor {
-  stable var attendances : [Attendance];
-  stable students :
-    [var ?([var ?Principal], [var ?Student], [var Nat], [var Nat32])];
-  stable teacherStudents :
-    [var ?([var ?Principal], [var ?[Student]], [var Nat], [var Nat32])];
-  stable teachers :
-    [var ?([var ?Principal], [var ?Teacher], [var Nat], [var Nat32])]
+  
 };

@@ -21,8 +21,10 @@ const assetList = [
   require("../assets/images/travel/travel-5.jpg"),
 
   // Others
+  require("../assets/images/bg.jpg"),
   require("../assets/images/card-mask.png"),
   require("../assets/images/dfinity.png"),
+  require("../assets/images/gcash.png"),
   require("../assets/images/logo.png"),
 ];
 

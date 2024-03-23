@@ -5,7 +5,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { TextField } from "react-native-ui-lib";
 
 import { colors, sizes } from "../assets/styles/globalStyles";
-import textStyles from "../assets/styles/textStyles";
 
 const TextInput = (props) => {
   const trailingAccessory = useMemo(() => {
@@ -46,26 +45,25 @@ const TextInput = (props) => {
 
   return (
     <TextField
-      style={textStyles.subTitle}
-      labelStyle={[
-        textStyles.subTitle,
-        { color: props.isViewing ? colors.tertiary : "gray" },
-      ]}
-      fieldStyle={{
-        ...(!props.isViewing && {
+      h1
+      white
+      labelStyle={{ color: props.isViewing ? "lightgray" : "gray" }}
+      fieldStyle={[
+        { paddingVertical: sizes.medium },
+        props.isTextArea && { height: 150 },
+        trailingAccessory && { paddingRight: sizes.xxlarge },
+        !props.isViewing && {
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: "gray",
-        }),
-        paddingVertical: sizes.medium,
-        paddingRight: sizes.xxlarge,
-      }}
+        },
+        props.fieldStyle,
+      ]}
       readOnly={props.isViewing}
       autoCapitalize={props.isEmail ? "none" : "words"}
       secureTextEntry={props.isPassword && !props.arePasswordsVisible}
       trailingAccessory={!props.isViewing && trailingAccessory}
       validationMessageStyle={{
         paddingVertical: sizes.medium,
-        ...textStyles.body,
       }}
       {...props}
     />

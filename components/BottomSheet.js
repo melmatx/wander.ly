@@ -1,5 +1,4 @@
 import GHBottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import React, { forwardRef, memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
@@ -17,6 +16,8 @@ const DETACHED_INITIAL_STYLES = {
   marginHorizontal: sizes.xlarge,
 };
 
+const DETACHED_BOTTOM_INSET = 90;
+
 const BottomSheet = forwardRef(
   (
     {
@@ -29,8 +30,6 @@ const BottomSheet = forwardRef(
     },
     ref
   ) => {
-    const bottomTabHeight = useBottomTabBarHeight();
-
     const bottomSheetBackground = useCallback(
       () => (
         <BlurView
@@ -52,7 +51,7 @@ const BottomSheet = forwardRef(
           opacity={0.4}
           appearsOnIndex={1}
           disappearsOnIndex={-1}
-          pressBehavior="none"
+          // pressBehavior="none"
         />
       ),
       []
@@ -82,7 +81,7 @@ const BottomSheet = forwardRef(
         {...(detached && {
           ...DETACHED_INITIAL_PROPS,
           backdropComponent: bottomSheetBackdrop,
-          bottomInset: bottomTabHeight + sizes.large,
+          bottomInset: DETACHED_BOTTOM_INSET,
         })}
         {...props}
       >

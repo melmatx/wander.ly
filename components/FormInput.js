@@ -1,11 +1,41 @@
-import React, { memo } from "react";
+import { useBottomSheetInternal } from "@gorhom/bottom-sheet";
+import React, { memo, useCallback, useEffect } from "react";
 import { Colors, DateTimePicker, Picker } from "react-native-ui-lib";
 
 import { sizes } from "../assets/styles/globalStyles";
 import TextInput from "../components/TextInput";
 
-const FormInput = ({ item, data, setData, value }) => {
-  if (item.isDate) {
+const FormInput = ({ item, data, setData, value, onFocus, onBlur }) => {
+  const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
+
+  useEffect(() => {
+    return () => {
+      // Reset the flag on unmount
+      shouldHandleKeyboardEvents.value = false;
+    };
+  }, [shouldHandleKeyboardEvents]);
+
+  const handleOnFocus = useCallback(
+    (args) => {
+      shouldHandleKeyboardEvents.value = true;
+      if (onFocus) {
+        onFocus(args);
+      }
+    },
+    [onFocus, shouldHandleKeyboardEvents]
+  );
+
+  const handleOnBlur = useCallback(
+    (args) => {
+      shouldHandleKeyboardEvents.value = false;
+      if (onBlur) {
+        onBlur(args);
+      }
+    },
+    [onBlur, shouldHandleKeyboardEvents]
+  );
+
+  if (item?.isDate) {
     const date = new Date((data && data[item.state]) || value);
 
     return (
@@ -37,7 +67,7 @@ const FormInput = ({ item, data, setData, value }) => {
     );
   }
 
-  if (item.isDropdown) {
+  if (item?.isDropdown) {
     return (
       <Picker
         value={(data && data[item.state]) || value || ""}
@@ -71,18 +101,21 @@ const FormInput = ({ item, data, setData, value }) => {
 
   return (
     <TextInput
-      label={item.label}
+      label={item?.label}
       value={(data && data[item.state]) || value || ""}
-      placeholder={item.placeholder}
+      placeholder={item?.placeholder}
       onChangeText={(text) => {
-        if (!item.state) {
-          setData(text);
+        if (!item?.state) {
+          setData?.(text);
           return;
         }
         setData({ [item.state]: text });
       }}
-      arePasswordsVisible={item.arePasswordsVisible}
-      onTogglePasswordsVisibility={item.togglePasswordsVisibility}
+      multiline={item?.isTextArea}
+      onFocus={handleOnFocus}
+      onBlur={handleOnBlur}
+      arePasswordsVisible={item?.arePasswordsVisible}
+      onTogglePasswordsVisibility={item?.togglePasswordsVisibility}
       {...item}
     />
   );

@@ -18,8 +18,7 @@ import getBackendActor from "../src/actor";
 const initialState = {
   baseKey: "",
   identity: "",
-  principal: "",
-  isRegistered: false,
+  // isRegistered: false,
   isReady: false,
 };
 
@@ -47,9 +46,6 @@ const useAuthStore = create((set, get) => ({
       if (isDelegationValid(chain)) {
         const id = new DelegationIdentity(baseKey, chain);
 
-        // Get principal
-        // const principal = get().getPrincipal(id);
-
         // Set identity with the base key
         set({ baseKey, identity: id });
       } else {
@@ -57,21 +53,7 @@ const useAuthStore = create((set, get) => ({
       }
     }
 
-    // No delegation, set base key
-    set({ baseKey });
-
-    // Check if user is registered
-    const isRegistered = await AsyncStorage.getItem("isRegistered");
-
-    if (isRegistered === "true") {
-      console.log(isRegistered);
-      // Fetch role and profile
-      await useProfileStore.getState().fetchRoleAndProfile(get().identity);
-
-      set({ isRegistered: true });
-    }
-
-    set({ isReady: true });
+    set({ baseKey, isReady: true });
   },
   setIdentity: async (delegation) => {
     // Decode delegation from uri result
@@ -90,17 +72,6 @@ const useAuthStore = create((set, get) => ({
 
     // Dismiss the browser
     WebBrowser.dismissBrowser();
-
-    // Check if user is already registered
-    if (await useProfileStore.getState().fetchRoleAndProfile(id)) {
-      set({ isRegistered: true });
-
-      // Save registered status
-      await AsyncStorage.setItem("isRegistered", "true");
-    }
-
-    // Get principal
-    // const principal = get().getPrincipal(id);
 
     set({ identity: id });
   },
@@ -121,16 +92,22 @@ const useAuthStore = create((set, get) => ({
 
     // Create url for internet identity integration
     const url = new URL(
-      process.env.EXPO_PUBLIC_NGROK_URL +
-        "/?canisterId=" +
-        process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
+      // process.env.EXPO_PUBLIC_NGROK_URL +
+      //   "/?canisterId=" +
+      //   process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
+
+      // Must not be the same as the internet canister (127.0.0.1 OR localhost)
+      `http://localhost:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
     );
 
     // Set internet identity uri
     const internetIdentityUri = new URL(
-      process.env.EXPO_PUBLIC_NGROK_URL +
-        "/?canisterId=" +
-        process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY
+      // process.env.EXPO_PUBLIC_NGROK_URL +
+      //   "/?canisterId=" +
+      //   process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY
+
+      // Must not be the same as the integration canister (127.0.0.1 OR localhost)
+      `http://127.0.0.1:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
     );
     url.searchParams.set(
       "internet_identity_uri",
@@ -151,7 +128,7 @@ const useAuthStore = create((set, get) => ({
     await AsyncStorage.removeItem("isRegistered");
     await useProfileStore.getState().clearProfile();
 
-    set({ identity: "", principal: "", isRegistered: false });
+    set({ identity: "", isRegistered: false });
   },
   setIsRegistered: (isRegistered) => {
     set({ isRegistered });

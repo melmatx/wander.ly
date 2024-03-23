@@ -4,19 +4,20 @@ import React, { memo } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-ui-lib";
 
-import globalStyles, { sizes } from "../assets/styles/globalStyles";
+import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 
 const CommunityCard = ({ card }) => {
   return (
-    <BlurView tint="light" intensity={50} style={style.container}>
+    <BlurView tint="light" intensity={35} style={style.container}>
       <View style={[globalStyles.flexFull, globalStyles.spaceBetween]}>
-        <View style={{ rowGap: sizes.medium }}>
+        <View style={{ rowGap: sizes.xxlarge }}>
           <Image source={card.image} style={style.image} transition={100} />
           <Text h4 semibold white numberOfLines={6}>
             {card.content}
           </Text>
         </View>
-        <Text h3 center color="lightgray">
+
+        <Text h3 center color={colors.gray}>
           {card.place}
         </Text>
       </View>
@@ -28,14 +29,14 @@ export const style = {
   container: {
     height: "85%",
     padding: sizes.xlarge,
-    borderRadius: sizes.xlarge,
+    borderRadius: sizes.medium,
     overflow: "hidden",
   },
   image: {
     height: "70%",
     width: "100%",
-    marginVertical: sizes.xxlarge,
-    borderRadius: sizes.large,
+    // marginVertical: sizes.large,
+    borderRadius: sizes.medium,
   },
 };
 

@@ -1,25 +1,37 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BottomSheetSectionList } from "@gorhom/bottom-sheet";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useScrollToTop } from "@react-navigation/native";
+import { useIsFocused, useScrollToTop } from "@react-navigation/native";
 import Mapbox from "@rnmapbox/maps";
-import { format, set } from "date-fns";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { View } from "react-native";
+import * as Burnt from "burnt";
+import { format } from "date-fns";
+import * as Location from "expo-location";
+import { StatusBar } from "expo-status-bar";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Alert, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Share from "react-native-share";
 import { Button, Text } from "react-native-ui-lib";
 
-import globalStyles, { sizes } from "../assets/styles/globalStyles";
+import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
+import EventSheetContent from "../components/EventSheetContent";
+import GoalSheetContent from "../components/GoalSheetContent";
 import TaskItem from "../components/TaskItem";
 import featureList from "../consts/featureList";
 import tasks from "../consts/sampleTasks";
+import Routes from "../navigation/Routes";
 import greetings from "../utils/greetings";
 
 const HEADING = 0;
 const PITCH = 60;
-const ZOOM = 17;
+const ZOOM = 18;
 
 const MAPBOX_STYLE_CONFIG = {
   showPointOfInterestLabels: false,
@@ -27,20 +39,46 @@ const MAPBOX_STYLE_CONFIG = {
   lightPreset: "night",
 };
 
-const Explore = () => {
-  const [userLocation, setUserLocation] = useState(null);
+const Explore = ({ navigation }) => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const bottomTabHeight = useBottomTabBarHeight();
 
   const cameraRef = useRef(null);
   const sectionListRef = useRef(null);
-  const goalSheetRef = useRef(null);
   const eventSheetRef = useRef(null);
+  const goalSheetRef = useRef(null);
 
-  const snapPoints = useMemo(() => ["30%", "60%", "85%"], []);
+  const snapPoints = useMemo(() => ["35%", "60%", "85%"], []);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+      }
+    })();
+  }, []);
+
+  const onLocateUser = useCallback(async () => {
+    const userLocation = await Location.getLastKnownPositionAsync();
+    const { longitude, latitude } = userLocation.coords;
+
+    cameraRef.current?.setCamera({
+      centerCoordinate: [longitude, latitude],
+      animationMode: "linearTo",
+      heading: HEADING,
+      pitch: PITCH,
+      zoomLevel: ZOOM,
+    });
+  }, []);
+
+  const onScanCode = useCallback(() => {
+    navigation.navigate(Routes.SCAN_CODE);
+  }, []);
 
   const onMapPress = useCallback((event, feature) => {
     goalSheetRef.current?.close();
@@ -57,10 +95,6 @@ const Explore = () => {
     setSelectedGoal(item);
   }, []);
 
-  const handleGoalButton = useCallback(() => {
-    goalSheetRef.current.close();
-  }, []);
-
   const handleEventButton = useCallback(() => {
     eventSheetRef.current.close();
   }, []);
@@ -68,6 +102,30 @@ const Explore = () => {
   const handleShareEvent = useCallback((event) => {
     Share.open({ message: event.title }).catch(console.log);
   }, []);
+
+  const handleGoalButton = useCallback(
+    (goal) => {
+      goalSheetRef.current.close();
+
+      if (goal.progress === 0) {
+        Burnt.toast({
+          title: "Task Started",
+          message: "Good luck with your task!",
+          preset: "custom",
+          duration: 0.5,
+          icon: {
+            ios: {
+              name: "checkmark.seal",
+              color: colors.primary,
+            },
+          },
+        });
+      }
+
+      navigation.navigate(Routes.ACTIVE_TASK, { goal });
+    },
+    [navigation]
+  );
 
   const renderSectionHeader = useCallback(({ section }) => {
     const totalCompleted = section.data.filter(
@@ -85,20 +143,6 @@ const Explore = () => {
     );
   }, []);
 
-  const onLocateUser = useCallback(() => {
-    if (userLocation) {
-      const { longitude, latitude } = userLocation.coords;
-
-      cameraRef.current?.setCamera({
-        centerCoordinate: [longitude, latitude],
-        animationMode: "linearTo",
-        heading: HEADING,
-        pitch: PITCH,
-        zoomLevel: ZOOM,
-      });
-    }
-  }, [userLocation]);
-
   const renderItem = useCallback(
     ({ item }) => <TaskItem item={item} onPress={() => onTaskPress(item)} />,
     [onTaskPress]
@@ -108,6 +152,8 @@ const Explore = () => {
 
   return (
     <>
+      <StatusBar style="light" animated />
+
       <View
         style={{
           position: "absolute",
@@ -129,18 +175,19 @@ const Explore = () => {
       <View
         style={{
           position: "absolute",
-          top: insets.top + sizes.medium,
+          top: insets.top,
           right: 0,
           zIndex: 1,
-          padding: sizes.xsmall,
+          padding: sizes.large,
+          rowGap: sizes.large,
         }}
       >
-        <Button
-          backgroundColor="rgba(0,0,0,0.5)"
-          style={{ margin: sizes.medium }}
-          onPress={onLocateUser}
-        >
+        <Button backgroundColor="rgba(0,0,0,0.5)" onPress={onLocateUser}>
           <Ionicons name="navigate" color="white" size={sizes.xxlarge} />
+        </Button>
+
+        <Button backgroundColor="rgba(0,0,0,0.5)" onPress={onScanCode}>
+          <Ionicons name="qr-code" color="white" size={sizes.xxlarge} />
         </Button>
       </View>
 
@@ -150,6 +197,7 @@ const Explore = () => {
         logoEnabled={false}
         attributionEnabled={false}
         scaleBarEnabled={false}
+        pitchEnabled={false}
       >
         <Mapbox.Camera ref={cameraRef} />
         <Mapbox.Camera
@@ -158,32 +206,44 @@ const Explore = () => {
           followPitch={PITCH}
           followZoomLevel={ZOOM}
         />
-        <Mapbox.UserLocation onUpdate={setUserLocation} />
 
-        {featureList.map((feature, index) => (
-          <Mapbox.ShapeSource
-            key={`feature-${index}`}
-            id={`feature-${index}`}
-            shape={feature}
-            onPress={(event) => onMapPress(event, feature)}
-          >
-            <Mapbox.FillLayer
-              id={`feature-${index}-fill`}
-              style={{ fillOpacity: 0.5 }}
+        {isFocused && (
+          <>
+            <Mapbox.LocationPuck
+              visible
+              pulsing={{ radius: 50 }}
+              puckBearing="heading"
+              puckBearingEnabled
             />
-            <Mapbox.SymbolLayer
-              id={`feature-${index}-icon`}
-              style={{
-                iconImage: `icon-${feature.icon}`,
-                iconSize: 0.1,
-                iconAllowOverlap: true,
-              }}
-            />
-            <Mapbox.Images
-              images={{ [`icon-${feature.icon}`]: feature.icon }}
-            />
-          </Mapbox.ShapeSource>
-        ))}
+
+            {featureList.map((feature, index) => (
+              <Mapbox.ShapeSource
+                key={`feature-${index}`}
+                id={`feature-${index}`}
+                shape={feature}
+                onPress={(event) => onMapPress(event, feature)}
+              >
+                <Mapbox.FillLayer
+                  id={`feature-${index}-fill`}
+                  style={{ fillOpacity: 0.5 }}
+                />
+                <Mapbox.SymbolLayer
+                  id={`feature-${index}-icon`}
+                  style={{
+                    iconImage: `icon-${feature.icon}`,
+                    iconSize: 0.1,
+                    iconAllowOverlap: true,
+                  }}
+                />
+                <Mapbox.Images
+                  images={{
+                    [`icon-${feature.icon}`]: feature.icon,
+                  }}
+                />
+              </Mapbox.ShapeSource>
+            ))}
+          </>
+        )}
 
         <Mapbox.StyleImport
           id="basemap"
@@ -197,79 +257,35 @@ const Explore = () => {
           ref={sectionListRef}
           sections={tasks}
           keyExtractor={(_, index) => `task-${index}`}
-          stickySectionHeadersEnabled={false}
           contentContainerStyle={{
             rowGap: sizes.medium,
-            padding: sizes.medium,
-            paddingBottom: bottomTabHeight + insets.bottom,
+            padding: sizes.large,
+            // paddingBottom: bottomTabHeight + StatusBar.currentHeight,
           }}
+          contentInset={{ bottom: bottomTabHeight }}
           style={{ borderRadius: sizes.xlarge }}
           renderSectionHeader={renderSectionHeader}
           renderItem={renderItem}
+          stickySectionHeadersEnabled={false}
         />
-      </BottomSheet>
-
-      <BottomSheet ref={goalSheetRef} detached zIndex={3}>
-        {selectedGoal && (
-          <View
-            style={[
-              globalStyles.flexFull,
-              {
-                rowGap: sizes.medium,
-                padding: sizes.medium,
-                justifyContent: "space-between",
-              },
-            ]}
-          >
-            <View style={{ rowGap: sizes.small }}>
-              <Text h1 white>
-                {selectedGoal.title}
-              </Text>
-              <Text white>{selectedGoal.description}</Text>
-            </View>
-            <Text color="gray">Progress: {selectedGoal.progress}</Text>
-            <Button label="Continue" onPress={handleGoalButton} />
-          </View>
-        )}
       </BottomSheet>
 
       <BottomSheet ref={eventSheetRef} detached zIndex={3}>
         {selectedEvent && (
-          <View
-            style={[
-              globalStyles.flexFull,
-              {
-                rowGap: sizes.medium,
-                padding: sizes.medium,
-                justifyContent: "space-between",
-              },
-            ]}
-          >
-            <View style={{ rowGap: sizes.small }}>
-              <Text h1 white>
-                {selectedEvent.title}
-              </Text>
-              <Text white>{selectedEvent.description}</Text>
-            </View>
-            <Text color="gray">
-              {format(set(new Date(), { hours: 10, minutes: 0 }), "h:mm a")} -{" "}
-              {format(set(new Date(), { hours: 18, minutes: 0 }), "h:mm a")}
-            </Text>
-            <View style={globalStyles.rowCenter}>
-              <Button
-                label="Done"
-                onPress={handleEventButton}
-                style={globalStyles.flexFull}
-              />
-              <Button
-                link
-                style={{ padding: sizes.large }}
-                onPress={() => handleShareEvent(selectedEvent)}
-              >
-                <Ionicons name="share" size={25} color="white" />
-              </Button>
-            </View>
-          </View>
+          <EventSheetContent
+            event={selectedEvent}
+            onButtonPress={handleEventButton}
+            onShare={() => handleShareEvent(selectedEvent)}
+          />
+        )}
+      </BottomSheet>
+
+      <BottomSheet ref={goalSheetRef} detached zIndex={3}>
+        {selectedGoal && (
+          <GoalSheetContent
+            goal={selectedGoal}
+            onButtonPress={() => handleGoalButton(selectedGoal)}
+          />
         )}
       </BottomSheet>
     </>

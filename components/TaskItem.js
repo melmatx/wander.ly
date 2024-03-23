@@ -9,6 +9,9 @@ import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 const TaskItem = ({ item, onPress }) => {
   const isUnavailable = isBefore(new Date(), item.timeStart);
   const isExpired = isAfter(new Date(), item.timeEnd);
+  const isDisabled = isExpired || isUnavailable;
+  // const isDisabled = false;
+
   return (
     <View
       style={[
@@ -18,8 +21,7 @@ const TaskItem = ({ item, onPress }) => {
           padding: sizes.large,
           borderRadius: sizes.medium,
           columnGap: sizes.large,
-          opacity:
-            isExpired || isUnavailable ? 0.4 : item.isCompleted ? 0.6 : 1,
+          opacity: isDisabled ? 0.4 : item.isCompleted ? 0.6 : 1,
         },
       ]}
     >
@@ -44,8 +46,8 @@ const TaskItem = ({ item, onPress }) => {
       {item.isCompleted ? (
         <Ionicons name="checkmark-outline" size={35} color={colors.primary} />
       ) : (
-        !(isExpired || isUnavailable) && (
-          <Button link onPress={onPress}>
+        !isDisabled && (
+          <Button link onPress={onPress} activeOpacity={0.3}>
             <Ionicons name="arrow-forward-circle" size={40} color="white" />
           </Button>
         )

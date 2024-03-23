@@ -1,13 +1,13 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { BlurView } from "expo-blur";
 
 import Routes from "./Routes";
-import Explore from "../screens/Explore";
-import Community from "../screens/Community";
-import Wallet from "../screens/Wallet";
-import Profile from "../screens/Profile";
-import { BlurView } from "expo-blur";
 import globalStyles from "../assets/styles/globalStyles";
+import Community from "../screens/Community";
+import Explore from "../screens/Explore";
+import Profile from "../screens/Profile";
+import Wallet from "../screens/Wallet";
 
 const Tab = createBottomTabNavigator();
 

@@ -1,8 +1,15 @@
 {
   "canisters": {
     "internet_identity": {
-      "type": "pull",
-      "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
     "wanderly": {
       "main": "src/wanderly/main.mo",
@@ -19,6 +26,12 @@
   "defaults": {
     "build": {
       "packtool": "mops sources"
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:4943",
+      "type": "ephemeral"
     }
   },
   "output_env_file": ".env",
