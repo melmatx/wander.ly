@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-actor Wanderly {
-
-=======
 import Map "mo:map/Map";
 import { phash } "mo:map/Map";
 import { thash } "mo:map/Map";
@@ -270,9 +266,6 @@ actor Wanderly {
   };
 
   // ACHIEVEMENTS
-  
-
-
 
   // REWARDS
 
@@ -280,5 +273,4 @@ actor Wanderly {
 
   // POINTS
   // public func computeDailyPoints();
->>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7
 };
