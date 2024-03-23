@@ -1,3 +1,4 @@
+<<<<<<< HEAD:.dfx/local/canisters/internet_identity/constructor.old.did
 type UserNumber = nat64;
 type PublicKey = blob;
 type CredentialId = blob;
@@ -617,4 +618,36 @@ service : (opt InternetIdentityInit) -> {
     // The methods below are used to generate ID-alias credentials during attribute sharing flow.
     prepare_id_alias : (PrepareIdAliasRequest) -> (variant {Ok: PreparedIdAlias; Err: PrepareIdAliasError;});
     get_id_alias : (GetIdAliasRequest) -> (variant {Ok: IdAliasCredentials; Err: GetIdAliasError;}) query;
+=======
+type User = 
+ record {
+   achievementsId: opt text;
+   id: opt text;
+   nickname: text;
+   points: opt float64;
+ };
+type Result_2 = 
+ variant {
+   err: MessageResult;
+   ok: record {
+         id: text;
+         message: text;
+       };
+ };
+type Result_1 = 
+ variant {
+   err: MessageResult;
+   ok: opt text;
+ };
+type Result = 
+ variant {
+   err: MessageResult;
+   ok: MessageResult;
+ };
+type MessageResult = record {message: text;};
+service : {
+  createUser: (User) -> (Result_2);
+  getUser: (principal) -> (Result_1);
+  updateUserNickname: (User) -> (Result);
+>>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7:.dfx/playground/canisters/wanderly/constructor.old.did
 }

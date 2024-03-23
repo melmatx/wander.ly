@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "ii_integration": {
     "playground": "zkfwe-6yaaa-aaaab-qacca-cai"
   },
@@ -10,5 +11,9 @@
   },
   "wanderly": {
     "playground": "75i2c-tiaaa-aaaab-qacxa-cai"
+=======
+  "wanderly": {
+    "playground": "5jw7w-wiaaa-aaaab-qacza-cai"
+>>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7
   }
 }

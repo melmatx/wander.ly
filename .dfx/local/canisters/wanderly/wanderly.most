@@ -1,4 +1,41 @@
 // Version: 1.0.0
+<<<<<<< HEAD
 actor {
   
+=======
+type Achievement =
+  {
+    description : Text;
+    emoji : Text;
+    multiplier : Float;
+    title : Text;
+    tradable : Bool
+  };
+type Task =
+  {
+    description : Text;
+    emoji : Text;
+    id : ?Text;
+    taskType : {#DistanceBased; #StepBased; #TimeBased};
+    timeEnd : Text;
+    timeOfDay : {#Afternoon; #Evening; #Morning};
+    timeStart : Text;
+    title : Text
+  };
+type User =
+  {achievementsId : ?Text; id : ?Text; nickname : Text; points : ?Float};
+actor {
+  stable achivementList :
+    [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
+  stable afternoonTaskList :
+    [var ?([var ?Text], [var ?Task], [var Nat], [var Nat32])];
+  stable eveningTaskList :
+    [var ?([var ?Text], [var ?Task], [var Nat], [var Nat32])];
+  stable morningTaskList :
+    [var ?([var ?Text], [var ?Task], [var Nat], [var Nat32])];
+  stable userAchievements :
+    [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
+  stable users :
+    [var ?([var ?Principal], [var ?User], [var Nat], [var Nat32])]
+>>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7
 };

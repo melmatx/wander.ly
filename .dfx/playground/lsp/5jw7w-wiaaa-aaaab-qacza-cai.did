@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-service : {
-=======
 type User = 
  record {
    achievementsId: opt text;
@@ -31,5 +28,4 @@ service : {
   createUser: (User) -> (Result_2);
   getUser: (principal) -> (Result_1);
   updateUserNickname: (User) -> (Result);
->>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7
 }
