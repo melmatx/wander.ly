@@ -79,7 +79,7 @@ const Wallet = ({ navigation, route }) => {
               >
                 <View style={{ rowGap: sizes.small }}>
                   <Text h2 white>
-                    ₱ 0.00
+                    0.00
                   </Text>
                   <Text h4 white>
                     Total Points
