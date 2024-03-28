@@ -4,7 +4,13 @@ import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { sizes } from "../assets/styles/globalStyles";
 
-const InfoSheetContent = ({ title, description, onButtonPress, children }) => {
+const InfoSheetContent = ({
+  title,
+  description,
+  buttonLabel = "Done",
+  onButtonPress,
+  children,
+}) => {
   return (
     <View
       style={[
@@ -25,7 +31,7 @@ const InfoSheetContent = ({ title, description, onButtonPress, children }) => {
 
       {children}
 
-      <Button label="Done" onPress={onButtonPress} />
+      <Button label={buttonLabel} onPress={onButtonPress} />
     </View>
   );
 };

@@ -18,7 +18,6 @@ import getBackendActor from "../src/actor";
 const initialState = {
   baseKey: "",
   identity: "",
-  // isRegistered: false,
   isReady: false,
 };
 
@@ -84,29 +83,18 @@ const useAuthStore = create((set, get) => ({
     // Get public key
     const publicDerKey = toHex(get().baseKey.getPublicKey().toDer());
 
-    // Replace with own ii integration canister
-    // const url = new URL(
-    //   "http://127.0.0.1:4943/?canisterId=" +
-    //     process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
-    // );
-
     // Create url for internet identity integration
     const url = new URL(
-      // process.env.EXPO_PUBLIC_NGROK_URL +
-      //   "/?canisterId=" +
-      //   process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
+      process.env.EXPO_PUBLIC_NGROK_URL +
+        "/?canisterId=" +
+        process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
 
-      // Must not be the same as the internet canister (127.0.0.1 OR localhost)
-      `http://localhost:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
+      // Must not be the same as the internet identity canister (127.0.0.1 OR localhost)
+      // `http://localhost:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
     );
 
     // Set internet identity uri
     const internetIdentityUri = new URL(
-      // process.env.EXPO_PUBLIC_NGROK_URL +
-      //   "/?canisterId=" +
-      //   process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY
-
-      // Must not be the same as the integration canister (127.0.0.1 OR localhost)
       `http://127.0.0.1:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
     );
     url.searchParams.set(
@@ -125,13 +113,10 @@ const useAuthStore = create((set, get) => ({
   },
   logout: async () => {
     await AsyncStorage.removeItem("delegation");
-    await AsyncStorage.removeItem("isRegistered");
+    await AsyncStorage.removeItem("isTutorialDone");
     await useProfileStore.getState().clearProfile();
 
-    set({ identity: "", isRegistered: false });
-  },
-  setIsRegistered: (isRegistered) => {
-    set({ isRegistered });
+    set({ identity: "" });
   },
   getActor: (identity) => {
     if (!identity && !get().identity) {

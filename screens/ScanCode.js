@@ -42,6 +42,7 @@ const ScanCode = ({ route }) => {
               barCodeTypes: ["qr"],
             }}
             onBarcodeScanned={onQRScanned}
+            mute
           >
             <BarcodeMask
               edgeColor={colors.primary}

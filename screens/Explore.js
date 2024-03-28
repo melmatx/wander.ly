@@ -3,7 +3,6 @@ import { BottomSheetSectionList } from "@gorhom/bottom-sheet";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useIsFocused, useScrollToTop } from "@react-navigation/native";
 import Mapbox from "@rnmapbox/maps";
-import * as Burnt from "burnt";
 import { format } from "date-fns";
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
@@ -19,7 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Share from "react-native-share";
 import { Button, Text } from "react-native-ui-lib";
 
-import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
+import globalStyles, { sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
 import EventSheetContent from "../components/EventSheetContent";
 import GoalSheetContent from "../components/GoalSheetContent";
@@ -100,28 +99,12 @@ const Explore = ({ navigation }) => {
   }, []);
 
   const handleShareEvent = useCallback((event) => {
-    Share.open({ message: event.title }).catch(console.log);
+    Share.open({ message: event.title, failOnCancel: false });
   }, []);
 
   const handleGoalButton = useCallback(
     (goal) => {
       goalSheetRef.current.close();
-
-      if (goal.progress === 0) {
-        Burnt.toast({
-          title: "Task Started",
-          message: "Good luck with your task!",
-          preset: "custom",
-          duration: 0.5,
-          icon: {
-            ios: {
-              name: "checkmark.seal",
-              color: colors.primary,
-            },
-          },
-        });
-      }
-
       navigation.navigate(Routes.ACTIVE_TASK, { goal });
     },
     [navigation]

@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Burnt from "burnt";
-import React, { useCallback, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { View } from "react-native";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { Button, Text } from "react-native-ui-lib";
@@ -37,6 +37,23 @@ const ActiveTask = ({ navigation, route }) => {
     });
   }, [headerRight, navigation]);
 
+  useEffect(() => {
+    if (progress === 0) {
+      Burnt.toast({
+        title: "Task Started",
+        message: "Good luck with your task!",
+        preset: "custom",
+        duration: 1,
+        icon: {
+          ios: {
+            name: "checkmark.circle",
+            color: colors.primary,
+          },
+        },
+      });
+    }
+  }, [progress]);
+
   const onAnimationComplete = useCallback(() => {
     if (isCompleted) {
       Burnt.alert({
@@ -61,7 +78,7 @@ const ActiveTask = ({ navigation, route }) => {
     console.log("Walk with a friend");
   }, []);
 
-  const onShare = useCallback(() => {
+  const onShareTask = useCallback(() => {
     navigation.navigate(Routes.SHARE_JOURNEY);
   }, [navigation]);
 
@@ -121,7 +138,7 @@ const ActiveTask = ({ navigation, route }) => {
               <Ionicons name="people" size={30} color="white" />
             </Button>
 
-            <Button backgroundColor={colors.dark} onPress={onShare}>
+            <Button backgroundColor={colors.dark} onPress={onShareTask}>
               <Ionicons name="camera" size={30} color="white" />
             </Button>
           </View>

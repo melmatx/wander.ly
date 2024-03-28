@@ -6,10 +6,13 @@ import Routes from "./Routes";
 import { colors } from "../assets/styles/globalStyles";
 import Achievements from "../screens/Achievements";
 import ActiveTask from "../screens/ActiveTask";
+import AwardedPosts from "../screens/AwardedPosts";
+import LikedPosts from "../screens/LikedPosts";
 import Login from "../screens/Login";
 import Rewards from "../screens/Rewards";
 import ScanCode from "../screens/ScanCode";
 import ShareJourney from "../screens/ShareJourney";
+import YourPosts from "../screens/YourPosts";
 import useAuthStore from "../stores/useAuthStore";
 
 const Stack = createNativeStackNavigator();
@@ -49,8 +52,34 @@ const MainNavigation = () => {
               }}
             />
             <Stack.Screen name={Routes.SCAN_CODE} component={ScanCode} />
-            <Stack.Screen name={Routes.ACHIEVEMENTS} component={Achievements} />
-            <Stack.Screen name={Routes.REWARDS} component={Rewards} />
+
+            <Stack.Group
+              screenOptions={{
+                headerTransparent: true,
+              }}
+            >
+              {/* Screens with gradient background */}
+              <Stack.Group screenOptions={{ headerTintColor: "white" }}>
+                <Stack.Screen name={Routes.REWARDS} component={Rewards} />
+                <Stack.Screen
+                  name={Routes.ACHIEVEMENTS}
+                  component={Achievements}
+                />
+              </Stack.Group>
+
+              {/* Screens with custom header */}
+              <Stack.Group screenOptions={{ headerTitle: "" }}>
+                <Stack.Screen name={Routes.YOUR_POSTS} component={YourPosts} />
+                <Stack.Screen
+                  name={Routes.AWARDED_POSTS}
+                  component={AwardedPosts}
+                />
+                <Stack.Screen
+                  name={Routes.LIKED_POSTS}
+                  component={LikedPosts}
+                />
+              </Stack.Group>
+            </Stack.Group>
           </Stack.Group>
         </>
       ) : (

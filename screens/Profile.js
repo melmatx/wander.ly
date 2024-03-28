@@ -1,29 +1,93 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useScrollToTop } from "@react-navigation/native";
+import * as Burnt from "burnt";
 import { format } from "date-fns";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useMemo, useReducer, useRef } from "react";
 import { Alert, SafeAreaView, ScrollView, View } from "react-native";
 import { AnimatedScanner, Avatar, Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
+import AppHeader from "../components/AppHeader";
 import BottomSheet from "../components/BottomSheet";
 import FormInput from "../components/FormInput";
 import InfoSheetContent from "../components/InfoSheetContent";
+import ProfileBanner from "../components/ProfileBanner";
 import avatarColorsConfig from "../consts/avatarConfig";
+import palette from "../consts/profilePalette";
 import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
 
-const PALETTE = ["#FF4848", "#0079FF", "#00DFA2", "#F6FA70"];
+const Profile = ({ navigation }) => {
+  const [isViewing, toggleViewingMode] = useReducer((state) => !state, true);
 
-const Profile = ({ navigation, route }) => {
   const profileSheetRef = useRef(null);
   const infoSheetRef = useRef(null);
   const scrollViewRef = useRef(null);
 
   const logout = useAuthStore((state) => state.logout);
   const bottomTabHeight = useBottomTabBarHeight();
+
+  const banners = useMemo(
+    () => [
+      {
+        customTitle: (
+          <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
+            <Text profile white>
+              Achievements
+            </Text>
+
+            <Button
+              link
+              activeOpacity={0.3}
+              onPress={() => navigation.navigate(Routes.ACHIEVEMENTS)}
+            >
+              <Ionicons name="arrow-forward-circle" size={40} color="white" />
+            </Button>
+          </View>
+        ),
+        customDescription: (
+          <Text profile>
+            🏆 <Text white>0</Text>
+          </Text>
+        ),
+      },
+      {
+        title: "1500km",
+        description: "Distance walked",
+      },
+      {
+        title: "200",
+        description: "Trees saved",
+      },
+      {
+        title: "200lbs",
+        description: "Carbon emissions saved",
+      },
+    ],
+    [navigation]
+  );
+
+  const postsTabs = useMemo(
+    () => [
+      {
+        label: "Your Posts",
+        icon: "person",
+        onPress: () => navigation.navigate(Routes.YOUR_POSTS),
+      },
+      {
+        label: "Awarded Posts",
+        icon: "star",
+        onPress: () => navigation.navigate(Routes.AWARDED_POSTS),
+      },
+      {
+        label: "Liked Posts",
+        icon: "heart",
+        onPress: () => navigation.navigate(Routes.LIKED_POSTS),
+      },
+    ],
+    [navigation]
+  );
 
   const handleLogout = useCallback(() => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -50,36 +114,64 @@ const Profile = ({ navigation, route }) => {
     infoSheetRef.current?.close();
   }, []);
 
+  const onEditProfile = useCallback(() => {
+    toggleViewingMode();
+
+    // If the user is viewing the profile, do nothing
+    // TODO: Check if the data is the same as the previous data
+    if (isViewing) {
+      return;
+    }
+
+    Burnt.alert({
+      title: "Updating profile",
+      preset: "spinner",
+      shouldDismissByTap: false,
+    });
+
+    // Simulating a delay
+    setTimeout(() => {
+      Burnt.dismissAllAlerts();
+
+      Burnt.alert({
+        title: "Profile updated",
+        preset: "done",
+        duration: 0.8,
+      });
+    }, 1500);
+  }, [isViewing]);
+
   const bottomSheetFooter = useCallback(
     () => (
-      <Button
-        label="Logout"
-        onPress={handleLogout}
-        style={{ marginHorizontal: sizes.large }}
-      />
+      <View style={{ marginHorizontal: sizes.large, rowGap: sizes.large }}>
+        <Button
+          label={isViewing ? "Edit" : "Save"}
+          onPress={onEditProfile}
+          outline
+          outlineColor={colors.primary}
+        >
+          <Ionicons
+            name={isViewing ? "create-outline" : "save-outline"}
+            size={20}
+            color={colors.primary}
+            style={{ marginRight: sizes.small }}
+          />
+        </Button>
+        <Button label="Logout" onPress={handleLogout} />
+      </View>
     ),
-    [handleLogout]
+    [handleLogout, isViewing, onEditProfile]
   );
 
   useScrollToTop(scrollViewRef);
 
   return (
     <SafeAreaView style={globalStyles.flexFull}>
-      <View style={{ padding: sizes.large }}>
-        <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
-          <Text h1 white>
-            {route.name}
-          </Text>
-
-          <Button link onPress={onProfilePress}>
-            <Avatar
-              size={35}
-              label="MP"
-              autoColorsConfig={avatarColorsConfig}
-            />
-          </Button>
-        </View>
-      </View>
+      <AppHeader>
+        <Button link onPress={onProfilePress}>
+          <Avatar size={35} label="MP" autoColorsConfig={avatarColorsConfig} />
+        </Button>
+      </AppHeader>
 
       <ScrollView
         ref={scrollViewRef}
@@ -142,115 +234,30 @@ const Profile = ({ navigation, route }) => {
           </View>
         </View>
 
-        <LinearGradient
-          colors={[PALETTE[0], colors.dark]}
-          locations={[0.1, 0.9]}
-          style={[
-            globalStyles.spaceBetween,
-            {
-              height: 150,
-              padding: sizes.large,
-              borderRadius: sizes.medium,
-            },
-          ]}
-        >
-          <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
-            <Text profile white>
-              Achievements
-            </Text>
-
-            <Button
-              link
-              activeOpacity={0.3}
-              onPress={() => navigation.navigate(Routes.ACHIEVEMENTS)}
-            >
-              <Ionicons name="arrow-forward-circle" size={40} color="white" />
-            </Button>
-          </View>
-
-          <Text profile>
-            🏆 <Text white>0</Text>
-          </Text>
-        </LinearGradient>
-
-        <LinearGradient
-          colors={[PALETTE[1], colors.dark]}
-          locations={[0.1, 0.9]}
-          style={[
-            globalStyles.spaceBetween,
-            {
-              height: 150,
-              padding: sizes.large,
-              borderRadius: sizes.medium,
-            },
-          ]}
-        >
-          <Text profile white>
-            1500km
-          </Text>
-          <Text h2 white>
-            Distance walked
-          </Text>
-        </LinearGradient>
-
-        <LinearGradient
-          colors={[PALETTE[2], colors.dark]}
-          locations={[0.1, 0.9]}
-          style={[
-            globalStyles.spaceBetween,
-            {
-              height: 150,
-              padding: sizes.large,
-              borderRadius: sizes.medium,
-            },
-          ]}
-        >
-          <Text profile white>
-            200
-          </Text>
-          <Text h2 white>
-            Trees saved
-          </Text>
-        </LinearGradient>
-
-        <LinearGradient
-          colors={[PALETTE[3], colors.dark]}
-          locations={[0.1, 0.9]}
-          style={[
-            globalStyles.spaceBetween,
-            {
-              height: 150,
-              padding: sizes.large,
-              borderRadius: sizes.medium,
-            },
-          ]}
-        >
-          <Text profile white>
-            200lbs
-          </Text>
-          <Text h2 white>
-            Carbon emissions saved
-          </Text>
-        </LinearGradient>
+        {banners.map((banner, index) => (
+          <ProfileBanner
+            key={`banner-${index}`}
+            title={banner.title}
+            description={banner.description}
+            customTitle={banner.customTitle}
+            customDescription={banner.customDescription}
+            gradientColor={palette[index]}
+          />
+        ))}
 
         <View style={{ marginVertical: sizes.medium, rowGap: sizes.large }}>
-          <Button
-            label="Awarded Posts"
-            outline
-            outlineColor={colors.primary}
-            style={{ columnGap: sizes.small }}
-          >
-            <Ionicons name="star" size={20} color={colors.primary} />
-          </Button>
-
-          <Button
-            label="Liked Posts"
-            outline
-            outlineColor={colors.primary}
-            style={{ columnGap: sizes.small }}
-          >
-            <Ionicons name="heart" size={20} color={colors.primary} />
-          </Button>
+          {postsTabs.map((tab, index) => (
+            <Button
+              key={`tab-${index}`}
+              label={tab.label}
+              outline
+              outlineColor={colors.primary}
+              style={{ columnGap: sizes.small }}
+              onPress={tab.onPress}
+            >
+              <Ionicons name={tab.icon} size={20} color={colors.primary} />
+            </Button>
+          ))}
         </View>
 
         <Text color="gray" center>
@@ -273,10 +280,7 @@ const Profile = ({ navigation, route }) => {
             containerStyle={{ alignSelf: "center" }}
           />
 
-          <FormInput
-            value="Mel Mathew"
-            item={{ label: "Name", isViewing: true }}
-          />
+          <FormInput value="Mel Mathew" item={{ label: "Name", isViewing }} />
         </View>
       </BottomSheet>
 

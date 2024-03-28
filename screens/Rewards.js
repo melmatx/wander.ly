@@ -1,5 +1,7 @@
+import { useHeaderHeight } from "@react-navigation/elements";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
@@ -7,6 +9,8 @@ import RewardItem from "../components/RewardItem";
 import rewards from "../consts/sampleRewards";
 
 const Rewards = () => {
+  const headerHeight = useHeaderHeight();
+
   const renderItem = useCallback(
     ({ item }) => (
       <RewardItem
@@ -19,10 +23,19 @@ const Rewards = () => {
   );
 
   return (
-    <View style={[globalStyles.flexFull, { padding: sizes.large }]}>
+    <View
+      style={[
+        globalStyles.flexFull,
+        { padding: sizes.large, paddingTop: headerHeight + sizes.large },
+      ]}
+    >
+      <LinearGradient
+        colors={[colors.primary, "rgba(0,0,0,0.3)"]}
+        style={[StyleSheet.absoluteFill, { zIndex: -1, bottom: "80%" }]}
+      />
+
       <View
         style={{
-          paddingTop: sizes.small,
           paddingBottom: sizes.xxlarge,
           rowGap: sizes.small,
         }}

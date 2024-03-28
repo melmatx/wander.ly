@@ -11,4 +11,7 @@ export default {
   SHARE_JOURNEY: "Share Journey",
   ACHIEVEMENTS: "Achievements",
   REWARDS: "Rewards",
+  YOUR_POSTS: "Your Posts",
+  AWARDED_POSTS: "Awarded Posts",
+  LIKED_POSTS: "Liked Posts",
 };

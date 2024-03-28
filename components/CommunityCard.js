@@ -1,29 +1,50 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
-import React, { memo } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-ui-lib";
+import { ImageBackground } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { forwardRef, memo, useCallback } from "react";
+import { StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 
-const CommunityCard = ({ card }) => {
+const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
+  const handleInfoPress = useCallback(() => {
+    if (!item) {
+      return;
+    }
+    onInfoPress(item);
+  }, [item?.task, onInfoPress]);
+
+  if (!item) {
+    return null;
+  }
+
   return (
     <BlurView tint="light" intensity={35} style={style.container}>
-      <View style={[globalStyles.flexFull, globalStyles.spaceBetween]}>
-        <View style={{ rowGap: sizes.xxlarge }}>
-          <Image source={card.image} style={style.image} transition={100} />
-          <Text h4 semibold white numberOfLines={6}>
-            {card.content}
-          </Text>
-        </View>
+      <ImageBackground source={item.image} style={style.image} transition={100}>
+        <LinearGradient
+          colors={["rgba(0,0,0,0.3)", "transparent"]}
+          style={[StyleSheet.absoluteFill, { height: 100 }]}
+        />
 
-        <Text h3 center color={colors.gray}>
-          {card.place}
+        <Button link onPress={handleInfoPress} ref={buttonRef}>
+          <Ionicons name="information-circle" size={35} color="white" />
+        </Button>
+      </ImageBackground>
+
+      <View style={[globalStyles.spaceBetween, { height: "25%" }]}>
+        <Text h4 semibold white numberOfLines={5}>
+          {item.content}
+        </Text>
+
+        <Text h4 center color={colors.gray}>
+          {item.place}
         </Text>
       </View>
     </BlurView>
   );
-};
+});
 
 export const style = {
   container: {
@@ -35,8 +56,11 @@ export const style = {
   image: {
     height: "70%",
     width: "100%",
-    // marginVertical: sizes.large,
     borderRadius: sizes.medium,
+    overflow: "hidden",
+    alignItems: "flex-end",
+    padding: sizes.medium,
+    marginBottom: sizes.xxlarge,
   },
 };
 

@@ -5,6 +5,7 @@ import { colors } from "./assets/styles/globalStyles";
 Colors.loadColors({
   $textPrimary: colors.primary,
   $backgroundPrimaryHeavy: colors.primary,
+  $backgroundDefault: colors.dark,
 });
 
 Typography.loadTypographies({

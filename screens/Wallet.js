@@ -1,4 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Burnt from "burnt";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback } from "react";
@@ -7,9 +8,19 @@ import GradientShimmer from "react-native-gradient-shimmer";
 import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
+import AppHeader from "../components/AppHeader";
 import Routes from "../navigation/Routes";
 
-const Wallet = ({ navigation, route }) => {
+const Wallet = ({ navigation }) => {
+  const onConnectWallet = useCallback(() => {
+    Burnt.alert({
+      title: "Wallet Added",
+      preset: "done",
+      message: "You have successfully added a wallet",
+      duration: 0.8,
+    });
+  }, []);
+
   const onRedeemRewards = useCallback(() => {
     navigation.navigate(Routes.REWARDS);
   }, [navigation]);
@@ -20,17 +31,11 @@ const Wallet = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={globalStyles.flexFull}>
-      <View style={{ padding: sizes.large }}>
-        <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
-          <Text h1 white>
-            {route.name}
-          </Text>
-
-          <Button link onPress={() => console.log("Connect Wallet")}>
-            <Ionicons name="add" size={30} color="white" />
-          </Button>
-        </View>
-      </View>
+      <AppHeader>
+        <Button link onPress={onConnectWallet}>
+          <Ionicons name="add" size={30} color="white" />
+        </Button>
+      </AppHeader>
 
       <View style={{ padding: sizes.large }}>
         <Button link activeOpacity={0.8} enableShadow>
@@ -97,13 +102,13 @@ const Wallet = ({ navigation, route }) => {
         </Button>
 
         <View style={{ marginTop: sizes.xxlarge, rowGap: sizes.xlarge }}>
-          <Button
-            semibold
-            label="Redeem Rewards"
-            onPress={onRedeemRewards}
-            style={{ columnGap: sizes.small }}
-          >
-            <Ionicons name="gift" size={25} color="white" />
+          <Button semibold label="Redeem Rewards" onPress={onRedeemRewards}>
+            <Ionicons
+              name="gift"
+              size={25}
+              color="white"
+              style={{ marginRight: sizes.small }}
+            />
           </Button>
 
           <Button
@@ -112,12 +117,12 @@ const Wallet = ({ navigation, route }) => {
             outline
             outlineColor={colors.primary}
             onPress={onDonatePoints}
-            style={{ columnGap: sizes.small }}
           >
             <Ionicons
               name="add-circle-outline"
               size={25}
               color={colors.primary}
+              style={{ marginRight: sizes.small }}
             />
           </Button>
         </View>

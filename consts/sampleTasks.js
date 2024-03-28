@@ -15,7 +15,7 @@ const tasks = [
         type: "distance-based",
         progress: 0.5,
         maxValue: 1.0,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Step Fresh",
@@ -26,7 +26,7 @@ const tasks = [
         type: "step-based",
         progress: 600,
         maxValue: 3000,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Park Explorer",
@@ -38,7 +38,7 @@ const tasks = [
         type: "time-based",
         progress: 30,
         maxValue: 30,
-        isCompleted: true,
+        completedAt: new Date().setHours(7, 30, 0, 0),
       },
       {
         title: "Morning Challenge",
@@ -47,9 +47,9 @@ const tasks = [
         timeStart: new Date().setHours(6, 0, 0, 0),
         timeEnd: new Date().setHours(11, 0, 0, 0),
         type: "distance-based",
-        progress: 1,
+        progress: 0,
         maxValue: 2,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Quiet Time Walk",
@@ -61,7 +61,7 @@ const tasks = [
         type: "time-based",
         progress: 15,
         maxValue: 15,
-        isCompleted: true,
+        completedAt: new Date().setHours(5, 15, 0, 0),
       },
     ],
   },
@@ -78,7 +78,7 @@ const tasks = [
         type: "distance-based",
         progress: 0.75,
         maxValue: 1.5,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Step It Up",
@@ -90,7 +90,7 @@ const tasks = [
         type: "step-based",
         progress: 1250,
         maxValue: 2500,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Nature's Midday",
@@ -102,7 +102,7 @@ const tasks = [
         type: "time-based",
         progress: 20,
         maxValue: 20,
-        isCompleted: true,
+        completedAt: new Date().setHours(11, 20, 0, 0),
       },
       {
         title: "Urban Explorer",
@@ -114,7 +114,7 @@ const tasks = [
         type: "distance-based",
         progress: 2,
         maxValue: 2,
-        isCompleted: true,
+        completedAt: new Date().setHours(16, 0, 0, 0),
       },
       {
         title: "Afternoon Reset",
@@ -126,7 +126,7 @@ const tasks = [
         type: "time-based",
         progress: 5,
         maxValue: 10,
-        isCompleted: false,
+        completedAt: null,
       },
     ],
   },
@@ -143,7 +143,7 @@ const tasks = [
         type: "distance-based",
         progress: 0.5,
         maxValue: 1.0,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Evening Steps",
@@ -154,7 +154,7 @@ const tasks = [
         type: "step-based",
         progress: 2000,
         maxValue: 2000,
-        isCompleted: true,
+        completedAt: new Date().setHours(20, 0, 0, 0),
       },
       {
         title: "Night Sky Gazer",
@@ -166,7 +166,7 @@ const tasks = [
         type: "time-based",
         progress: 7.5,
         maxValue: 15.0,
-        isCompleted: false,
+        completedAt: null,
       },
       {
         title: "Reflective Walk",
@@ -178,7 +178,7 @@ const tasks = [
         type: "distance-based",
         progress: 2,
         maxValue: 2,
-        isCompleted: true,
+        completedAt: new Date().setHours(20, 0, 0, 0),
       },
       {
         title: "Moonlit Serenity",
@@ -190,7 +190,7 @@ const tasks = [
         type: "time-based",
         progress: 10,
         maxValue: 20,
-        isCompleted: false,
+        completedAt: null,
       },
     ],
   },
