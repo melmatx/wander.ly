@@ -18,3 +18,9 @@
 - EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY
 - EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
 - EXPO_PUBLIC_NGROK_URL
+
+# Prerequisites
+
+- [Installing DFX](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/)
+- [Installing Expo](https://docs.expo.dev/get-started/installation/)
+- [Installing Mops for Motoko](https://mops.one/docs/install)
