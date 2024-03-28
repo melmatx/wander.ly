@@ -3,7 +3,8 @@
 1. dfx start --clean
 2. dfx deploy
 3. npx expo prebuild --clean
-4. npx expo run:ios (or run:android, but not tested) (--device, to select device)
+4. npx expo run:ios (or run:android)
+   - --device (to select device)
 
 # Environment Variables
 
