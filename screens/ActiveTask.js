@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Burnt from "burnt";
-import React, { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import { View } from "react-native";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { Button, Text } from "react-native-ui-lib";
@@ -9,12 +9,17 @@ import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
 import InfoSheetContent from "../components/InfoSheetContent";
 import dashedStrokeConfig from "../consts/progressConfig";
+import TaskTypes from "../consts/taskTypes";
+import useCurrentProgress from "../hooks/useCurrentProgress";
 import Routes from "../navigation/Routes";
-import getGoalUnits from "../utils/getGoalUnits";
+import convertAltValue from "../utils/convertAltValue";
+import convertSecToMin from "../utils/convertSecToMin";
+import getTaskUnit from "../utils/getTaskUnit";
 
 const ActiveTask = ({ navigation, route }) => {
-  const { progress, maxValue, type, title, description, isCompleted } =
-    route.params?.goal || {};
+  const task = route.params?.task;
+
+  const { currentProgress, completedAt } = useCurrentProgress();
 
   const infoSheetRef = useRef(null);
 
@@ -37,25 +42,8 @@ const ActiveTask = ({ navigation, route }) => {
     });
   }, [headerRight, navigation]);
 
-  useEffect(() => {
-    if (progress === 0) {
-      Burnt.toast({
-        title: "Task Started",
-        message: "Good luck with your task!",
-        preset: "custom",
-        duration: 1,
-        icon: {
-          ios: {
-            name: "checkmark.circle",
-            color: colors.primary,
-          },
-        },
-      });
-    }
-  }, [progress]);
-
   const onAnimationComplete = useCallback(() => {
-    if (isCompleted) {
+    if (completedAt) {
       Burnt.alert({
         title: "Goal Reached",
         message: "Congratulations! You've earned 10 points.",
@@ -64,7 +52,7 @@ const ActiveTask = ({ navigation, route }) => {
         duration: 1,
       });
     }
-  }, [progress, maxValue]);
+  }, [completedAt]);
 
   const onInfoPress = useCallback(() => {
     infoSheetRef.current?.expand();
@@ -82,45 +70,79 @@ const ActiveTask = ({ navigation, route }) => {
     navigation.navigate(Routes.SHARE_JOURNEY);
   }, [navigation]);
 
+  const renderHint = useMemo(() => {
+    const progress = convertAltValue(task.type, currentProgress);
+    const maxValue = convertAltValue(task.type, task.maxValue);
+    const remaining = maxValue - progress;
+    const unit = getTaskUnit(task.type, remaining);
+
+    return (
+      <Text h4 color={colors.gray} flex center>
+        You need to walk {remaining} more {unit} to reach your goal.
+      </Text>
+    );
+  }, [currentProgress, task.maxValue, task.type]);
+
+  const title = useMemo(
+    () => getTaskUnit(task.type, currentProgress),
+    [currentProgress, task.type]
+  );
+
+  const convertedProgress = useMemo(() => {
+    if (task.type === TaskTypes.TIME) {
+      return convertSecToMin(currentProgress);
+    }
+
+    return currentProgress;
+  }, [currentProgress]);
+
+  const progressFormatter = useCallback(
+    (value) => {
+      "worklet";
+
+      // Workaround for the janky animation at start
+      if (value <= 0) {
+        return -1;
+      }
+
+      // Convert time to minutes
+      if (task.type === TaskTypes.TIME) {
+        return convertedProgress;
+      }
+
+      if (Number.isInteger(currentProgress)) {
+        return value.toFixed(0); // no decimal places
+      }
+
+      return value.toFixed(1); // 1 decimal place
+    },
+    [convertedProgress]
+  );
+
   return (
     <>
       <View style={[globalStyles.flexFull, { padding: sizes.large }]}>
         <View style={globalStyles.flexCenter}>
           <View style={{ height: "50%" }}>
             <CircularProgress
-              value={progress}
-              maxValue={maxValue}
+              value={currentProgress}
+              maxValue={task.maxValue}
               onAnimationComplete={onAnimationComplete}
               radius={150}
-              delay={350}
               inActiveStrokeOpacity={0.5}
               activeStrokeWidth={15}
               inActiveStrokeWidth={20}
               progressValueStyle={{ fontWeight: "100", color: "white" }}
               activeStrokeSecondaryColor="yellow"
               inActiveStrokeColor={colors.dark}
-              duration={1500}
-              title={getGoalUnits(type, progress)}
+              title={title}
               titleColor="white"
               dashedStrokeConfig={dashedStrokeConfig}
-              progressFormatter={(value) => {
-                "worklet";
-
-                if (Number.isInteger(value)) {
-                  return value.toString();
-                } else {
-                  return value.toFixed(1); // 1 decimal place
-                }
-              }}
+              progressFormatter={progressFormatter}
             />
           </View>
 
-          <View style={{ height: "15%" }}>
-            <Text h4 color="gray" flex center>
-              You need to walk {maxValue - progress} more{" "}
-              {getGoalUnits(type, maxValue)} to reach your goal.
-            </Text>
-          </View>
+          <View style={{ height: "15%" }}>{renderHint}</View>
 
           <View
             style={[
@@ -147,8 +169,8 @@ const ActiveTask = ({ navigation, route }) => {
 
       <BottomSheet ref={infoSheetRef} detached>
         <InfoSheetContent
-          title={title}
-          description={description}
+          title={task.title}
+          description={task.description}
           onButtonPress={handleInfoButton}
         />
       </BottomSheet>

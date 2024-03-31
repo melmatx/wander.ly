@@ -6,6 +6,7 @@ import Mapbox from "@rnmapbox/maps";
 import { useAssets } from "expo-asset";
 import * as Linking from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
+import * as TaskManager from "expo-task-manager";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useShallow } from "zustand/react/shallow";
@@ -53,6 +54,9 @@ export default function App() {
 
   useEffect(() => {
     fetchKeyAndIdentity();
+
+    console.log("Unregistering all tasks");
+    (async () => await TaskManager.unregisterAllTasksAsync())();
   }, []);
 
   if (!isReady || !assets) {

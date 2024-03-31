@@ -1,23 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import React from "react";
 import { View } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
 
-import globalStyles, { sizes } from "../assets/styles/globalStyles";
+import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 
 const EventSheetContent = ({ event, onButtonPress, onShare }) => {
   // Random remaining slots
   const eventSlots = Math.floor(Math.random() * 10);
-
-  // Random deadline with date and time
-  const eventDeadline = format(
-    set(new Date(), {
-      hours: Math.floor(Math.random() * 24),
-      minutes: Math.floor(Math.random() * 60),
-    }),
-    "MMM dd, yyyy, hh:mm a"
-  );
 
   return (
     <View
@@ -38,8 +29,10 @@ const EventSheetContent = ({ event, onButtonPress, onShare }) => {
       </View>
 
       <View style={{ rowGap: sizes.small }}>
-        <Text color="gray">Remaining slots: {eventSlots}</Text>
-        <Text color="gray">Event deadline: {eventDeadline}</Text>
+        <Text color={colors.gray}>Remaining slots: {eventSlots}</Text>
+        <Text color={colors.gray}>
+          Event deadline: {format(event.deadline, "MMM dd, yyyy, hh:mm a")}
+        </Text>
       </View>
 
       <View style={globalStyles.rowCenter}>

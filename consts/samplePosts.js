@@ -1,9 +1,10 @@
 import tasks from "./sampleTasks";
+import TimeOfDay from "./timeOfDay";
 
 // Get morning tasks as sample
-const morningTasks = tasks
-  .filter((task) => task.title === "Morning")
-  .flatMap((task) => task.data);
+const morningTasks = tasks.filter(
+  (task) => task.timeOfDay === TimeOfDay.MORNING
+);
 
 const posts = [
   {

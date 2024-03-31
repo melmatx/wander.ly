@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
+import { Platform } from "react-native";
 
 import Routes from "./Routes";
 import globalStyles from "../assets/styles/globalStyles";
@@ -54,11 +55,16 @@ const BottomTabs = () => {
         headerShown: false,
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "gray",
-        tabBarIcon: (props) => getTabBarIcon(props, route),
         tabBarStyle: { position: "absolute" },
-        tabBarBackground: () => (
-          <BlurView tint="dark" intensity={70} style={globalStyles.flexFull} />
-        ),
+        tabBarIcon: (props) => getTabBarIcon(props, route),
+        tabBarBackground: () =>
+          Platform.OS === "ios" ? (
+            <BlurView
+              tint="dark"
+              intensity={70}
+              style={globalStyles.flexFull}
+            />
+          ) : undefined,
       })}
     >
       <Tab.Screen name={Routes.EXPLORE} component={Explore} />

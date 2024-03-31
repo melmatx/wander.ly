@@ -10,14 +10,18 @@ import { Button, Text } from "react-native-ui-lib";
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import AppHeader from "../components/AppHeader";
 import Routes from "../navigation/Routes";
+import authenticateLocally from "../utils/authenticateLocally";
 
 const Wallet = ({ navigation }) => {
-  const onConnectWallet = useCallback(() => {
-    Burnt.alert({
-      title: "Wallet Added",
-      preset: "done",
-      message: "You have successfully added a wallet",
-      duration: 0.8,
+  const onConnectWallet = useCallback(async () => {
+    await authenticateLocally({
+      onSuccess: () =>
+        Burnt.alert({
+          title: "Wallet Added",
+          preset: "done",
+          message: "You have successfully added a wallet",
+          duration: 0.8,
+        }),
     });
   }, []);
 
@@ -30,7 +34,7 @@ const Wallet = ({ navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView style={globalStyles.flexFull}>
+    <SafeAreaView style={[globalStyles.flexFull, globalStyles.androidPadding]}>
       <AppHeader>
         <Button link onPress={onConnectWallet}>
           <Ionicons name="add" size={30} color="white" />

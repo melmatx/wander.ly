@@ -86,6 +86,7 @@ const ShareJourney = () => {
             onCameraReady={onCameraReady}
             enableTorch={torch}
             facing={type}
+            mute
           >
             <View
               style={[

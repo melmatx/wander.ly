@@ -1,19 +1,19 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { format, isAfter, isBefore, isToday } from "date-fns";
-import React, { memo, useCallback } from "react";
+import { format, isToday } from "date-fns";
+import React, { memo, useMemo } from "react";
 import { View } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 
 const TaskItem = ({ item, onPress, isUser = true }) => {
-  const isUnavailable = isBefore(new Date(), item.timeStart);
-  const isExpired = isAfter(new Date(), item.timeEnd);
-  const isDisabled = isExpired || isUnavailable;
-  // const isDisabled = false;
+  // const isUnavailable = isBefore(new Date(), item.timeStart);
+  // const isExpired = isAfter(new Date(), item.timeEnd);
+  // const isDisabled = isExpired || isUnavailable;
+  const isDisabled = false;
 
-  const renderActionButton = useCallback(() => {
-    if (item.completedAt) {
+  const renderActionButton = useMemo(() => {
+    if (isUser && item.completedAt) {
       return (
         <Ionicons name="checkmark-outline" size={35} color={colors.primary} />
       );
@@ -28,9 +28,9 @@ const TaskItem = ({ item, onPress, isUser = true }) => {
         <Ionicons name="arrow-forward-circle" size={40} color="white" />
       </Button>
     );
-  }, [item.completedAt, isDisabled, onPress]);
+  }, [item.completedAt, isDisabled, isUser, onPress]);
 
-  const renderDate = useCallback(() => {
+  const renderDate = useMemo(() => {
     if (item.completedAt) {
       let completedAt = item.completedAt;
 
@@ -79,10 +79,10 @@ const TaskItem = ({ item, onPress, isUser = true }) => {
         </Text>
         <Text white>{item.description}</Text>
 
-        {renderDate()}
+        {renderDate}
       </View>
 
-      {renderActionButton()}
+      {renderActionButton}
     </View>
   );
 };

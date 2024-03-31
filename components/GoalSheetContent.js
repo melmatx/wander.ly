@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
 
-import globalStyles, { sizes } from "../assets/styles/globalStyles";
-import getGoalUnits from "../utils/getGoalUnits";
+import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
+import getTaskProgress from "../utils/getTaskProgress";
 
 const GoalSheetContent = ({ goal, onButtonPress }) => {
+  const renderProgress = useMemo(() => {
+    const { progress, maxValue, unit } = getTaskProgress(goal);
+
+    return (
+      <Text color={colors.gray}>
+        Progress: {progress}/{maxValue} {unit}
+      </Text>
+    );
+  }, [goal]);
+
   return (
     <View
       style={[
@@ -24,10 +34,7 @@ const GoalSheetContent = ({ goal, onButtonPress }) => {
         <Text white>{goal.description}</Text>
       </View>
 
-      <Text color="gray">
-        Progress: {goal.progress}/{goal.maxValue}{" "}
-        {getGoalUnits(goal.type, goal.maxValue)}
-      </Text>
+      {renderProgress}
 
       <Button
         label={goal.progress === 0 ? "Begin Task" : "Continue"}

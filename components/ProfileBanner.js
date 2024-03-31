@@ -10,6 +10,7 @@ const ProfileBanner = ({
   customTitle,
   customDescription,
   gradientColor,
+  containerStyle,
 }) => {
   return (
     <LinearGradient
@@ -22,6 +23,7 @@ const ProfileBanner = ({
           padding: sizes.large,
           borderRadius: sizes.medium,
         },
+        containerStyle,
       ]}
     >
       {customTitle || (

@@ -14,8 +14,11 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.melmatx.Wanderly"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.melmatx.Wanderly",
+      "infoPlist": {
+        "UIBackgroundModes": ["location"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,13 +35,6 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "@rnmapbox/maps",
-        {
-          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoibWVseG1hdCIsImEiOiJjbHRweXdndmIwMGpkMmxvYWpveTh1eTVnIn0.ODBC7wdTJlj9Bhp936uKvA",
-          "RNMapboxMapsVersion": "11.0.0"
-        }
-      ],
       [
         "expo-location",
         {

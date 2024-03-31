@@ -10,7 +10,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, SafeAreaView, View, useWindowDimensions } from "react-native";
+import {
+  Alert,
+  SafeAreaView,
+  StatusBar,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import Swiper from "react-native-deck-swiper";
 import { Button, FeatureHighlight, Text } from "react-native-ui-lib";
 
@@ -24,6 +30,7 @@ import InfoSheetContent from "../components/InfoSheetContent";
 import OverlayLabel from "../components/OverlayLabel";
 import tutorials from "../consts/communityTutorial";
 import posts from "../consts/samplePosts";
+import authenticateLocally from "../utils/authenticateLocally";
 
 const Community = () => {
   const [cardIndex, setCardIndex] = useState(0);
@@ -68,6 +75,18 @@ const Community = () => {
     setCardIndex((prevIndex) => prevIndex + 1);
   }, [isSwipingBack]);
 
+  const onSwipedAll = useCallback(() => {
+    setSwipedAllCards(true);
+  }, []);
+
+  const onSwipedBack = useCallback(() => {
+    setCardIndex((prevIndex) => prevIndex - 1);
+    setIsSwipingBack(true);
+    setSwipedAllCards(false);
+
+    swiperRef.current?.swipeBack();
+  }, []);
+
   const onSwipedRight = useCallback((index) => {
     Burnt.alert({
       title: "Post Liked",
@@ -86,41 +105,41 @@ const Community = () => {
     });
   }, []);
 
-  const onSwipedTop = useCallback((index) => {
-    Alert.alert(
-      "Award Post",
-      "Are you sure you want to award 1 point to the post?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-          onPress: () => swiperRef.current?.swipeBack(),
-        },
-        {
-          text: "Confirm",
-          onPress: () =>
-            Burnt.alert({
-              title: "Post Awarded",
-              preset: "custom",
-              icon: { ios: { name: "star.circle.fill" } },
-              message: "1 point awarded for this post",
-              duration: 0.8,
-            }),
-        },
-      ]
-    );
-  }, []);
+  const onAward = useCallback(async () => {
+    await authenticateLocally({
+      onSuccess: () =>
+        Burnt.alert({
+          title: "Post Awarded",
+          preset: "custom",
+          icon: { ios: { name: "star.circle.fill" } },
+          message: "1 point awarded for this post",
+          duration: 0.8,
+        }),
+      onError: onSwipedBack,
+      errorOnUnavailable: false,
+    });
+  }, [onSwipedBack]);
 
-  const onSwipedAll = useCallback(() => {
-    setSwipedAllCards(true);
-  }, []);
-
-  const onSwipedBack = useCallback(() => {
-    setCardIndex((prevIndex) => prevIndex - 1);
-    setIsSwipingBack(true);
-
-    swiperRef.current?.swipeBack();
-  }, []);
+  const onSwipedTop = useCallback(
+    (index) => {
+      Alert.alert(
+        "Award Post",
+        "Are you sure you want to award 1 point to the post?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: onSwipedBack,
+          },
+          {
+            text: "Confirm",
+            onPress: onAward,
+          },
+        ]
+      );
+    },
+    [onAward, onSwipedBack]
+  );
 
   const swipeLeft = useCallback(() => {
     swiperRef.current?.swipeLeft();
@@ -215,7 +234,9 @@ const Community = () => {
 
   return (
     <>
-      <SafeAreaView style={globalStyles.flexFull}>
+      <SafeAreaView
+        style={[globalStyles.flexFull, globalStyles.androidPadding]}
+      >
         <View style={globalStyles.flexFull}>
           <AppHeader>
             <View style={[globalStyles.rowCenter, { columnGap: sizes.large }]}>
@@ -276,8 +297,14 @@ const Community = () => {
           )}
 
           {swipedAllCards && (
-            <View style={globalStyles.flexCenter} pointerEvents="box-none">
-              <Text h3 white>
+            <View
+              style={[
+                globalStyles.flexCenter,
+                { paddingBottom: bottomTabHeight + sizes.xxlarge },
+              ]}
+              pointerEvents="box-none"
+            >
+              <Text h3 color={colors.gray}>
                 You're all out!
               </Text>
             </View>
@@ -288,10 +315,11 @@ const Community = () => {
               globalStyles.rowCenter,
               {
                 position: "absolute",
-                bottom: bottomTabHeight,
+                bottom: bottomTabHeight + StatusBar.currentHeight,
                 alignSelf: "center",
                 justifyContent: "space-evenly",
                 width: "60%",
+                height: "8%",
               },
             ]}
           >

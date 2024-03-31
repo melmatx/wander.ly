@@ -3,7 +3,7 @@ import { BlurView } from "expo-blur";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { forwardRef, memo, useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
@@ -21,8 +21,18 @@ const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
   }
 
   return (
-    <BlurView tint="light" intensity={35} style={style.container}>
-      <ImageBackground source={item.image} style={style.image} transition={100}>
+    <BlurView
+      tint="light"
+      intensity={Platform.OS === "ios" ? 60 : 35}
+      style={style.container}
+      experimentalBlurMethod="dimezisBlurView"
+    >
+      <ImageBackground
+        source={item.image}
+        style={style.image}
+        transition={100}
+        cachePolicy="memory-disk"
+      >
         <LinearGradient
           colors={["rgba(0,0,0,0.3)", "transparent"]}
           style={[StyleSheet.absoluteFill, { height: 100 }]}

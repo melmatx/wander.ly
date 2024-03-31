@@ -166,7 +166,7 @@ const Profile = ({ navigation }) => {
   useScrollToTop(scrollViewRef);
 
   return (
-    <SafeAreaView style={globalStyles.flexFull}>
+    <SafeAreaView style={[globalStyles.flexFull, globalStyles.androidPadding]}>
       <AppHeader>
         <Button link onPress={onProfilePress}>
           <Avatar size={35} label="MP" autoColorsConfig={avatarColorsConfig} />

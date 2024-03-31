@@ -1,3 +1,5 @@
+import { set } from "date-fns";
+
 import academy from "./features/academy";
 import animals from "./features/animals";
 import bakery from "./features/bakery";
@@ -24,6 +26,12 @@ const featureList = [
   shop,
   surf,
   wellness,
-];
+].map((feature) => ({
+  ...feature,
+  deadline: set(new Date(), {
+    hours: Math.floor(Math.random() * 24),
+    minutes: Math.floor(Math.random() * 60),
+  }),
+}));
 
 export default featureList;

@@ -1,9 +1,11 @@
 import GHBottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import React, { forwardRef, memo, useCallback, useMemo } from "react";
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 import { sizes } from "../assets/styles/globalStyles";
+
+const { height } = Dimensions.get("window");
 
 const DETACHED_INITIAL_PROPS = {
   snapPoints: ["30%"],
@@ -16,13 +18,12 @@ const DETACHED_INITIAL_STYLES = {
   marginHorizontal: sizes.xlarge,
 };
 
-const DETACHED_BOTTOM_INSET = 90;
-
 const BottomSheet = forwardRef(
   (
     {
       children,
       detached,
+      enableBlurAndroid = true,
       containerStyle,
       handleIndicatorStyle,
       zIndex,
@@ -39,9 +40,12 @@ const BottomSheet = forwardRef(
             StyleSheet.absoluteFill,
             { borderRadius: sizes.large, overflow: "hidden" },
           ]}
+          experimentalBlurMethod={
+            enableBlurAndroid ? "dimezisBlurView" : "none"
+          }
         />
       ),
-      []
+      [enableBlurAndroid]
     );
 
     const bottomSheetBackdrop = useCallback(
@@ -81,7 +85,7 @@ const BottomSheet = forwardRef(
         {...(detached && {
           ...DETACHED_INITIAL_PROPS,
           backdropComponent: bottomSheetBackdrop,
-          bottomInset: DETACHED_BOTTOM_INSET,
+          bottomInset: height * 0.1,
         })}
         {...props}
       >
