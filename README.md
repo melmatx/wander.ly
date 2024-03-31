@@ -22,8 +22,8 @@
 # Prerequisites
 
 - [Installing DFX](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/)
-- [Installing Expo](https://docs.expo.dev/get-started/installation/)
 - [Installing ngrok](https://ngrok.com/docs/getting-started/)
+- [Installing Expo](https://docs.expo.dev/get-started/installation/)
 - [Installing Mops for Motoko](https://mops.one/docs/install)
 
 > Don't forget to visit the [landing page](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
