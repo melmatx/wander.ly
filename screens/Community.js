@@ -12,6 +12,7 @@ import React, {
 } from "react";
 import {
   Alert,
+  LogBox,
   SafeAreaView,
   StatusBar,
   View,
@@ -31,6 +32,11 @@ import OverlayLabel from "../components/OverlayLabel";
 import tutorials from "../consts/communityTutorial";
 import posts from "../consts/samplePosts";
 import authenticateLocally from "../utils/authenticateLocally";
+
+// Workaround for bug when quickly swiping cards
+LogBox.ignoreLogs([
+  "Sending `onAnimatedValueUpdate` with no listeners registered.",
+]);
 
 const Community = () => {
   const [cardIndex, setCardIndex] = useState(0);
