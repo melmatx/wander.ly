@@ -46,6 +46,7 @@ const MAPBOX_STYLE_CONFIG = {
 const Explore = ({ navigation }) => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isMapShown, setIsMapShown] = useState(true);
 
   const insets = useSafeAreaInsets();
@@ -91,6 +92,7 @@ const Explore = ({ navigation }) => {
         heading: HEADING,
         pitch: PITCH,
         zoomLevel: ZOOM,
+        // padding: { paddingBottom: BOTTOM_PADDING },
       });
     } catch (error) {
       console.log("Error getting user location", error);
@@ -99,6 +101,10 @@ const Explore = ({ navigation }) => {
 
   const onScanCode = useCallback(() => {
     navigation.navigate(Routes.SCAN_CODE);
+  }, []);
+
+  const onMapLoad = useCallback(() => {
+    setIsMapLoaded(true);
   }, []);
 
   const onMapPress = useCallback((event, feature) => {
@@ -162,6 +168,11 @@ const Explore = ({ navigation }) => {
     setIsMapShown(to <= 0);
   }, []);
 
+  const onChangeSheet = useCallback((index) => {
+    // Workaround for onAnimateSheet not working when the sheet is dragged slowly
+    setIsMapShown(index <= 0);
+  }, []);
+
   const renderSectionHeader = useCallback(({ section }) => {
     const totalCompleted = section.data.filter(
       (item) => item.isCompleted
@@ -196,9 +207,9 @@ const Explore = ({ navigation }) => {
         style={[
           globalStyles.spaceBetween,
           {
-            height: "25%",
+            height: isMapShown ? "25%" : "23%",
+            marginVertical: isMapShown ? sizes.medium : sizes.small,
             padding: sizes.large,
-            marginVertical: sizes.medium,
             borderRadius: sizes.medium,
           },
         ]}
@@ -239,9 +250,24 @@ const Explore = ({ navigation }) => {
         </View>
       </View>
     );
-  }, [currentTask, handleGoalButton, onCancelTask]);
+  }, [currentTask, handleGoalButton, isMapShown, onCancelTask]);
+
+  const renderMapImages = useMemo(() => {
+    return featureList.map((feature) => (
+      <Mapbox.Images
+        key={`icon-${feature.icon}`}
+        images={{
+          [`icon-${feature.icon}`]: feature.icon,
+        }}
+      />
+    ));
+  }, []);
 
   const renderFeatures = useMemo(() => {
+    if (!isMapLoaded) {
+      return null;
+    }
+
     return featureList.map((feature, index) => (
       <Mapbox.ShapeSource
         key={`feature-${index}`}
@@ -253,22 +279,19 @@ const Explore = ({ navigation }) => {
           id={`feature-${index}-fill`}
           style={{ fillOpacity: 0.5 }}
         />
+
         <Mapbox.SymbolLayer
           id={`feature-${index}-icon`}
           style={{
             iconImage: `icon-${feature.icon}`,
-            iconSize: 0.1,
+            iconSize: 0.12,
             iconAllowOverlap: true,
-          }}
-        />
-        <Mapbox.Images
-          images={{
-            [`icon-${feature.icon}`]: feature.icon,
+            iconIgnorePlacement: true,
           }}
         />
       </Mapbox.ShapeSource>
     ));
-  }, [onMapPress]);
+  }, [isMapLoaded, onMapPress]);
 
   useScrollToTop(sectionListRef);
 
@@ -320,6 +343,7 @@ const Explore = ({ navigation }) => {
         attributionEnabled={false}
         scaleBarEnabled={false}
         pitchEnabled={false}
+        onDidFinishLoadingMap={onMapLoad}
       >
         <Mapbox.StyleImport
           id="basemap"
@@ -337,6 +361,7 @@ const Explore = ({ navigation }) => {
           />
         )}
 
+        {renderMapImages}
         {renderFeatures}
       </Mapbox.MapView>
 
@@ -345,6 +370,7 @@ const Explore = ({ navigation }) => {
         zIndex={2}
         enableBlurAndroid={false}
         onAnimate={onAnimateSheet}
+        onChange={onChangeSheet}
       >
         {renderCurrentTask}
 

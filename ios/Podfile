@@ -37,8 +37,8 @@ elsif podfile_properties.key?('ios.flipper') then
   end
 end
 
-# @generated begin @rnmapbox/maps-rnmapboxmapsimpl - expo prebuild (DO NOT MODIFY) sync-238906821d0b0bdee96c36342d163f0b43c79fe2
-$RNMapboxMapsDownloadToken = 'sk.eyJ1IjoibWVseG1hdCIsImEiOiJjbHViaXN6eXAwZHk1MmtwOWpvZ3Vqc2loIn0.dVWTZX2cXznpQCtl3YcGrQ'
+# @generated begin @rnmapbox/maps-rnmapboxmapsimpl - expo prebuild (DO NOT MODIFY) sync-d06668e519d0fcde01d3bd14fc06fdde6b92f88c
+$RNMapboxMapsDownloadToken = 'sk.eyJ1IjoibWVseG1hdCIsImEiOiJjbHVmcXZpOGUxaWt4Mmtuc3NjcW8zcTYxIn0.IeBYaGh7qK-WBMjou7zvMw'
 $RNMapboxMapsVersion = '11.0.0'
 # @generated end @rnmapbox/maps-rnmapboxmapsimpl
 target 'Wanderly' do
