@@ -3,6 +3,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { CameraType } from "expo-camera";
 import { CameraView, useCameraPermissions } from "expo-camera/next";
 import { Image } from "expo-image";
+import { manipulateAsync, FlipType } from "expo-image-manipulator";
 import React, {
   useCallback,
   useEffect,
@@ -52,8 +53,16 @@ const ShareJourney = () => {
     setIsLoading(true);
 
     try {
-      const photo = await cameraRef.current?.takePictureAsync({ base64: true });
-      setPreview(photo);
+      let picture = await cameraRef.current?.takePictureAsync({ base64: true });
+
+      if (type === CameraType.front) {
+        picture = await manipulateAsync(
+          picture.uri,
+          [{ flip: FlipType.Horizontal }],
+          { base64: true }
+        );
+      }
+      setPreview(picture);
       detailsSheetRef.current?.expand();
     } catch (error) {
       console.log(error);
@@ -61,7 +70,7 @@ const ShareJourney = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [isCameraReady]);
+  }, [isCameraReady, type]);
 
   const onCloseDetailsSheet = useCallback(() => {
     Keyboard.dismiss();
