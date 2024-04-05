@@ -16,7 +16,7 @@
    - 4943 is based on the port specified on dfx.json
 3. lt --port 4943 again (copy link to **EXPO_PUBLIC_TUNNEL_URL2**)
    - We need two tunnels of the localhost because internet identity and the integration won't work with the same url
-4. If you plan to only use it with simulators, just remove the **EXPO_PUBLIC_TUNNEL_URL1** and **EXPO_PUBLIC_TUNNEL_URL2** in the env file.
+4. If you plan to only use it with simulators, just remove the **EXPO_PUBLIC_TUNNEL_URL1** and **EXPO_PUBLIC_TUNNEL_URL2** in the .env file.
 
 > **Note:** To run app on physical device for iOS, open **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, remove **Push Notifications** capability and then add your free team for signing. Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).
 
