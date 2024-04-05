@@ -4,10 +4,10 @@
 2. dfx start --clean
 3. dfx deploy
 4. dfx generate
-5. Open .env file and copy the canister ids to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
-6. lt --port 8080 (copy link to EXPO_PUBLIC_TUNNEL_URL1, make sure to install [LocalTunnel](https://localtunnel.me) first)
+5. Open .env file and copy the canister ids to **EXPO_PUBLIC_CANISTER_ID_WANDERLY**, **EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY**, and **EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION**
+6. lt --port 8080 (copy link to **EXPO_PUBLIC_TUNNEL_URL1**, make sure to install [LocalTunnel](https://localtunnel.me) first)
    - 8080 is based on the port specified on dfx.json
-7. lt --port 8080 again (copy link to EXPO_PUBLIC_TUNNEL_URL2)
+7. lt --port 8080 again (copy link to **EXPO_PUBLIC_TUNNEL_URL2**)
    - We need two tunnels because internet identity and the integration won't work with the same url
 8. npx expo prebuild --clean
 9. npx expo run:ios (or run:android)
