@@ -41,4 +41,9 @@ You can view your password by visiting: https://whatismyipaddress.com/
 - [Installing Expo](https://docs.expo.dev/get-started/installation/)
 - [Installing Localtunnel](https://theboroer.github.io/localtunnel-www/)
 
-> Don't forget to visit the [landing page](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
+# Programmers
+
+- Mel Mathew C. Palaña (Full-stack developer)
+- Alexander John Cammado (Backend developer)
+
+> Don't forget to visit this project's [landing page](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
