@@ -40,9 +40,7 @@ const Rewards = () => {
           rowGap: sizes.small,
         }}
       >
-        <Text h1 white>
-          Exchange Center
-        </Text>
+        <Text h1>Exchange Center</Text>
         <Text color={colors.gray}>
           Rewards for your hard work and dedication.
         </Text>

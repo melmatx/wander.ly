@@ -44,7 +44,7 @@ const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
       </ImageBackground>
 
       <View style={[globalStyles.spaceBetween, { height: "25%" }]}>
-        <Text h4 semibold white numberOfLines={5}>
+        <Text h4 semibold numberOfLines={5}>
           {item.content}
         </Text>
 

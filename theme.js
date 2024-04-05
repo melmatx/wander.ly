@@ -3,6 +3,7 @@ import { Colors, Typography } from "react-native-ui-lib";
 import { colors } from "./assets/styles/globalStyles";
 
 Colors.loadColors({
+  $textDefault: "white",
   $textPrimary: colors.primary,
   $backgroundPrimaryHeavy: colors.primary,
   $backgroundDefault: colors.dark,

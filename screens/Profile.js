@@ -3,7 +3,13 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useScrollToTop } from "@react-navigation/native";
 import * as Burnt from "burnt";
 import { format } from "date-fns";
-import React, { useCallback, useMemo, useReducer, useRef } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { Alert, SafeAreaView, ScrollView, View } from "react-native";
 import { AnimatedScanner, Avatar, Button, Text } from "react-native-ui-lib";
 
@@ -19,6 +25,7 @@ import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
 
 const Profile = ({ navigation }) => {
+  const [name, setName] = useState("Mel Mathew");
   const [isViewing, toggleViewingMode] = useReducer((state) => !state, true);
 
   const profileSheetRef = useRef(null);
@@ -33,9 +40,7 @@ const Profile = ({ navigation }) => {
       {
         customTitle: (
           <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
-            <Text profile white>
-              Achievements
-            </Text>
+            <Text profile>Achievements</Text>
 
             <Button
               link
@@ -48,7 +53,7 @@ const Profile = ({ navigation }) => {
         ),
         customDescription: (
           <Text profile>
-            🏆 <Text white>0</Text>
+            🏆 <Text>0</Text>
           </Text>
         ),
       },
@@ -141,7 +146,13 @@ const Profile = ({ navigation }) => {
     }, 1500);
   }, [isViewing]);
 
-  const bottomSheetFooter = useCallback(
+  const onCloseProfileSheet = useCallback(() => {
+    if (!isViewing) {
+      toggleViewingMode();
+    }
+  }, [isViewing]);
+
+  const renderSheetFooter = useCallback(
     () => (
       <View style={{ marginHorizontal: sizes.large, rowGap: sizes.large }}>
         <Button
@@ -152,12 +163,19 @@ const Profile = ({ navigation }) => {
         >
           <Ionicons
             name={isViewing ? "create-outline" : "save-outline"}
-            size={20}
+            size={22}
             color={colors.primary}
             style={{ marginRight: sizes.small }}
           />
         </Button>
-        <Button label="Logout" onPress={handleLogout} />
+        <Button label="Logout" onPress={handleLogout}>
+          <Ionicons
+            name="log-out-outline"
+            size={22}
+            color="white"
+            style={{ marginRight: sizes.small }}
+          />
+        </Button>
       </View>
     ),
     [handleLogout, isViewing, onEditProfile]
@@ -205,10 +223,8 @@ const Profile = ({ navigation }) => {
         <View>
           <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
             <View>
-              <Text white>Level 5</Text>
-              <Text h1 white>
-                Earth Warrior
-              </Text>
+              <Text>Level 5</Text>
+              <Text h1>Earth Warrior</Text>
             </View>
 
             <Button link onPress={onInfoPress}>
@@ -260,7 +276,7 @@ const Profile = ({ navigation }) => {
           ))}
         </View>
 
-        <Text color="gray" center>
+        <Text color={colors.gray} center>
           Member since {format(new Date(), "MMMM yyyy")}
         </Text>
       </ScrollView>
@@ -270,8 +286,21 @@ const Profile = ({ navigation }) => {
         index={-1}
         snapPoints={["85%"]}
         enablePanDownToClose
-        footerComponent={bottomSheetFooter}
+        footerComponent={renderSheetFooter}
+        onClose={onCloseProfileSheet}
       >
+        <View
+          style={{
+            alignSelf: "flex-end",
+            paddingHorizontal: sizes.xlarge,
+            height: sizes.xlarge,
+          }}
+        >
+          {!isViewing && (
+            <Button link label="Cancel" onPress={toggleViewingMode} />
+          )}
+        </View>
+
         <View style={{ rowGap: sizes.large, padding: sizes.large }}>
           <Avatar
             size={100}
@@ -280,7 +309,11 @@ const Profile = ({ navigation }) => {
             containerStyle={{ alignSelf: "center" }}
           />
 
-          <FormInput value="Mel Mathew" item={{ label: "Name", isViewing }} />
+          <FormInput
+            value={name}
+            setData={setName}
+            item={{ label: "Name", isViewing }}
+          />
         </View>
       </BottomSheet>
 

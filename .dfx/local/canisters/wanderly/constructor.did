@@ -52,12 +52,21 @@ service : {
   createTask: (text, Task) -> (Result);
   createUser: (User) -> (Result_3);
   getAfternoonTaskList: (text) -> (Result_2);
-  getAllMorningTaskList: () -> (vec record {
-                                      text;
-                                      Task;
-                                    });
+  getAllAfternoonTasks: () -> (vec record {
+                                     text;
+                                     Task;
+                                   });
+  getAllEveningTasks: () -> (vec record {
+                                   text;
+                                   Task;
+                                 });
+  getAllMorningTasks: () -> (vec record {
+                                   text;
+                                   Task;
+                                 });
   getEveningTaskList: (text) -> (Result_2);
   getMorningTaskList: (text) -> (Result_2);
   getUser: (principal) -> (Result_1);
   updateUserNickname: (User) -> (Result);
+  whoami: () -> (principal);
 }

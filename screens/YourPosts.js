@@ -9,7 +9,7 @@ import { Button } from "react-native-ui-lib";
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import CommunityModal from "../components/CommunityModal";
 import GradientIcon from "../components/GradientIcon";
-import ListHeader from "../components/ListHeader";
+import LargeHeader from "../components/LargeHeader";
 import PostItem from "../components/PostItem";
 import posts from "../consts/samplePosts";
 
@@ -22,7 +22,7 @@ const YourPosts = () => {
 
   const HeaderComponent = useMemo(
     () => (
-      <ListHeader
+      <LargeHeader
         icon={
           <GradientIcon
             icon="person"
@@ -111,6 +111,7 @@ const YourPosts = () => {
         item={selectedPost}
         visible={isModalVisible}
         onClose={onCloseModal}
+        isUser
       />
     </View>
   );

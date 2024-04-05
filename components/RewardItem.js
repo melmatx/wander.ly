@@ -29,9 +29,7 @@ const RewardItem = ({ item, image, onPress }) => {
         />
 
         <View style={{ rowGap: sizes.small, flex: 1 }}>
-          <Text h4 white>
-            {item.name}
-          </Text>
+          <Text h4>{item.name}</Text>
           <Text color={colors.gray}>{item.points} pts</Text>
         </View>
       </View>

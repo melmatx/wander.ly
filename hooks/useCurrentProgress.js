@@ -71,6 +71,8 @@ const useCurrentProgress = () => {
         console.log("Starting location updates");
         await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
           accuracy: Location.Accuracy.BestForNavigation,
+          activityType: Location.ActivityType.Fitness,
+          pausesUpdatesAutomatically: true,
         });
       };
 

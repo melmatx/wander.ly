@@ -69,7 +69,6 @@ const TaskItem = ({ item, onPress, isUser = true }) => {
       <View style={[globalStyles.flexFull, { rowGap: sizes.xsmall }]}>
         <Text
           h4
-          white
           style={{
             textDecorationLine:
               item.completedAt && isUser ? "line-through" : "none",
@@ -77,7 +76,7 @@ const TaskItem = ({ item, onPress, isUser = true }) => {
         >
           {item.title}
         </Text>
-        <Text white>{item.description}</Text>
+        <Text>{item.description}</Text>
 
         {renderDate}
       </View>

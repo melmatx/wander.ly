@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import { toHex } from "@dfinity/agent";
 import {
   Ed25519KeyIdentity,
@@ -9,7 +11,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
-import { URL } from "react-native-url-polyfill";
 import { create } from "zustand";
 
 import useProfileStore from "./useProfileStore";
@@ -18,12 +19,16 @@ import getBackendActor from "../src/actor";
 const initialState = {
   baseKey: "",
   identity: "",
+  principal: "",
   isReady: false,
+  isFetching: false,
 };
 
 const useAuthStore = create((set, get) => ({
   ...initialState,
   fetchKeyAndIdentity: async () => {
+    set({ isFetching: true });
+
     // Get base key
     let baseKey = SecureStore.getItem("baseKey");
 
@@ -52,9 +57,11 @@ const useAuthStore = create((set, get) => ({
       }
     }
 
-    set({ baseKey, isReady: true });
+    set({ baseKey, isReady: true, isFetching: false });
   },
   setIdentity: async (delegation) => {
+    set({ isFetching: true });
+
     // Decode delegation from uri result
     const decodedFromUri = decodeURIComponent(delegation);
     const chain = DelegationChain.fromJSON(JSON.parse(decodedFromUri));
@@ -72,9 +79,14 @@ const useAuthStore = create((set, get) => ({
     // Dismiss the browser
     WebBrowser.dismissBrowser();
 
-    set({ identity: id });
+    // Get principal
+    const actor = getBackendActor(id);
+    const principal = await actor.whoami();
+
+    set({ identity: id, principal: principal.toText(), isFetching: false });
   },
-  loginTest: () => set({ identity: "testIdentity" }),
+  loginTest: () =>
+    set({ identity: "testIdentity", principal: "testPrincipal" }),
   login: async () => {
     if (!get().baseKey) {
       throw new Error("Base key not set");
@@ -85,17 +97,18 @@ const useAuthStore = create((set, get) => ({
 
     // Create url for internet identity integration
     const url = new URL(
-      process.env.EXPO_PUBLIC_NGROK_URL +
-        "/?canisterId=" +
-        process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
-
-      // Must not be the same as the internet identity canister (127.0.0.1 OR localhost)
-      // `http://localhost:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
+      process.env.EXPO_PUBLIC_TUNNEL_URL1 +
+        `/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
     );
 
     // Set internet identity uri
     const internetIdentityUri = new URL(
-      `http://127.0.0.1:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
+      // Must not be the same as the internet identity integration canister (127.0.0.1 OR localhost)
+      // `http://127.0.0.1:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
+      // `http://${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}.localhost:8080`
+
+      process.env.EXPO_PUBLIC_TUNNEL_URL2 +
+        `/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
     );
     url.searchParams.set(
       "internet_identity_uri",
@@ -116,14 +129,14 @@ const useAuthStore = create((set, get) => ({
     await AsyncStorage.removeItem("isTutorialDone");
     await useProfileStore.getState().clearProfile();
 
-    set({ identity: "" });
+    set({ identity: "", principal: "" });
   },
-  getActor: (identity) => {
-    if (!identity && !get().identity) {
+  getActor: () => {
+    if (!get().identity) {
       throw new Error("Identity not set");
     }
 
-    return getBackendActor(identity || get().identity);
+    return getBackendActor(get().identity);
   },
 }));
 

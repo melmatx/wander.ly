@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-export const idlFactory = ({ IDL }) => { return IDL.Service({}); };
-=======
 export const idlFactory = ({ IDL }) => {
   const Task = IDL.Record({
     'id' : IDL.Opt(IDL.Text),
@@ -41,7 +38,17 @@ export const idlFactory = ({ IDL }) => {
     'createTask' : IDL.Func([IDL.Text, Task], [Result], []),
     'createUser' : IDL.Func([User], [Result_3], []),
     'getAfternoonTaskList' : IDL.Func([IDL.Text], [Result_2], []),
-    'getAllMorningTaskList' : IDL.Func(
+    'getAllAfternoonTasks' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, Task))],
+        [],
+      ),
+    'getAllEveningTasks' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, Task))],
+        [],
+      ),
+    'getAllMorningTasks' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, Task))],
         [],
@@ -50,7 +57,7 @@ export const idlFactory = ({ IDL }) => {
     'getMorningTaskList' : IDL.Func([IDL.Text], [Result_2], []),
     'getUser' : IDL.Func([IDL.Principal], [Result_1], []),
     'updateUserNickname' : IDL.Func([User], [Result], []),
+    'whoami' : IDL.Func([], [IDL.Principal], []),
   });
 };
->>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7
 export const init = ({ IDL }) => { return []; };

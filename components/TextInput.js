@@ -46,7 +46,6 @@ const TextInput = (props) => {
   return (
     <TextField
       h1
-      white
       labelStyle={{ color: props.isViewing ? "lightgray" : "gray" }}
       fieldStyle={[
         { paddingVertical: sizes.medium },

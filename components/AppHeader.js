@@ -11,9 +11,7 @@ const AppHeader = ({ routeName, children }) => {
   return (
     <View style={{ padding: sizes.large }}>
       <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
-        <Text h1 white>
-          {routeName || route.name}
-        </Text>
+        <Text h1>{routeName || route.name}</Text>
 
         {children}
       </View>

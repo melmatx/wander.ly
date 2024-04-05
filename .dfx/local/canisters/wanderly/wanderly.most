@@ -1,8 +1,4 @@
 // Version: 1.0.0
-<<<<<<< HEAD
-actor {
-  
-=======
 type Achievement =
   {
     description : Text;
@@ -37,5 +33,4 @@ actor {
     [var ?([var ?Text], [var ?Achievement], [var Nat], [var Nat32])];
   stable users :
     [var ?([var ?Principal], [var ?User], [var Nat], [var Nat32])]
->>>>>>> 203fe7733cbf1d7cea5c1b9abc0418b63dbad3c7
 };

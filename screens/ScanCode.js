@@ -70,7 +70,9 @@ const ScanCode = ({ route }) => {
         </CameraView>
       ) : (
         <View style={globalStyles.flexCenter}>
-          <Text h2>Camera permission required.</Text>
+          <Text h3 color={colors.gray}>
+            Camera permission required.
+          </Text>
         </View>
       )}
     </View>

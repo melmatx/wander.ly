@@ -26,16 +26,8 @@ const ProfileBanner = ({
         containerStyle,
       ]}
     >
-      {customTitle || (
-        <Text profile white>
-          {title}
-        </Text>
-      )}
-      {customDescription || (
-        <Text h2 white>
-          {description}
-        </Text>
-      )}
+      {customTitle || <Text profile>{title}</Text>}
+      {customDescription || <Text h2>{description}</Text>}
     </LinearGradient>
   );
 };

@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import CommunityModal from "../components/CommunityModal";
 import GradientIcon from "../components/GradientIcon";
-import ListHeader from "../components/ListHeader";
+import LargeHeader from "../components/LargeHeader";
 import PostItem from "../components/PostItem";
 import posts from "../consts/samplePosts";
 
@@ -19,7 +19,7 @@ const AwardedPosts = () => {
 
   const HeaderComponent = useMemo(
     () => (
-      <ListHeader
+      <LargeHeader
         icon={
           <GradientIcon
             icon="star"

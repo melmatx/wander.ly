@@ -79,6 +79,11 @@ actor Wanderly {
   stable let afternoonTaskList = Map.new<Text, Task>();
   stable let eveningTaskList = Map.new<Text, Task>();
 
+  // Needed to get the principal id of the user
+  public shared (msg) func whoami() : async Principal {
+    msg.caller;
+  };
+
   //* USER
   public shared ({ caller }) func createUser(payload : User) : async Result.Result<MessageResult and { id : Text }, MessageResult> {
     if (Principal.isAnonymous(caller)) {

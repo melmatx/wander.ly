@@ -23,10 +23,8 @@ const PostItem = ({ item, onPress, children }) => {
         }}
       >
         <View style={{ rowGap: sizes.small }}>
-          <Text h3 white>
-            {item.place}
-          </Text>
-          <Text white>{item.content}</Text>
+          <Text h3>{item.place}</Text>
+          <Text>{item.content}</Text>
         </View>
 
         <View

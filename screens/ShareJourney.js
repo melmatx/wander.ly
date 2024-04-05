@@ -7,6 +7,7 @@ import { manipulateAsync, FlipType } from "expo-image-manipulator";
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -79,6 +80,8 @@ const ShareJourney = () => {
     setPreview(null);
   }, []);
 
+  const snapPoints = useMemo(() => ["85%"], []);
+
   return (
     <>
       <View
@@ -112,6 +115,7 @@ const ShareJourney = () => {
                 onPress={toggleTorch}
                 backgroundColor={torch ? "white" : "rgba(255,255,255,0.2)"}
                 disabled={type === CameraType.front}
+                disabledBackgroundColor={colors.dark}
                 enableShadow
               >
                 <Ionicons
@@ -148,7 +152,9 @@ const ShareJourney = () => {
           </CameraView>
         ) : (
           <View style={globalStyles.flexCenter}>
-            <Text h2>Camera permission required.</Text>
+            <Text h3 color={colors.gray}>
+              Camera permission required.
+            </Text>
           </View>
         )}
       </View>
@@ -156,7 +162,7 @@ const ShareJourney = () => {
       <BottomSheet
         ref={detailsSheetRef}
         index={-1}
-        snapPoints={["85%"]}
+        snapPoints={snapPoints}
         enablePanDownToClose
         onClose={onCloseDetailsSheet}
       >

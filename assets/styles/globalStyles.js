@@ -11,10 +11,12 @@ export const sizes = {
 
 export const colors = {
   primary: "#0CC0DF",
-  secondary: "#FFCBCB",
-  tertiary: "#F6F6F6",
+  secondary: "#FF6F61",
+  tertiary: "#20B2AA",
   dark: "#1c1c1e",
   gray: "#aeaeb2",
+  red: "#E63946",
+  pink: "#FFCBCB",
 };
 
 const globalStyles = StyleSheet.create({

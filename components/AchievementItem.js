@@ -23,7 +23,7 @@ const AchievementItem = ({ item, height, onPress }) => {
         <Text achievement center>
           {item.emoji}
         </Text>
-        <Text semibold white center>
+        <Text semibold center>
           {item.name}
         </Text>
       </View>

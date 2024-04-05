@@ -14,7 +14,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Share from "react-native-share";
 import { Button, Text } from "react-native-ui-lib";
@@ -22,14 +22,16 @@ import { useShallow } from "zustand/react/shallow";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
-import EventSheetContent from "../components/EventSheetContent";
-import GoalSheetContent from "../components/GoalSheetContent";
+import ChipHeader from "../components/ChipHeader";
+import InfoSheetContent from "../components/InfoSheetContent";
 import TaskItem from "../components/TaskItem";
 import featureList from "../consts/featureList";
 import sectionColors from "../consts/sectionColors";
+import TimeOfDay from "../consts/timeOfDay";
 import Routes from "../navigation/Routes";
 import useTaskStore from "../stores/useTaskStore";
 import getTaskProgress from "../utils/getTaskProgress";
+import getTimeOfDay from "../utils/getTimeOfDay";
 import greetings from "../utils/greetings";
 import transformTasks from "../utils/transformTasks";
 
@@ -43,9 +45,17 @@ const MAPBOX_STYLE_CONFIG = {
   lightPreset: "night",
 };
 
+const FILTERS = [
+  "All",
+  TimeOfDay.MORNING,
+  TimeOfDay.AFTERNOON,
+  TimeOfDay.EVENING,
+];
+
 const Explore = ({ navigation }) => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState(getTimeOfDay());
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isMapShown, setIsMapShown] = useState(true);
 
@@ -68,6 +78,13 @@ const Explore = ({ navigation }) => {
   const goalSheetRef = useRef(null);
 
   const snapPoints = useMemo(() => ["35%", "60%", "85%"], []);
+
+  // Filter tasks by selected filter
+  const filteredTasks = useMemo(() => {
+    return selectedFilter === "All"
+      ? tasks
+      : tasks.filter((task) => task.title === selectedFilter);
+  }, [selectedFilter, tasks]);
 
   useEffect(() => {
     (async () => {
@@ -183,7 +200,7 @@ const Explore = ({ navigation }) => {
     return (
       <Text h1 color={color}>
         {section.title}{" "}
-        <Text h2 color="gray">
+        <Text h2 color={colors.gray}>
           {`(${totalCompleted}/${totalData})`}
         </Text>
       </Text>
@@ -209,8 +226,8 @@ const Explore = ({ navigation }) => {
           {
             height: isMapShown ? "25%" : "23%",
             marginVertical: isMapShown ? sizes.medium : sizes.small,
-            padding: sizes.large,
             borderRadius: sizes.medium,
+            padding: sizes.large,
           },
         ]}
       >
@@ -223,11 +240,9 @@ const Explore = ({ navigation }) => {
           <Text achievement>{currentTask.emoji}</Text>
 
           <View style={{ rowGap: sizes.medium }}>
-            <Text profile white>
-              {currentTask.title}
-            </Text>
+            <Text profile>{currentTask.title}</Text>
 
-            <Text semibold white>
+            <Text semibold>
               Progress: {progress}/{maxValue} {unit}
             </Text>
           </View>
@@ -252,12 +267,57 @@ const Explore = ({ navigation }) => {
     );
   }, [currentTask, handleGoalButton, isMapShown, onCancelTask]);
 
+  const renderSelectedEvent = useMemo(() => {
+    if (!selectedEvent) {
+      return null;
+    }
+
+    return (
+      <InfoSheetContent
+        title={selectedEvent.title}
+        description={selectedEvent.description}
+        onButtonPress={handleEventButton}
+        onSharePress={() => handleShareEvent(selectedEvent)}
+      >
+        <Text color={colors.gray}>
+          Event deadline:{" "}
+          {format(selectedEvent.deadline, "MMM dd, yyyy, hh:mm a")}
+        </Text>
+      </InfoSheetContent>
+    );
+  }, [selectedEvent]);
+
+  const renderSelectedGoal = useMemo(() => {
+    if (!selectedGoal) {
+      return null;
+    }
+
+    const { progress, maxValue, unit } = getTaskProgress(selectedGoal);
+
+    return (
+      <InfoSheetContent
+        title={selectedGoal.title}
+        description={selectedGoal.description}
+        gap={sizes.small}
+        onButtonPress={() => handleGoalButton(selectedGoal)}
+        buttonLabel={progress === 0 ? "Begin Task" : "Continue"}
+      >
+        <Text color={colors.gray}>
+          Progress: {progress}/{maxValue} {unit}
+        </Text>
+      </InfoSheetContent>
+    );
+  }, [selectedGoal]);
+
   const renderMapImages = useMemo(() => {
     return featureList.map((feature) => (
       <Mapbox.Images
         key={`icon-${feature.icon}`}
         images={{
           [`icon-${feature.icon}`]: feature.icon,
+        }}
+        onImageMissing={(name) => {
+          console.log(`Image ${name} is missing`);
         }}
       />
     ));
@@ -309,12 +369,8 @@ const Explore = ({ navigation }) => {
           rowGap: sizes.xsmall,
         }}
       >
-        <Text h1 white>
-          {greetings()}
-        </Text>
-        <Text h4 white>
-          {format(new Date(), "EEEE, MMMM do")}
-        </Text>
+        <Text h1>{greetings()}</Text>
+        <Text h4>{format(new Date(), "EEEE, MMMM do")}</Text>
       </View>
 
       <View
@@ -374,21 +430,42 @@ const Explore = ({ navigation }) => {
       >
         {renderCurrentTask}
 
-        {(!currentTask || !isMapShown) && (
-          <BottomSheetSectionList
-            ref={sectionListRef}
-            sections={tasks}
-            keyExtractor={(_, index) => `task-${index}`}
-            contentContainerStyle={{
-              rowGap: sizes.medium,
-              padding: sizes.large,
-              paddingBottom: bottomTabHeight + sizes.large,
+        {currentTask && !isMapShown && (
+          <View
+            style={{
+              borderBottomColor: "rgba(255,255,255,0.1)",
+              borderBottomWidth: StyleSheet.hairlineWidth,
             }}
-            style={{ borderRadius: sizes.xlarge }}
-            renderSectionHeader={renderSectionHeader}
-            renderItem={renderItem}
-            stickySectionHeadersEnabled={false}
           />
+        )}
+
+        {(!currentTask || !isMapShown) && (
+          <>
+            <View style={{ padding: sizes.large }}>
+              <ChipHeader
+                data={FILTERS}
+                selected={selectedFilter}
+                onPress={setSelectedFilter}
+                activeColor={sectionColors[selectedFilter]}
+              />
+            </View>
+
+            <BottomSheetSectionList
+              ref={sectionListRef}
+              sections={filteredTasks}
+              keyExtractor={(_, index) => `task-${index}`}
+              contentContainerStyle={{
+                rowGap: sizes.medium,
+                paddingTop: sizes.small,
+                paddingBottom: bottomTabHeight + sizes.large,
+                paddingHorizontal: sizes.large,
+              }}
+              style={{ borderRadius: sizes.xlarge }}
+              renderSectionHeader={renderSectionHeader}
+              renderItem={renderItem}
+              stickySectionHeadersEnabled={false}
+            />
+          </>
         )}
       </BottomSheet>
 
@@ -398,13 +475,7 @@ const Explore = ({ navigation }) => {
         zIndex={3}
         enableBlurAndroid={false}
       >
-        {selectedEvent && (
-          <EventSheetContent
-            event={selectedEvent}
-            onButtonPress={handleEventButton}
-            onShare={() => handleShareEvent(selectedEvent)}
-          />
-        )}
+        {renderSelectedEvent}
       </BottomSheet>
 
       <BottomSheet
@@ -413,12 +484,7 @@ const Explore = ({ navigation }) => {
         zIndex={3}
         enableBlurAndroid={false}
       >
-        {selectedGoal && (
-          <GoalSheetContent
-            goal={selectedGoal}
-            onButtonPress={() => handleGoalButton(selectedGoal)}
-          />
-        )}
+        {renderSelectedGoal}
       </BottomSheet>
     </>
   );

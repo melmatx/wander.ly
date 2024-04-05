@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useScrollToTop } from "@react-navigation/native";
 import * as Burnt from "burnt";
 import { format } from "date-fns";
 import React, {
@@ -238,6 +239,12 @@ const Community = () => {
     [handleInfoPress]
   );
 
+  useScrollToTop(
+    useRef({
+      scrollToTop: onRefresh,
+    })
+  );
+
   return (
     <>
       <SafeAreaView
@@ -335,7 +342,7 @@ const Community = () => {
               round
               ref={(ref) => addTarget(ref, 1)}
             >
-              <Ionicons name="close" size={45} color="crimson" />
+              <Ionicons name="close" size={45} color={colors.red} />
             </Button>
 
             <Button
@@ -374,7 +381,11 @@ const Community = () => {
             onButtonPress={handleInfoButton}
           >
             {selectedPost.task.completedAt && (
-              <Text color="gray" center style={{ marginTop: sizes.medium }}>
+              <Text
+                center
+                color={colors.gray}
+                style={{ marginTop: sizes.medium }}
+              >
                 Completed:{" "}
                 {format(selectedPost.task.completedAt, "MMM d, yyyy")}
               </Text>

@@ -8,16 +8,15 @@ import {
 } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
 
-import globalStyles, { sizes } from "../assets/styles/globalStyles";
+import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import useAuthStore from "../stores/useAuthStore";
-import useProfileStore from "../stores/useProfileStore";
 
 const Login = () => {
   const [logoLoaded, setLogoLoaded] = useState(false);
 
-  // const login = useAuthStore((state) => state.login);
-  const login = useAuthStore((state) => state.loginTest);
-  const isFetching = useProfileStore((state) => state.isFetching);
+  const login = useAuthStore((state) => state.login);
+  // const login = useAuthStore((state) => state.loginTest);
+  const isFetching = useAuthStore((state) => state.isFetching);
 
   return (
     <ImageBackground
@@ -81,8 +80,9 @@ const Login = () => {
             enableShadow
             onPress={login}
             disabled={isFetching}
+            disabledBackgroundColor={colors.dark}
           >
-            {isFetching && <ActivityIndicator />}
+            {isFetching && <ActivityIndicator color="white" />}
           </Button>
         </View>
       </SafeAreaView>

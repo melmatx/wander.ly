@@ -31,11 +31,7 @@ const MainNavigation = () => {
           <Stack.Group
             screenOptions={{
               headerShown: true,
-              headerTitle: ({ children }) => (
-                <Text h3 white>
-                  {children}
-                </Text>
-              ),
+              headerTitle: ({ children }) => <Text h3>{children}</Text>,
             }}
           >
             <Stack.Screen

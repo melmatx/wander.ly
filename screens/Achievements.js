@@ -2,6 +2,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useRef, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
+import Share from "react-native-share";
 import { GridList, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
@@ -30,6 +31,13 @@ const Achievements = () => {
   const handleAchievementButton = useCallback(() => {
     infoSheetRef.current?.close();
   }, []);
+
+  const handleAchievementShare = useCallback(() => {
+    if (!selectedAchievement) {
+      return;
+    }
+    Share.open({ message: selectedAchievement.name, failOnCancel: false });
+  }, [selectedAchievement]);
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -61,9 +69,7 @@ const Achievements = () => {
           rowGap: sizes.small,
         }}
       >
-        <Text h1 white>
-          Keep On Roaming
-        </Text>
+        <Text h1>Keep On Roaming</Text>
         <Text color={colors.gray}>
           Achievements for completing your goals, going to businesses, and more.
         </Text>
@@ -82,6 +88,7 @@ const Achievements = () => {
             title={selectedAchievement.name}
             description={selectedAchievement.description}
             onButtonPress={handleAchievementButton}
+            onSharePress={handleAchievementShare}
           />
         )}
       </BottomSheet>
