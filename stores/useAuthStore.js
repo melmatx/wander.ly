@@ -97,7 +97,7 @@ const useAuthStore = create((set, get) => ({
 
     // Create url for internet identity integration
     const url = new URL(
-      process.env.EXPO_PUBLIC_TUNNEL_URL1 +
+      (process.env.EXPO_PUBLIC_TUNNEL_URL1 || "http://127.0.0.1:4943") +
         `/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
     );
 
@@ -105,9 +105,8 @@ const useAuthStore = create((set, get) => ({
     const internetIdentityUri = new URL(
       // Must not be the same as the internet identity integration canister (127.0.0.1 OR localhost)
       // `http://127.0.0.1:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
-      // `http://${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}.localhost:8080`
 
-      process.env.EXPO_PUBLIC_TUNNEL_URL2 +
+      (process.env.EXPO_PUBLIC_TUNNEL_URL2 || "http://localhost:4943") +
         `/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
     );
     url.searchParams.set(

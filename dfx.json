@@ -30,7 +30,7 @@
   },
   "networks": {
     "local": {
-      "bind": "0.0.0.0:8080",
+      "bind": "0.0.0.0:4943",
       "type": "ephemeral"
     }
   },
