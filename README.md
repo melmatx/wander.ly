@@ -41,8 +41,4 @@ You can view your password by visiting: https://whatismyipaddress.com/
 - [Installing Expo](https://docs.expo.dev/get-started/installation/)
 - [Installing Localtunnel](https://theboroer.github.io/localtunnel-www/)
 
-# Localtunnel Password
-
-You can view your password by visiting: https://whatismyipaddress.com/
-
 > Don't forget to visit the [landing page](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
