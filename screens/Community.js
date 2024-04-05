@@ -309,7 +309,7 @@ const Community = () => {
             </View>
           )}
 
-          {swipedAllCards && (
+          {swipedAllCards ? (
             <View
               style={[
                 globalStyles.flexCenter,
@@ -321,54 +321,54 @@ const Community = () => {
                 You're all out!
               </Text>
             </View>
+          ) : (
+            <View
+              style={[
+                globalStyles.rowCenter,
+                {
+                  position: "absolute",
+                  bottom: bottomTabHeight + StatusBar.currentHeight,
+                  alignSelf: "center",
+                  justifyContent: "space-evenly",
+                  width: "60%",
+                  height: "8%",
+                },
+              ]}
+            >
+              <Button
+                onPress={swipeLeft}
+                backgroundColor={colors.dark}
+                round
+                ref={(ref) => addTarget(ref, 1)}
+              >
+                <Ionicons name="close" size={45} color={colors.red} />
+              </Button>
+
+              <Button
+                onPress={swipeTop}
+                backgroundColor={colors.dark}
+                round
+                ref={(ref) => addTarget(ref, 2)}
+              >
+                <GradientIcon
+                  icon="star"
+                  size={35}
+                  spacing={5}
+                  colors={["white", "gold"]}
+                  gradientProps={{ locations: [0.4, 1] }}
+                />
+              </Button>
+
+              <Button
+                onPress={swipeRight}
+                backgroundColor={colors.dark}
+                round
+                ref={(ref) => addTarget(ref, 0)}
+              >
+                <Ionicons name="heart" size={45} color={colors.primary} />
+              </Button>
+            </View>
           )}
-
-          <View
-            style={[
-              globalStyles.rowCenter,
-              {
-                position: "absolute",
-                bottom: bottomTabHeight + StatusBar.currentHeight,
-                alignSelf: "center",
-                justifyContent: "space-evenly",
-                width: "60%",
-                height: "8%",
-              },
-            ]}
-          >
-            <Button
-              onPress={swipeLeft}
-              backgroundColor={colors.dark}
-              round
-              ref={(ref) => addTarget(ref, 1)}
-            >
-              <Ionicons name="close" size={45} color={colors.red} />
-            </Button>
-
-            <Button
-              onPress={swipeTop}
-              backgroundColor={colors.dark}
-              round
-              ref={(ref) => addTarget(ref, 2)}
-            >
-              <GradientIcon
-                icon="star"
-                size={35}
-                spacing={5}
-                colors={["white", "gold"]}
-                gradientProps={{ locations: [0.4, 1] }}
-              />
-            </Button>
-
-            <Button
-              onPress={swipeRight}
-              backgroundColor={colors.dark}
-              round
-              ref={(ref) => addTarget(ref, 0)}
-            >
-              <Ionicons name="heart" size={45} color={colors.primary} />
-            </Button>
-          </View>
         </View>
       </SafeAreaView>
 

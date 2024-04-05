@@ -77,7 +77,10 @@ const Explore = ({ navigation }) => {
   const eventSheetRef = useRef(null);
   const goalSheetRef = useRef(null);
 
-  const snapPoints = useMemo(() => ["35%", "60%", "85%"], []);
+  const snapPoints = useMemo(() => {
+    const initial = currentTask ? "35%" : "12%";
+    return [initial, "55%", "85%"];
+  }, [currentTask]);
 
   // Filter tasks by selected filter
   const filteredTasks = useMemo(() => {
@@ -423,6 +426,7 @@ const Explore = ({ navigation }) => {
 
       <BottomSheet
         snapPoints={snapPoints}
+        index={1}
         zIndex={2}
         enableBlurAndroid={false}
         onAnimate={onAnimateSheet}

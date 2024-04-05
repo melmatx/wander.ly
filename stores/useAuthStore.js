@@ -50,8 +50,11 @@ const useAuthStore = create((set, get) => ({
       if (isDelegationValid(chain)) {
         const id = new DelegationIdentity(baseKey, chain);
 
+        // Get principal
+        const principal = await getBackendActor(id).whoami();
+
         // Set identity with the base key
-        set({ baseKey, identity: id });
+        set({ identity: id, principal: principal.toText() });
       } else {
         await AsyncStorage.removeItem("delegation");
       }
@@ -80,8 +83,7 @@ const useAuthStore = create((set, get) => ({
     WebBrowser.dismissBrowser();
 
     // Get principal
-    const actor = getBackendActor(id);
-    const principal = await actor.whoami();
+    const principal = await getBackendActor(id).whoami();
 
     set({ identity: id, principal: principal.toText(), isFetching: false });
   },

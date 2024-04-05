@@ -1,4 +1,3 @@
-import { blsVerify } from "@dfinity/bls-verify";
 import { Platform } from "react-native";
 
 import { createActor } from "./declarations/wanderly";
@@ -13,20 +12,6 @@ const getBackendActor = (identity) => {
     agentOptions: {
       host: process.env.EXPO_PUBLIC_TUNNEL_URL1 || NETWORK,
       identity,
-      fetchOptions: {
-        reactNative: {
-          __nativeResponseType: "base64",
-        },
-      },
-      callOptions: {
-        reactNative: {
-          textStreaming: true,
-        },
-      },
-      verifyQuerySignatures: true,
-    },
-    actorOptions: {
-      blsVerify,
     },
   });
 };
