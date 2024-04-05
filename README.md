@@ -9,7 +9,7 @@
 7. npx expo run:ios (or run:android)
    - --device (to select device)
 
-# Optional: Make Internet Identity work with Physical Devices
+# Optional: Make Internet Identity work with Physical Devices Locally
 
 1. Install [LocalTunnel](https://localtunnel.me)
 2. lt --port 4943 (copy link to **EXPO_PUBLIC_TUNNEL_URL1**)
