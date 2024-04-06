@@ -51,6 +51,10 @@
       ],
       "expo-secure-store"
     ],
+    "updates": {
+      "url": "https://u.expo.dev/35b90805-00cf-4f7a-97d6-5aa4b9bd6448"
+    },
+    "runtimeVersion": "1.0.0",
     "extra": {
       "eas": {
         "projectId": "35b90805-00cf-4f7a-97d6-5aa4b9bd6448"
