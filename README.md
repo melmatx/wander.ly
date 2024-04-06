@@ -1,6 +1,9 @@
 # Landing Page
 
-> https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/
+```
+https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/
+```
+**Repository:** https://github.com/spcf-coMeLex/wander.ly-landing
 
 # How to run?
 
