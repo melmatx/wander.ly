@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import {
   Alert,
+  Keyboard,
   Modal,
   Platform,
   SafeAreaView,
@@ -36,6 +37,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
   const insets = useSafeAreaInsets();
   const { sharePost } = usePostActions(item);
 
+  const previousDescription = useRef("");
   const editSheetRef = useRef(null);
 
   const snapPoints = useMemo(() => ["50%"], []);
@@ -44,18 +46,44 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
     if (!item) {
       return;
     }
+    // Set the description
     setDescription(item.content);
+
+    // Save the previous description
+    previousDescription.current = item.content;
   }, [item?.content]);
+
+  const onCloseSheet = useCallback(() => {
+    editSheetRef.current?.close();
+    Keyboard.dismiss();
+  }, []);
 
   const onEditPost = useCallback(() => {
     editSheetRef.current?.expand();
   }, []);
 
   const onFinishEdit = useCallback(() => {
-    editSheetRef.current?.close();
+    // Check if the description is the same as the previous one
+    if (description === previousDescription.current) {
+      console.log("No changes for description");
+      onCloseSheet();
+      return;
+    }
+
+    // Save the new description (Needed only if there are no online changes and not saved yet)
+    previousDescription.current = description;
+
+    // Close the sheet
+    onCloseSheet();
+  }, [description, onCloseSheet]);
+
+  const onCancelEdit = useCallback(() => {
+    setDescription(previousDescription.current);
   }, []);
 
   const handleDelete = useCallback(() => {
+    // Delete the post
+
     onClose();
   }, []);
 
@@ -223,6 +251,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
+        onClose={onCancelEdit}
       >
         <View
           style={[

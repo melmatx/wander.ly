@@ -7,6 +7,7 @@ Colors.loadColors({
   $textPrimary: colors.primary,
   $backgroundPrimaryHeavy: colors.primary,
   $backgroundDefault: colors.dark,
+  $outlineDefault: "gray",
 });
 
 Typography.loadTypographies({

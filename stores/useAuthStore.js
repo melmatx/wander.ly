@@ -40,6 +40,20 @@ const useAuthStore = create((set, get) => ({
       SecureStore.setItem("baseKey", JSON.stringify(baseKey.toJSON()));
     }
 
+    // Check if testing
+    const isTesting = await AsyncStorage.getItem("isTesting");
+
+    if (isTesting) {
+      set({
+        baseKey,
+        identity: "testIdentity",
+        principal: "testPrincipal",
+        isReady: true,
+        isFetching: false,
+      });
+      return;
+    }
+
     // Get identity from delegation
     const delegation = await AsyncStorage.getItem("delegation");
 
@@ -87,8 +101,11 @@ const useAuthStore = create((set, get) => ({
 
     set({ identity: id, principal: principal.toText(), isFetching: false });
   },
-  loginTest: () =>
-    set({ identity: "testIdentity", principal: "testPrincipal" }),
+  loginTest: async () => {
+    await AsyncStorage.setItem("isTesting", "true");
+
+    set({ identity: "testIdentity", principal: "testPrincipal" });
+  },
   login: async () => {
     if (!get().baseKey) {
       throw new Error("Base key not set");
@@ -128,6 +145,7 @@ const useAuthStore = create((set, get) => ({
   logout: async () => {
     await AsyncStorage.removeItem("delegation");
     await AsyncStorage.removeItem("isTutorialDone");
+    await AsyncStorage.removeItem("isTesting");
     await useProfileStore.getState().clearProfile();
 
     set({ identity: "", principal: "" });

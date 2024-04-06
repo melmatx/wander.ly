@@ -5,12 +5,13 @@ import * as Burnt from "burnt";
 import { format } from "date-fns";
 import React, {
   useCallback,
+  useEffect,
   useMemo,
   useReducer,
   useRef,
   useState,
 } from "react";
-import { Alert, SafeAreaView, ScrollView, View } from "react-native";
+import { Alert, Keyboard, SafeAreaView, ScrollView, View } from "react-native";
 import { AnimatedScanner, Avatar, Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
@@ -23,17 +24,32 @@ import avatarColorsConfig from "../consts/avatarConfig";
 import palette from "../consts/profilePalette";
 import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
+import fetchCountryFlags from "../utils/fetchCountryFlags";
+
+const profileState = {
+  name: "Mel Mathew",
+  country: "Philippines",
+};
 
 const Profile = ({ navigation }) => {
-  const [name, setName] = useState("Mel Mathew");
-  const [isViewing, toggleViewingMode] = useReducer((state) => !state, true);
+  const [profileData, setProfileData] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
+    profileState
+  );
+  const [isViewing, setIsViewing] = useState(true);
+  const [countries, setCountries] = useState([]);
 
+  const previousState = useRef({});
   const profileSheetRef = useRef(null);
   const infoSheetRef = useRef(null);
   const scrollViewRef = useRef(null);
 
   const logout = useAuthStore((state) => state.logout);
   const bottomTabHeight = useBottomTabBarHeight();
+
+  useEffect(() => {
+    fetchCountryFlags().then(setCountries);
+  }, []);
 
   const banners = useMemo(
     () => [
@@ -119,15 +135,23 @@ const Profile = ({ navigation }) => {
     infoSheetRef.current?.close();
   }, []);
 
-  const onEditProfile = useCallback(() => {
-    toggleViewingMode();
+  const onStartEdit = useCallback(() => {
+    // Save unedited data
+    previousState.current = profileData;
+  }, [profileData]);
 
-    // If the user is viewing the profile, do nothing
-    // TODO: Check if the data is the same as the previous data
-    if (isViewing) {
+  const onFinishEdit = useCallback(() => {
+    // Check if there are no changes to the profile
+    const hasNoChanges = Object.keys(profileData).every(
+      (key) => profileData[key] === previousState.current[key]
+    );
+
+    if (hasNoChanges) {
+      console.log("No changes");
       return;
     }
 
+    // Update profile
     Burnt.alert({
       title: "Updating profile",
       preset: "spinner",
@@ -143,13 +167,33 @@ const Profile = ({ navigation }) => {
         preset: "done",
         duration: 0.8,
       });
-    }, 1500);
-  }, [isViewing]);
+    }, 1000);
+  }, [profileData]);
 
-  const onCloseProfileSheet = useCallback(() => {
-    if (!isViewing) {
-      toggleViewingMode();
+  const onEditProfile = useCallback(() => {
+    setIsViewing((prev) => !prev);
+
+    if (isViewing) {
+      onStartEdit();
+    } else {
+      onFinishEdit();
     }
+  }, [isViewing, onFinishEdit, onStartEdit]);
+
+  const onCancelEdit = useCallback(() => {
+    if (isViewing) {
+      // Do nothing if not editing
+      return;
+    }
+
+    // Reset to previous data
+    setProfileData(previousState.current);
+
+    // Disable editing
+    setIsViewing(true);
+
+    // Close the keyboard
+    Keyboard.dismiss();
   }, [isViewing]);
 
   const renderSheetFooter = useCallback(
@@ -287,7 +331,7 @@ const Profile = ({ navigation }) => {
         snapPoints={["85%"]}
         enablePanDownToClose
         footerComponent={renderSheetFooter}
-        onClose={onCloseProfileSheet}
+        onClose={onCancelEdit}
       >
         <View
           style={{
@@ -296,9 +340,7 @@ const Profile = ({ navigation }) => {
             height: sizes.xlarge,
           }}
         >
-          {!isViewing && (
-            <Button link label="Cancel" onPress={toggleViewingMode} />
-          )}
+          {!isViewing && <Button link label="Cancel" onPress={onCancelEdit} />}
         </View>
 
         <View style={{ rowGap: sizes.large, padding: sizes.large }}>
@@ -310,9 +352,26 @@ const Profile = ({ navigation }) => {
           />
 
           <FormInput
-            value={name}
-            setData={setName}
+            value={profileData.name}
+            setData={(name) => setProfileData({ name })}
             item={{ label: "Name", isViewing }}
+          />
+          <FormInput
+            value={profileData.country}
+            setData={(country) => setProfileData({ country })}
+            item={{
+              label: "Country",
+              isViewing,
+              isDropdown: true,
+              dropdownData: [
+                {
+                  label: "Please select a country:",
+                  value: "",
+                  disabled: true,
+                },
+                ...countries,
+              ],
+            }}
           />
         </View>
       </BottomSheet>
