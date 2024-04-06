@@ -1,3 +1,10 @@
+# Landing Page
+
+```
+https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/
+```
+**Repository:** https://github.com/spcf-coMeLex/wander.ly-landing
+
 # How to run?
 
 1. yarn install
@@ -45,5 +52,3 @@ You can view your password by visiting: https://whatismyipaddress.com/
 
 - Mel Mathew C. Palaña (Full-stack developer)
 - Alexander John Cammado (Backend developer)
-
-> Don't forget to visit this project's [landing page](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
