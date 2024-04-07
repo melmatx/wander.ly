@@ -41,7 +41,7 @@ You can view your password by visiting: https://whatismyipaddress.com/
 5. After installing the dev build, login to your Expo account on the launcher screen of the app. (If it does not appear, shake or three-tap your screen)
 6. Run **eas update** on the root directory of the project and insert update message.
 7. The update will be be stored on the EAS servers. You can view it on the [Expo Dashboard](https://expo.dev/), and then selecting the project (e.g. Wanderly) -> Updates. 
-8. View the update on the Extensions tab of the launcher screen. Open it and voila! Turn off your internet connection and it will still work.
+8. Open the app on your device and view the update on the Extensions tab of the launcher screen. Open it and voila! Turn off your internet connection and it will still work.
 
 > **Note:** After doing this, you don't need to run prebuild and run:ios/android all the time anymore after making changes. You just need to run **eas update** and select the update on the launcher screen of the app.
 
