@@ -45,7 +45,7 @@ You can view your password by visiting: https://whatismyipaddress.com/
 
 > **Note:** After doing this, you don't need to run prebuild and run:ios/android all the time anymore after making changes. You just need to run **eas update** and select the update on the launcher screen of the app.
 
-> **Source:** https://docs.expo.dev/eas-update/expo-dev-client/
+> Source: https://docs.expo.dev/eas-update/expo-dev-client/
 
 # Environment Variables
 
