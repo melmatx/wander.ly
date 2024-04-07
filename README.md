@@ -19,7 +19,7 @@ https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/
 
 # Optional: Make Internet Identity work with Physical Devices Locally
 
-1. Install [LocalTunnel](https://localtunnel.me)
+1. Install [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud))
 2. lt --port 4943 (copy link to **EXPO_PUBLIC_TUNNEL_URL1**)
    - 4943 is based on the port specified on dfx.json
 3. lt --port 4943 again (copy link to **EXPO_PUBLIC_TUNNEL_URL2**)
