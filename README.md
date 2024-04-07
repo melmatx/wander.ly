@@ -62,7 +62,6 @@ You can view your password by visiting: https://whatismyipaddress.com/
 - [Installing DFX](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/)
 - [Installing Mops for Motoko](https://mops.one/docs/install)
 - [Installing Expo](https://docs.expo.dev/get-started/installation/)
-- [Installing Localtunnel](https://theboroer.github.io/localtunnel-www/)
 
 # Programmers
 
