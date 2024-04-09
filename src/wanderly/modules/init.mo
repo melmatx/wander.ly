@@ -1,5 +1,4 @@
 import Map "mo:map/Map";
-import Iter "mo:base/Iter";
 import { thash } "mo:map/Map";
 import Nat "mo:base/Nat";
 import Types "../types";
@@ -10,7 +9,7 @@ module {
   public func initTasks(tasks : Map.Map<Types.Id, Types.TaskWithId>) {
     let sampleTasks = Data.getSampleTasks();
 
-    for (task in Iter.fromArray(sampleTasks)) {
+    for (task in sampleTasks.vals()) {
       let currentTask = Map.add(tasks, thash, task.id, task);
 
       switch (currentTask) {
@@ -27,7 +26,7 @@ module {
   public func initPosts(posts : Map.Map<Types.Id, Types.PostWithId>) {
     let samplePosts = Data.getSamplePosts();
 
-    for (post in Iter.fromArray(samplePosts)) {
+    for (post in samplePosts.vals()) {
       let currentPost = Map.add(posts, thash, post.id, post);
 
       switch (currentPost) {
