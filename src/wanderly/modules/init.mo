@@ -1,6 +1,5 @@
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
-import Nat "mo:base/Nat";
 import Types "../types";
 import Data "data";
 import Debug "mo:base/Debug";
