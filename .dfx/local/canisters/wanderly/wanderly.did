@@ -1,0 +1,134 @@
+type UserWithId = 
+ record {
+   country: opt text;
+   id: principal;
+   name: opt text;
+   points: nat;
+ };
+type UserPayload = 
+ record {
+   country: opt text;
+   id: opt principal;
+   name: opt text;
+ };
+type TimeOfDay = 
+ variant {
+   Afternoon;
+   Evening;
+   Morning;
+ };
+type TaskWithId = 
+ record {
+   completedAt: text;
+   description: text;
+   emoji: text;
+   id: Id;
+   maxValue: float64;
+   taskType: TaskType;
+   timeEnd: text;
+   timeOfDay: TimeOfDay;
+   timeStart: text;
+   title: text;
+ };
+type TaskType = 
+ variant {
+   DistanceBased;
+   StepBased;
+   TimeBased;
+ };
+type Result = 
+ variant {
+   err: MessageResult;
+   ok: MessageResult;
+ };
+type PostWithId = 
+ record {
+   content: text;
+   id: Id;
+   image: text;
+   place: text;
+   points: nat;
+   taskId: Id;
+   userId: principal;
+ };
+type PostPayload = 
+ record {
+   content: text;
+   image: text;
+   place: text;
+   taskId: Id;
+ };
+type PostLike = 
+ record {
+   postId: Id;
+   userId: principal;
+ };
+type PostComplete = 
+ record {
+   awards: nat;
+   content: text;
+   id: Id;
+   image: text;
+   likes: nat;
+   place: text;
+   points: nat;
+   taskId: Id;
+   userId: principal;
+ };
+type PostAward = 
+ record {
+   postId: Id;
+   userId: principal;
+ };
+type MessageResult = record {message: text;};
+type Id = text;
+service : {
+  _init: () -> ();
+  awardPost: (record {postId: Id;}) -> (Result);
+  claimAllPoints: () -> (Result);
+  claimPointsByPost: (record {postId: Id;}) -> (Result);
+  createPost: (PostPayload) -> (Result);
+  getAllPostAwards: () -> (vec record {
+                                 Id;
+                                 PostAward;
+                               });
+  getAllPostLikes: () -> (vec record {
+                                Id;
+                                PostLike;
+                              });
+  getAllPosts: () -> (vec record {
+                            Id;
+                            PostComplete;
+                          });
+  getAllTasks: () -> (vec record {
+                            Id;
+                            TaskWithId;
+                          });
+  getAllUsers: () -> (vec record {
+                            principal;
+                            UserWithId;
+                          });
+  getAwardsByPost: (record {postId: Id;}) -> (vec record {
+                                                    Id;
+                                                    PostAward;
+                                                  });
+  getLikesByPost: (record {postId: Id;}) -> (vec record {
+                                                   Id;
+                                                   PostLike;
+                                                 });
+  getPostById: (record {id: Id;}) -> (opt PostWithId);
+  getPostsByUser: (record {userId: opt principal;}) ->
+   (vec record {
+          Id;
+          PostWithId;
+        });
+  getTaskById: (record {id: Id;}) -> (opt TaskWithId);
+  getUser: (record {id: opt principal;}) -> (opt UserWithId);
+  likeOrDislikePost: (record {postId: Id;}) -> (Result);
+  updateOrCreateUser: (UserPayload) -> (Result);
+  updatePostContent: (record {
+                        content: text;
+                        postId: Id;
+                      }) -> (Result);
+  whoami: () -> (principal);
+}

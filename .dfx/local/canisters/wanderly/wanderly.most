@@ -1,0 +1,43 @@
+// Version: 1.0.0
+type Id__1 = Text;
+type PostAward__1 = {postId : Id__1; userId : Principal};
+type PostLike__1 = {postId : Id__1; userId : Principal};
+type PostWithId__1 =
+  {
+    content : Text;
+    id : Id__1;
+    image : Text;
+    place : Text;
+    points : Nat;
+    taskId : Id__1;
+    userId : Principal
+  };
+type TaskType__1 = {#DistanceBased; #StepBased; #TimeBased};
+type TaskWithId__1 =
+  {
+    completedAt : Text;
+    description : Text;
+    emoji : Text;
+    id : Id__1;
+    maxValue : Float;
+    taskType : TaskType__1;
+    timeEnd : Text;
+    timeOfDay : TimeOfDay__1;
+    timeStart : Text;
+    title : Text
+  };
+type TimeOfDay__1 = {#Afternoon; #Evening; #Morning};
+type UserWithId__1 =
+  {country : ?Text; id : Principal; name : ?Text; points : Nat};
+actor {
+  stable postAwards :
+    [var ?([var ?Id__1], [var ?PostAward__1], [var Nat], [var Nat32])];
+  stable postLikes :
+    [var ?([var ?Id__1], [var ?PostLike__1], [var Nat], [var Nat32])];
+  stable posts :
+    [var ?([var ?Id__1], [var ?PostWithId__1], [var Nat], [var Nat32])];
+  stable tasks :
+    [var ?([var ?Id__1], [var ?TaskWithId__1], [var Nat], [var Nat32])];
+  stable users :
+    [var ?([var ?Principal], [var ?UserWithId__1], [var Nat], [var Nat32])]
+};

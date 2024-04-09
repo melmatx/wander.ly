@@ -1,281 +1,384 @@
+import Init "modules/init";
 import Map "mo:map/Map";
-import { phash } "mo:map/Map";
 import { thash } "mo:map/Map";
+import { phash } "mo:map/Map";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
-import Float "mo:base/Float";
-import Text "mo:base/Text";
-import Nat "mo:base/Nat";
-import Iter "mo:base/Iter";
-import Array "mo:base/Array";
-import Buffer "mo:base/Buffer";
-import Source "mo:uuid/async/SourceV4";
-import UUID "mo:uuid/UUID";
+import Option "mo:base/Option";
+import Types "types";
+import Utils "utils";
+import Service "modules/service";
 
 actor Wanderly {
-  // Message
-  type MessageResult = {
-    message : Text;
+  stable let users = Map.new<Principal, Types.UserWithId>();
+  stable let tasks = Map.new<Types.Id, Types.TaskWithId>();
+  stable let posts = Map.new<Types.Id, Types.PostWithId>();
+  stable let postLikes = Map.new<Types.Id, Types.PostLike>();
+  stable let postAwards = Map.new<Types.Id, Types.PostAward>();
+
+  let initialPoints = 10;
+
+  public shared ({ caller }) func _init() : async () {
+    Init.initTasks(tasks);
+    Init.initPosts(posts);
+
+    ignore await updateOrCreateUser({
+      id = ?caller;
+      name = null;
+      country = null;
+    });
   };
 
-  //* TYPES
-  type User = {
-    id : ?Text;
-    nickname : Text;
-    achievementsId : ?Text;
-    points : ?Float;
+  public shared ({ caller }) func getUser({ id : ?Principal }) : async ?Types.UserWithId {
+    let userId = Option.get(id, caller);
+
+    return Map.get(users, phash, userId);
   };
 
-  type Achievement = {
-    emoji : Text;
-    title : Text;
-    description : Text;
-    multiplier : Float;
-    tradable : Bool;
+  public func getAllUsers() : async [(Principal, Types.UserWithId)] {
+    return Map.toArray(users);
   };
 
-  type Task = {
-    id : ?Text;
-    title : Text;
-    description : Text;
-    emoji : Text;
-    timeStart : Text;
-    timeEnd : Text;
-    timeOfDay : {
-      #Morning;
-      #Afternoon;
-      #Evening;
-    };
-    taskType : {
-      #DistanceBased;
-      #StepBased;
-      #TimeBased;
-    };
+  public func getAllTasks() : async [(Types.Id, Types.TaskWithId)] {
+    return Map.toArray(tasks);
   };
 
-  type UserTask = Task and {
-    progress : Float;
-    maxValue : Float;
-    isCompleted : Bool;
+  public func getAllPosts() : async [(Types.Id, Types.PostComplete)] {
+    let completePosts = Service.getAllPosts(posts, postLikes, postAwards);
+
+    return Map.toArray(completePosts);
   };
 
-  type UserAchievement = {
-    userId : Text;
-    fullName : Text;
-    achievementList : [Achievement];
+  public func getAllPostLikes() : async [(Types.Id, Types.PostLike)] {
+    return Map.toArray(postLikes);
   };
 
-  //* UUID Generator
-  func generateUUID() : async Text {
-    let g = Source.Source();
-    return UUID.toText(await g.new());
+  public func getAllPostAwards() : async [(Types.Id, Types.PostAward)] {
+    return Map.toArray(postAwards);
   };
 
-  //* STABLE HASH-MAP
-  stable let users = Map.new<Principal, User>();
-  stable let achivementList = Map.new<Text, Achievement>();
-  stable let userAchievements = Map.new<Text, Achievement>();
-  stable let morningTaskList = Map.new<Text, Task>();
-  stable let afternoonTaskList = Map.new<Text, Task>();
-  stable let eveningTaskList = Map.new<Text, Task>();
+  public shared ({ caller }) func getPostsByUser({ userId : ?Principal }) : async [(Types.Id, Types.PostWithId)] {
+    let filteredPosts = Service.getPostsOfUser(posts, Option.get(userId, caller));
 
-  // Needed to get the principal id of the user
-  public shared (msg) func whoami() : async Principal {
-    msg.caller;
+    return Map.toArray(filteredPosts);
   };
 
-  //* USER
-  public shared ({ caller }) func createUser(payload : User) : async Result.Result<MessageResult and { id : Text }, MessageResult> {
-    if (Principal.isAnonymous(caller)) {
+  public func getPostById({ id : Types.Id }) : async ?Types.PostWithId {
+    return Map.get(posts, thash, id);
+  };
+
+  public func getTaskById({ id : Types.Id }) : async ?Types.TaskWithId {
+    return Map.get(tasks, thash, id);
+  };
+
+  public func getLikesByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostLike)] {
+    let filteredLikes = Service.getLikesOfPost(postLikes, postId);
+
+    return Map.toArray(filteredLikes);
+  };
+
+  public func getAwardsByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostAward)] {
+    let filteredAwards = Service.getAwardsOfPost(postAwards, postId);
+
+    return Map.toArray(filteredAwards);
+  };
+
+  public shared ({ caller }) func createPost(postPayload : Types.PostPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
       return #err({ message = "Anonymous identity found!" });
     };
 
-    if (Map.contains(users, phash, caller) != null) {
-      return #err({ message = "User already exist!" });
+    // Check if task exists
+    let containsTask = Option.get(Map.contains(tasks, thash, postPayload.taskId), false);
+
+    if (not containsTask) {
+      return #err({ message = "Task not found!" });
     };
 
-    // Generate user id
-    let userId : Text = do {
-      switch (payload.id) {
-        case (null) {
-          await generateUUID();
-        };
-        case (?id) {
-          id;
-        };
-      };
+    // Generate id
+    let newId : Types.Id = await Utils.generateUUID();
+
+    // Create new post
+    let newPost : Types.PostWithId = {
+      postPayload with id = newId;
+      userId = caller;
+      points = 0;
     };
 
-    // Generate user achievements id
-    let achievementsId : Text = do {
-      switch (payload.id) {
-        case (null) {
-          await generateUUID();
-        };
-        case (?id) {
-          id;
-        };
-      };
-    };
-
-    let newUser : User = {
-      id = ?userId;
-      nickname = payload.nickname;
-      achievementsId = ?achievementsId;
-      points = ?0.0;
-    };
-
-    // Create new user
-    switch (Map.add(users, phash, caller, newUser)) {
+    // Check if creation was successful
+    switch (Map.add(posts, thash, newId, newPost)) {
       case (null) {
-        return #ok({
-          message = "User account created successfully!";
-          id = userId;
-        });
+        return #ok({ message = "Post created successfully!" });
       };
-      case (?user) {
-        return #err({ message = "User already exists!" });
+      case (?post) {
+        return #err({ message = "Post already exists!" });
       };
     };
   };
 
-  // Update User nickname
-  public shared ({ caller }) func updateUserNickname(newUsername : User) : async Result.Result<MessageResult, MessageResult> {
-    switch (Map.get(users, phash, caller)) {
-      case (null) {
-        return #err({ message = "user not found" });
-      };
-      case (?user) {
-        let newUserNickname : User = {
-          id = user.id;
-          nickname = newUsername.nickname;
-          achievementsId = user.achievementsId;
-          points = user.points;
-        };
-
-        Map.set(users, phash, caller, newUserNickname);
-        return #ok({ message = "User nickname updated successfully!" });
-      };
-    };
-  };
-
-  // Get specific user
-  public func getUser(principal : Principal) : async Result.Result<?Text, MessageResult> {
-    switch (Map.get(users, phash, principal)) {
-      case (null) {
-        return #err({ message = "No user found" });
-      };
-      case (?user) {
-        return #ok(?user.nickname);
-      };
-    };
-  };
-
-  // TASK
-  public func createTask(taskKey : Text, taskInfo : Task) : async Result.Result<MessageResult, MessageResult> {
-    // Generating task UUID
-    let taskId : Text = do {
-      switch (taskInfo.id) {
-        case (null) {
-          await generateUUID();
-        };
-        case (?id) {
-          id;
-        };
-      };
+  public shared ({ caller }) func updateOrCreateUser(userPayload : Types.UserPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      return #err({ message = "Anonymous identity found!" });
     };
 
-    let newTaskInfo : Task = {
-      id = ?taskId;
-      title = taskInfo.title;
-      description = taskInfo.description;
-      emoji = taskInfo.emoji;
-      timeStart = taskInfo.timeStart;
-      timeEnd = taskInfo.timeEnd;
-      timeOfDay = taskInfo.timeOfDay;
-      taskType = taskInfo.taskType;
-    };
+    // Checks if the user is first time created
+    var isNewUser = false;
 
-    if (taskInfo.timeOfDay == #Morning) {
-      switch (Map.add(morningTaskList, thash, taskKey, newTaskInfo)) {
-        case (null) {
-          return #ok({ message = "Task created successfully" });
+    // Get the id from the payload if it exists, else use who called this func
+    let userId = Option.get(userPayload.id, caller);
+
+    let currentUser = Map.update(
+      users,
+      phash,
+      userId,
+      func(id : Principal, user : ?Types.UserWithId) : ?Types.UserWithId {
+        switch (user) {
+          case (null) {
+            isNewUser := true;
+
+            let newUser : Types.UserWithId = {
+              userPayload with id = userId;
+              points = initialPoints;
+            };
+
+            Option.make(newUser);
+          };
+          case (?user) {
+            // Updates the user
+            Option.make({
+              user with name = userPayload.name;
+              country = userPayload.country;
+            });
+          };
         };
-        case (?value) {
-          return #err({ message = "Task already exist" });
-        };
-      };
-    } else if (taskInfo.timeOfDay == #Afternoon) {
-      switch (Map.add(afternoonTaskList, thash, taskKey, newTaskInfo)) {
-        case (null) {
-          return #ok({ message = "Task created successfully" });
-        };
-        case (?value) {
-          return #err({ message = "Task already exist" });
-        };
-      };
+      },
+    );
+
+    if (isNewUser) {
+      return #ok({ message = "New user created!" });
     } else {
-      switch (Map.add(eveningTaskList, thash, taskKey, newTaskInfo)) {
-        case (null) {
-          return #ok({ message = "Task created successfully" });
+      return #ok({ message = "User updated!" });
+    };
+  };
+
+  public shared ({ caller }) func updatePostContent({
+    postId : Types.Id;
+    content : Text;
+  }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      return #err({ message = "Anonymous identity found!" });
+    };
+
+    // Check if user owns the post
+    switch (Map.get(posts, thash, postId)) {
+      case (null) {
+        return #err({ message = "Post not found!" });
+      };
+      case (?post) {
+        if (post.userId != caller) {
+          return #err({
+            message = "You are not authorized to update this post!";
+          });
         };
-        case (?value) {
-          return #err({ message = "Task already exist" });
+      };
+    };
+
+    switch (
+      Map.update(
+        posts,
+        thash,
+        postId,
+        func(id : Types.Id, post : ?Types.PostWithId) : ?Types.PostWithId {
+          Option.map(
+            post,
+            func(p : Types.PostWithId) : Types.PostWithId {
+              return { p with content };
+            },
+          );
+        },
+      )
+    ) {
+      case (null) {
+        return #err({ message = "No changes made!" });
+      };
+      case (?post) {
+        return #ok({ message = "Post successfully updated!" });
+      };
+    };
+  };
+
+  public shared ({ caller }) func likeOrDislikePost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      return #err({ message = "Anonymous identity found!" });
+    };
+
+    // Check if post exists
+    switch (Map.get(posts, thash, postId)) {
+      case (null) {
+        return #err({ message = "Post not found!" });
+      };
+      case (?post) {
+        // Check if post is already liked
+        switch (
+          Map.find(
+            postLikes,
+            func(id : Types.Id, postLike : Types.PostLike) : Bool {
+              postLike.userId == caller and postLike.postId == postId;
+            },
+          )
+        ) {
+          // If not liked, then Like the post
+          case (null) {
+            let newId = await Utils.generateUUID();
+
+            let newPostLike : Types.PostLike = {
+              userId = caller;
+              postId;
+            };
+
+            switch (Map.add(postLikes, thash, newId, newPostLike)) {
+              case (null) {
+                return #ok({ message = "Post liked!" });
+              };
+              case (?postLike) {
+                return #err({
+                  message = "An error happened! (Post already liked?)";
+                });
+              };
+            };
+          };
+          // Unlike the post
+          case (?(id, postLike)) {
+            Map.delete(postLikes, thash, id);
+
+            return #ok({ message = "Post unliked!" });
+          };
         };
       };
     };
-
   };
 
-  public func getAllMorningTasks() : async [(Text, Task)] {
-    return Map.toArray(morningTaskList);
-  };
+  public shared ({ caller }) func awardPost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      return #err({ message = "Anonymous identity found!" });
+    };
 
-  public func getAllAfternoonTasks() : async [(Text, Task)] {
-    return Map.toArray(afternoonTaskList);
-  };
-
-  public func getAllEveningTasks() : async [(Text, Task)] {
-    return Map.toArray(eveningTaskList);
-  };
-
-  public func getMorningTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
-    switch (Map.get(morningTaskList, thash, taskName)) {
+    switch (Map.get(posts, thash, postId)) {
       case (null) {
-        return #err({ message = "No task found" });
+        return #err({ message = "Post not found!" });
       };
-      case (?morningTask) {
-        return #ok(morningTask);
+      case (?post) {
+        // Check if post is already awarded
+        switch (
+          Map.find(
+            postAwards,
+            func(id : Types.Id, postAward : Types.PostAward) : Bool {
+              postAward.userId == caller and postAward.postId == postId;
+            },
+          )
+        ) {
+          case (null) {
+            // Check if user has available points
+            let currentUser = Option.getMapped(
+              Map.get(users, phash, caller),
+              func(user : Types.UserWithId) : { points : Nat } {
+                return { points = user.points };
+              },
+              { points = 0 },
+            );
+
+            if (currentUser.points <= 0) {
+              return #err({ message = "You don't have enough points!" });
+            };
+
+            // Deduct one point
+            if (not Service.modifyUserPoints(users, caller, 1, #deduct)) {
+              return #err({ message = "Failed to deduct points for user!" });
+            };
+
+            // Increase points of post by one
+            if (not Service.modifyPostPoints(posts, postId, 1, #add)) {
+              return #err({ message = "Failed to increase points for post!" });
+            };
+
+            // Add new post award
+            let newId = await Utils.generateUUID();
+
+            let newPostAward : Types.PostAward = {
+              userId = caller;
+              postId;
+            };
+
+            switch (Map.add(postAwards, thash, newId, newPostAward)) {
+              case (null) {
+                return #ok({ message = "Post awarded!" });
+              };
+              case (?postLike) {
+                return #err({
+                  message = "An error happened! (Post already awarded?)";
+                });
+              };
+            };
+          };
+          // Dismiss awarding
+          case (?(id, postAward)) {
+            return #err({
+              message = "Post already awarded! You can't unaward posts.";
+            });
+          };
+        };
       };
     };
   };
-  public func getAfternoonTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
-    switch (Map.get(afternoonTaskList, thash, taskName)) {
+
+  public shared ({ caller }) func claimPointsByPost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    switch (Map.get(posts, thash, postId)) {
       case (null) {
-        return #err({ message = "No task found" });
+        return #err({ message = "Post not found!" });
       };
-      case (?afternoonTask) {
-        return #ok(afternoonTask);
+      case (?post) {
+        if (post.userId != caller) {
+          return #err({
+            message = "You are not authorized to claim points on this post!";
+          });
+        };
+
+        if (not Service.modifyUserPoints(users, caller, post.points, #add)) {
+          return #err({ message = "Failed to add points for user!" });
+        };
+
+        if (not Service.modifyPostPoints(posts, postId, post.points, #deduct)) {
+          return #err({ message = "Failed to deduct points for post!" });
+        };
+
+        return #ok({ message = "Points for post claimed successfully!" });
       };
     };
   };
-  public func getEveningTaskList(taskName : Text) : async Result.Result<Task, MessageResult> {
-    switch (Map.get(eveningTaskList, thash, taskName)) {
-      case (null) {
-        return #err({ message = "No task found" });
+
+  public shared ({ caller }) func claimAllPoints() : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    let userPosts = Map.filter(
+      posts,
+      thash,
+      func(id : Types.Id, post : Types.PostWithId) : Bool {
+        post.userId == caller;
+      },
+    );
+
+    for (post in Map.vals(userPosts)) {
+      if (not Service.modifyUserPoints(users, caller, post.points, #add)) {
+        return #err({ message = "Failed to add points for user!" });
       };
-      case (?eveningTask) {
-        return #ok(eveningTask);
+
+      if (not Service.modifyPostPoints(posts, post.id, 0, #deduct)) {
+        return #err({ message = "Failed to deduct points for post!" });
       };
     };
+
+    return #ok({ message = "All points claimed successfully!" });
   };
 
-  // ACHIEVEMENTS
-
-  // REWARDS
-
-  // POST
-
-  // POINTS
-  // public func computeDailyPoints();
+  public shared (msg) func whoami() : async Principal {
+    msg.caller;
+  };
 };
