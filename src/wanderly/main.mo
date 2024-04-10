@@ -504,7 +504,7 @@ actor Wanderly {
           });
         };
 
-        if (post.points <= 0) {
+        if (post.points <= 0.0) {
           return #err({ message = "No points to claim!" });
         };
 
@@ -516,7 +516,9 @@ actor Wanderly {
           Debug.trap("Failed to deduct points for post!");
         };
 
-        return #ok({ message = "Points for post claimed successfully!" });
+        return #ok({
+          message = "Claimed " # debug_show (post.points) # " points successfully!";
+        });
       };
     };
   };
@@ -533,11 +535,14 @@ actor Wanderly {
       Debug.trap("User not found!");
     };
 
+    // Get all posts of user
     let userPosts = Service.getPostsOfUser(posts, caller);
 
     // Claim points for each post of the user
+    var pointsClaimed = 0.0;
+
     label claimLoop for (post in Map.vals(userPosts)) {
-      if (post.points <= 0) {
+      if (post.points <= 0.0) {
         Debug.print("No points to claim for post " # debug_show (post.id));
         continue claimLoop;
       };
@@ -549,9 +554,17 @@ actor Wanderly {
       if (not Service.modifyPostPoints(posts, post.id, post.points, #deduct)) {
         Debug.trap("Failed to deduct points for post!");
       };
+
+      pointsClaimed += post.points;
     };
 
-    return #ok({ message = "All points claimed successfully!" });
+    if (pointsClaimed > 0.0) {
+      return #ok({
+        message = "Claimed " # debug_show (pointsClaimed) # " points successfully!";
+      });
+    } else {
+      return #err({ message = "No points to claim!" });
+    };
   };
 
   public shared ({ caller }) func completeTask({ taskId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {

@@ -1,8 +1,8 @@
-](üøÿÿÿÿÿÿÿ:²>
+Z(¨ûÿÿÿÿÿÿÿ:²>
 ø‘E
 €’E
 €€@
-™ë¯¹9
+ÛÅ¯¹1
 	authorize
 clear
 commit_batch
@@ -31,7 +31,7 @@
 validate_grant_permission
 validate_revoke_permission
 validate_take_ownershipapi_versioncertified_treegetget_asset_properties	get_chunkhttp_request!http_request_streaming_callbacklist
-retrieve ]*¦8
+retrieve Z*¦8
 Ö7
 candid:serviceÃ7œ7type BatchId = nat;
 type ChunkId = nat;
@@ -298,13 +298,15 @@ service: (asset_canister_args: opt AssetCanisterArgs) -> {
  €ˆî…f<8‚owžÕx6k©Ê4ÙbzX²ð[ú¬7
 K
 supported_certificate_versions)1,2 ŽÔ»bØ—øÑŒ;ZâFATbà€'¨ø_¿M»'‡&û—2 <†ÙêÖÞq3¹÷‡ßL©þî¾¨ƒ]>Õ”´~èžl·08Z
-xˆÓ¢ ´D0X49äžÄJÖä–ž	þÚðw¤ÿDú+Ý¨$#²Ž…‹û¸€šžÊ
+xˆÒ¢ ËSNÝÏqØµX“ÿ
+§LQbæ¨
+O¶*½¿µÕ‰0²ä¹û¸€šžÊ
 
 €      Ê
-°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛíÒrUçÏ          ú
-è°§ä¬¹â‚                ¢âK¢	×³±p¢	éëÛ6¢
+°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛíÒ»çÏ          ú
+ðƒí®ƒŽºâ‚                ¢”C¢	×³±p¢	©Þ6¢
 ì™ýÓª¦
-KÀþáÇ—¤¹â"
+K€×Ìœº…ºâ"
 
 
 €      */
@@ -313,7 +315,7 @@ KÀþáÇ—¤¹â"
 €      
 
 °INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛí
-Uˆ´¸™Ž¥¹â!
+U°É×Ç¬†ºâ!
 
 °INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛí:$ <†ÙêÖÞq3¹÷‡ßL©þî¾¨ƒ]>Õ”´~èžl·0²                º P9'Œ          Â ÊP
 
