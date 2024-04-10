@@ -1,4 +1,6 @@
 // Version: 1.0.0
+type AchievementWithId__1 =
+  {description : Text; emoji : Text; id : Id__1; name : Text; points : Float};
 type Id__1 = Text;
 type PostAward__1 = {postId : Id__1; userId : Principal};
 type PostLike__1 = {postId : Id__1; userId : Principal};
@@ -8,15 +10,17 @@ type PostWithId__1 =
     id : Id__1;
     image : Text;
     place : Text;
-    points : Nat;
+    points : Float;
     taskId : Id__1;
     userId : Principal
   };
+type RewardWithId__1 = Reward__1;
+type Reward__1 = {id : Id__1; name : Text; points : Float};
 type TaskType__1 = {#DistanceBased; #StepBased; #TimeBased};
 type TaskWithId__1 =
   {
-    completedAt : Text;
     description : Text;
+    difficultyFactor : Float;
     emoji : Text;
     id : Id__1;
     maxValue : Float;
@@ -27,17 +31,39 @@ type TaskWithId__1 =
     title : Text
   };
 type TimeOfDay__1 = {#Afternoon; #Evening; #Morning};
+type UserAchievement__1 =
+  {
+    achievementId : Id__1;
+    completedAt : Text;
+    receivedPoints : Float;
+    userId : Principal
+  };
+type UserCompletedTask__1 =
+  {
+    completedAt : Text;
+    receivedPoints : Float;
+    taskId : Id__1;
+    userId : Principal
+  };
 type UserWithId__1 =
-  {country : ?Text; id : Principal; name : ?Text; points : Nat};
+  {country : ?Text; id : Principal; name : ?Text; points : Float};
 actor {
+  stable achievements :
+    [var ?([var ?Id__1], [var ?AchievementWithId__1], [var Nat], [var Nat32])];
   stable postAwards :
     [var ?([var ?Id__1], [var ?PostAward__1], [var Nat], [var Nat32])];
   stable postLikes :
     [var ?([var ?Id__1], [var ?PostLike__1], [var Nat], [var Nat32])];
   stable posts :
     [var ?([var ?Id__1], [var ?PostWithId__1], [var Nat], [var Nat32])];
+  stable rewards :
+    [var ?([var ?Id__1], [var ?RewardWithId__1], [var Nat], [var Nat32])];
   stable tasks :
     [var ?([var ?Id__1], [var ?TaskWithId__1], [var Nat], [var Nat32])];
+  stable userAchievements :
+    [var ?([var ?Id__1], [var ?UserAchievement__1], [var Nat], [var Nat32])];
+  stable userCompletedTasks :
+    [var ?([var ?Id__1], [var ?UserCompletedTask__1], [var Nat], [var Nat32])];
   stable users :
     [var ?([var ?Principal], [var ?UserWithId__1], [var Nat], [var Nat32])]
 };

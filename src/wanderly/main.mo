@@ -1,25 +1,36 @@
 import Init "modules/init";
-import Map "mo:map/Map";
-import { thash } "mo:map/Map";
-import { phash } "mo:map/Map";
-import Result "mo:base/Result";
-import Principal "mo:base/Principal";
-import Option "mo:base/Option";
+import Service "modules/service";
 import Types "types";
 import Utils "utils";
-import Service "modules/service";
+
+import DateTime "mo:datetime/DateTime";
+import Map "mo:map/Map";
+import { phash } "mo:map/Map";
+import { thash } "mo:map/Map";
+
+import Debug "mo:base/Debug";
+import Option "mo:base/Option";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 
 actor Wanderly {
   stable let users = Map.new<Principal, Types.UserWithId>();
   stable let tasks = Map.new<Types.Id, Types.TaskWithId>();
+  stable let userCompletedTasks = Map.new<Types.Id, Types.UserCompletedTask>();
+  stable let achievements = Map.new<Types.Id, Types.AchievementWithId>();
+  stable let userAchievements = Map.new<Types.Id, Types.UserAchievement>();
+  stable let rewards = Map.new<Types.Id, Types.RewardWithId>();
   stable let posts = Map.new<Types.Id, Types.PostWithId>();
   stable let postLikes = Map.new<Types.Id, Types.PostLike>();
   stable let postAwards = Map.new<Types.Id, Types.PostAward>();
 
-  let initialPoints = 10;
+  private let initialPoints = 10.0;
+  private let awardPoints = 1.0;
 
   public shared ({ caller }) func _init() : async () {
     Init.initTasks(tasks);
+    Init.initAchievements(achievements);
+    Init.initRewards(rewards);
     Init.initPosts(posts);
 
     ignore await updateOrCreateUser({
@@ -29,10 +40,17 @@ actor Wanderly {
     });
   };
 
-  public shared ({ caller }) func getUser({ id : ?Principal }) : async ?Types.UserWithId {
+  public shared ({ caller }) func getUser({ id : ?Principal }) : async Types.UserWithId {
     let userId = Option.get(id, caller);
 
-    return Map.get(users, phash, userId);
+    switch (Map.get(users, phash, userId)) {
+      case (null) {
+        Debug.trap("User not found!");
+      };
+      case (?user) {
+        return user;
+      };
+    };
   };
 
   public func getAllUsers() : async [(Principal, Types.UserWithId)] {
@@ -41,6 +59,22 @@ actor Wanderly {
 
   public func getAllTasks() : async [(Types.Id, Types.TaskWithId)] {
     return Map.toArray(tasks);
+  };
+
+  public func getAllUserCompletedTasks() : async [(Types.Id, Types.UserCompletedTask)] {
+    return Map.toArray(userCompletedTasks);
+  };
+
+  public func getAllAchievements() : async [(Types.Id, Types.AchievementWithId)] {
+    return Map.toArray(achievements);
+  };
+
+  public func getAllUserAchievements() : async [(Types.Id, Types.UserAchievement)] {
+    return Map.toArray(userAchievements);
+  };
+
+  public func getAllRewards() : async [(Types.Id, Types.RewardWithId)] {
+    return Map.toArray(rewards);
   };
 
   public func getAllPosts() : async [(Types.Id, Types.PostComplete)] {
@@ -57,18 +91,61 @@ actor Wanderly {
     return Map.toArray(postAwards);
   };
 
+  public shared ({ caller }) func getCompletedTasksByUser({
+    userId : ?Principal;
+  }) : async [(Types.Id, Types.UserCompletedTaskResult)] {
+    let user = Option.get(userId, caller);
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, user), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    let filteredTasks = Service.getCompletedTasksOfUser(userCompletedTasks, tasks, user);
+
+    return Map.toArray(filteredTasks);
+  };
+
+  public shared ({ caller }) func getAchievementsByUser({
+    userId : ?Principal;
+  }) : async [(Types.Id, Types.UserAchievementResult)] {
+    let user = Option.get(userId, caller);
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, user), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    let filteredAchievements = Service.getAchievementsOfUser(userAchievements, achievements, user);
+
+    return Map.toArray(filteredAchievements);
+  };
+
   public shared ({ caller }) func getPostsByUser({ userId : ?Principal }) : async [(Types.Id, Types.PostWithId)] {
-    let filteredPosts = Service.getPostsOfUser(posts, Option.get(userId, caller));
+    let user = Option.get(userId, caller);
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, user), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    let filteredPosts = Service.getPostsOfUser(posts, user);
 
     return Map.toArray(filteredPosts);
   };
 
-  public func getPostById({ id : Types.Id }) : async ?Types.PostWithId {
-    return Map.get(posts, thash, id);
-  };
-
   public func getTaskById({ id : Types.Id }) : async ?Types.TaskWithId {
     return Map.get(tasks, thash, id);
+  };
+
+  public func getPostById({ id : Types.Id }) : async ?Types.PostWithId {
+    return Map.get(posts, thash, id);
   };
 
   public func getLikesByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostLike)] {
@@ -85,13 +162,20 @@ actor Wanderly {
 
   public shared ({ caller }) func createPost(postPayload : Types.PostPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
-      return #err({ message = "Anonymous identity found!" });
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
     };
 
     // Check if task exists
-    let containsTask = Option.get(Map.contains(tasks, thash, postPayload.taskId), false);
+    let taskExists = Option.get(Map.contains(tasks, thash, postPayload.taskId), false);
 
-    if (not containsTask) {
+    if (not taskExists) {
       return #err({ message = "Task not found!" });
     };
 
@@ -102,7 +186,7 @@ actor Wanderly {
     let newPost : Types.PostWithId = {
       postPayload with id = newId;
       userId = caller;
-      points = 0;
+      points = 0.0;
     };
 
     // Check if creation was successful
@@ -118,7 +202,7 @@ actor Wanderly {
 
   public shared ({ caller }) func updateOrCreateUser(userPayload : Types.UserPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
-      return #err({ message = "Anonymous identity found!" });
+      Debug.trap("Anonymous identity found!");
     };
 
     // Checks if the user is first time created
@@ -166,15 +250,23 @@ actor Wanderly {
     content : Text;
   }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
-      return #err({ message = "Anonymous identity found!" });
+      Debug.trap("Anonymous identity found!");
     };
 
-    // Check if user owns the post
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Check if post exists
     switch (Map.get(posts, thash, postId)) {
       case (null) {
         return #err({ message = "Post not found!" });
       };
       case (?post) {
+        // Check if user owns the post
         if (post.userId != caller) {
           return #err({
             message = "You are not authorized to update this post!";
@@ -209,7 +301,14 @@ actor Wanderly {
 
   public shared ({ caller }) func likeOrDislikePost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
-      return #err({ message = "Anonymous identity found!" });
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
     };
 
     // Check if post exists
@@ -241,9 +340,7 @@ actor Wanderly {
                 return #ok({ message = "Post liked!" });
               };
               case (?postLike) {
-                return #err({
-                  message = "An error happened! (Post already liked?)";
-                });
+                Debug.trap("An error happened! (Post already liked?)");
               };
             };
           };
@@ -260,9 +357,17 @@ actor Wanderly {
 
   public shared ({ caller }) func awardPost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
-      return #err({ message = "Anonymous identity found!" });
+      Debug.trap("Anonymous identity found!");
     };
 
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Check if post exists
     switch (Map.get(posts, thash, postId)) {
       case (null) {
         return #err({ message = "Post not found!" });
@@ -281,24 +386,25 @@ actor Wanderly {
             // Check if user has available points
             let currentUser = Option.getMapped(
               Map.get(users, phash, caller),
-              func(user : Types.UserWithId) : { points : Nat } {
+              func(user : Types.UserWithId) : { points : Float } {
                 return { points = user.points };
               },
-              { points = 0 },
+              { points = 0.0 },
             );
 
-            if (currentUser.points <= 0) {
-              return #err({ message = "You don't have enough points!" });
+            // Check if the user has available balance
+            if (currentUser.points < awardPoints) {
+              Debug.trap("You don't have enough points!");
             };
 
-            // Deduct one point
-            if (not Service.modifyUserPoints(users, caller, 1, #deduct)) {
-              return #err({ message = "Failed to deduct points for user!" });
+            // Deduct points of user
+            if (not Service.modifyUserPoints(users, caller, awardPoints, #deduct)) {
+              Debug.trap("Failed to deduct points for user!");
             };
 
-            // Increase points of post by one
-            if (not Service.modifyPostPoints(posts, postId, 1, #add)) {
-              return #err({ message = "Failed to increase points for post!" });
+            // Increase points of post based on award
+            if (not Service.modifyPostPoints(posts, postId, awardPoints, #add)) {
+              Debug.trap("Failed to increase points for post!");
             };
 
             // Add new post award
@@ -313,10 +419,8 @@ actor Wanderly {
               case (null) {
                 return #ok({ message = "Post awarded!" });
               };
-              case (?postLike) {
-                return #err({
-                  message = "An error happened! (Post already awarded?)";
-                });
+              case (?postAward) {
+                Debug.trap("An error happened! (Post already awarded?)");
               };
             };
           };
@@ -332,6 +436,18 @@ actor Wanderly {
   };
 
   public shared ({ caller }) func claimPointsByPost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Check if post exists
     switch (Map.get(posts, thash, postId)) {
       case (null) {
         return #err({ message = "Post not found!" });
@@ -344,11 +460,11 @@ actor Wanderly {
         };
 
         if (not Service.modifyUserPoints(users, caller, post.points, #add)) {
-          return #err({ message = "Failed to add points for user!" });
+          Debug.trap("Failed to add points for user!");
         };
 
         if (not Service.modifyPostPoints(posts, postId, post.points, #deduct)) {
-          return #err({ message = "Failed to deduct points for post!" });
+          Debug.trap("Failed to deduct points for post!");
         };
 
         return #ok({ message = "Points for post claimed successfully!" });
@@ -367,15 +483,128 @@ actor Wanderly {
 
     for (post in Map.vals(userPosts)) {
       if (not Service.modifyUserPoints(users, caller, post.points, #add)) {
-        return #err({ message = "Failed to add points for user!" });
+        Debug.trap("Failed to add points for user!");
       };
 
       if (not Service.modifyPostPoints(posts, post.id, 0, #deduct)) {
-        return #err({ message = "Failed to deduct points for post!" });
+        Debug.trap("Failed to deduct points for post!");
       };
     };
 
     return #ok({ message = "All points claimed successfully!" });
+  };
+
+  public shared ({ caller }) func completeTask({ taskId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Check if task exists
+    switch (Map.get(tasks, thash, taskId)) {
+      case (null) {
+        return #err({ message = "Task not found!" });
+      };
+      case (?task) {
+        // Add points to user based on task reward calculation
+        let rewardPoints = Service.calculateRewardPoints(task);
+
+        if (not Service.modifyUserPoints(users, caller, rewardPoints, #add)) {
+          Debug.trap("Failed to add points for user!");
+        };
+
+        // Add completed task for user
+        let newId = await Utils.generateUUID();
+
+        let newUserCompletedTask : Types.UserCompletedTask = {
+          userId = caller;
+          taskId;
+          completedAt = DateTime.now().toText();
+          receivedPoints = rewardPoints;
+        };
+
+        switch (Map.add(userCompletedTasks, thash, newId, newUserCompletedTask)) {
+          case (null) {
+            return #ok({ message = "Task Completed!" });
+          };
+          case (?postAward) {
+            Debug.trap("An error happened! (Task already completed?)");
+          };
+        };
+      };
+    };
+  };
+
+  public shared ({ caller }) func addAchievementToUser({
+    userId : ?Principal;
+    achievementId : Types.Id;
+  }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    // Get user from either payload or who called the func
+    let user = Option.get(userId, caller);
+
+    if (Utils.isUserAnonymous(user)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, user), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Check if achievement exists
+    switch (Map.get(achievements, thash, achievementId)) {
+      case (null) {
+        return #err({ message = "Achievement not found!" });
+      };
+      case (?achievement) {
+        // Check if achievement is already given to user
+        switch (
+          Map.find(
+            userAchievements,
+            func(id : Types.Id, userAchievement : Types.UserAchievement) : Bool {
+              userAchievement.userId == user and userAchievement.achievementId == achievementId;
+            },
+          )
+        ) {
+          case (null) {
+            if (not Service.modifyUserPoints(users, caller, achievement.points, #add)) {
+              Debug.trap("Failed to add points for user!");
+            };
+
+            let newId = await Utils.generateUUID();
+
+            let newUserAchievement : Types.UserAchievement = {
+              userId = user;
+              achievementId;
+              completedAt = DateTime.now().toText();
+              receivedPoints = achievement.points;
+            };
+
+            switch (Map.add(userAchievements, thash, newId, newUserAchievement)) {
+              case (null) {
+                return #ok({ message = "Achievement awarded!" });
+              };
+              case (?userAchievement) {
+                Debug.trap("An error happened! (Achievement already awarded?)");
+              };
+            };
+          };
+          case (?(id, userAchievement)) {
+            return #err({
+              message = "Achievement already awarded!";
+            });
+          };
+        };
+      };
+    };
   };
 
   public shared (msg) func whoami() : async Principal {

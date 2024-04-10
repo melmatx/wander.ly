@@ -1,6 +1,6 @@
+import Principal "mo:base/Principal";
 import SourceV4 "mo:uuid/async/SourceV4";
 import UUID "mo:uuid/UUID";
-import Principal "mo:base/Principal";
 
 module {
   // Generate ID

@@ -1,7 +1,8 @@
+import Data "data";
+import Types "../types";
+
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
-import Types "../types";
-import Data "data";
 import Debug "mo:base/Debug";
 
 module {
@@ -16,7 +17,41 @@ module {
           Debug.print("Task " # debug_show (task.id) # " added");
         };
         case (?task) {
-          Debug.print("Failed adding task " # debug_show (task.id));
+          Debug.trap("Failed adding task " # debug_show (task.id));
+        };
+      };
+    };
+  };
+
+  public func initAchievements(achievements : Map.Map<Types.Id, Types.AchievementWithId>) {
+    let sampleAchievements = Data.getSampleAchievements();
+
+    for (achievement in sampleAchievements.vals()) {
+      let currentAchievement = Map.add(achievements, thash, achievement.id, achievement);
+
+      switch (currentAchievement) {
+        case (null) {
+          Debug.print("Achievement " # debug_show (achievement.id) # " added");
+        };
+        case (?achievement) {
+          Debug.trap("Failed adding achievement " # debug_show (achievement.id));
+        };
+      };
+    };
+  };
+
+  public func initRewards(rewards : Map.Map<Types.Id, Types.RewardWithId>) {
+    let sampleRewards = Data.getSampleRewards();
+
+    for (reward in sampleRewards.vals()) {
+      let currentReward = Map.add(rewards, thash, reward.id, reward);
+
+      switch (currentReward) {
+        case (null) {
+          Debug.print("Reward " # debug_show (reward.id) # " added");
+        };
+        case (?reward) {
+          Debug.trap("Failed adding reward " # debug_show (reward.id));
         };
       };
     };
@@ -33,7 +68,7 @@ module {
           Debug.print("Post " # debug_show (post.id) # " added");
         };
         case (?task) {
-          Debug.print("Failed adding post " # debug_show (post.id));
+          Debug.trap("Failed adding post " # debug_show (post.id));
         };
       };
     };

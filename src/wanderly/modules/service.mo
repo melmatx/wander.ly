@@ -3,6 +3,7 @@ import { thash } "mo:map/Map";
 import { phash } "mo:map/Map";
 import Map "mo:map/Map";
 import Option "mo:base/Option";
+import Principal "mo:base/Principal";
 
 module {
   public func getAllPosts(map : Map.Map<Types.Id, Types.PostWithId>, postLikes : Map.Map<Types.Id, Types.PostLike>, postAwards : Map.Map<Types.Id, Types.PostAward>) : Map.Map<Types.Id, Types.PostComplete> {
@@ -14,8 +15,51 @@ module {
         let awards = getAwardsOfPost(postAwards, post.id);
 
         return {
-          post with likes = if (Map.empty(likes)) { 0 } else likes.size();
+          post with
+          likes = if (Map.empty(likes)) { 0 } else likes.size();
           awards = if (Map.empty(awards)) { 0 } else awards.size();
+        };
+      },
+    );
+  };
+
+  public func getCompletedTasksOfUser(map : Map.Map<Types.Id, Types.UserCompletedTask>, tasks : Map.Map<Types.Id, Types.TaskWithId>, userId : Principal) : Map.Map<Types.Id, Types.UserCompletedTaskResult> {
+    return Map.mapFilter(
+      map,
+      thash,
+      func(id : Types.Id, userCompletedTask : Types.UserCompletedTask) : ?Types.UserCompletedTaskResult {
+        if (userCompletedTask.userId == userId) {
+          Option.map(
+            Map.get(tasks, thash, userCompletedTask.taskId),
+
+            // Combine task data with user completed task
+            func(task : Types.TaskWithId) : Types.UserCompletedTaskResult {
+              return { userCompletedTask with task };
+            },
+          );
+        } else {
+          null;
+        };
+      },
+    );
+  };
+
+  public func getAchievementsOfUser(map : Map.Map<Types.Id, Types.UserAchievement>, achievements : Map.Map<Types.Id, Types.AchievementWithId>, userId : Principal) : Map.Map<Types.Id, Types.UserAchievementResult> {
+    return Map.mapFilter(
+      map,
+      thash,
+      func(id : Types.Id, userAchievement : Types.UserAchievement) : ?Types.UserAchievementResult {
+        if (userAchievement.userId == userId) {
+          Option.map(
+            Map.get(achievements, thash, userAchievement.achievementId),
+
+            // Combine achievement data with user achievement
+            func(achievement : Types.AchievementWithId) : Types.UserAchievementResult {
+              return { userAchievement with achievement };
+            },
+          );
+        } else {
+          null;
         };
       },
     );
@@ -51,9 +95,9 @@ module {
     );
   };
 
-  public func modifyUserPoints(map : Map.Map<Principal, Types.UserWithId>, userId : Principal, points : Nat, operation : { #add; #deduct }) : Bool {
-    var prevPoints = 0;
-    var newPoints = 0;
+  public func modifyUserPoints(map : Map.Map<Principal, Types.UserWithId>, userId : Principal, points : Float, operation : { #add; #deduct }) : Bool {
+    var prevPoints = 0.0;
+    var newPoints = 0.0;
 
     let updatedUser = Map.update(
       map,
@@ -83,7 +127,7 @@ module {
     // Get updated points, if user does not exist return prevPoints
     newPoints := Option.getMapped(
       updatedUser,
-      func(user : Types.UserWithId) : Nat {
+      func(user : Types.UserWithId) : Float {
         user.points;
       },
       prevPoints,
@@ -92,9 +136,9 @@ module {
     newPoints != prevPoints;
   };
 
-  public func modifyPostPoints(map : Map.Map<Types.Id, Types.PostWithId>, postId : Types.Id, points : Nat, operation : { #add; #deduct }) : Bool {
-    var prevPoints = 0;
-    var newPoints = 0;
+  public func modifyPostPoints(map : Map.Map<Types.Id, Types.PostWithId>, postId : Types.Id, points : Float, operation : { #add; #deduct }) : Bool {
+    var prevPoints = 0.0;
+    var newPoints = 0.0;
 
     let updatedPost = Map.update(
       map,
@@ -124,12 +168,35 @@ module {
     // Get points from updated post, if not updated just use the previous points
     newPoints := Option.getMapped(
       updatedPost,
-      func(post : Types.PostWithId) : Nat {
+      func(post : Types.PostWithId) : Float {
         post.points;
       },
       prevPoints,
     );
 
     newPoints != prevPoints;
+  };
+
+  public func calculateRewardPoints(task : Types.TaskWithId) : Float {
+    var baseRate = 0.0;
+
+    switch (task.taskType) {
+      case (#DistanceBased) {
+        baseRate := 0.1;
+      };
+      case (#StepBased) {
+        baseRate := 0.15;
+      };
+      case (#TimeBased) {
+        baseRate := 0.12;
+      };
+    };
+
+    /*
+      Base Rate: A constant that represents the base number of points given per unit (meter, step, minute). This could differ based on the task type.
+      Value Completed: The actual value completed by the user, which could be distance, steps, or time.
+      Difficulty Factor: A multiplier based on the time of day, weather, or other conditions.
+    */
+    return baseRate * task.maxValue * task.difficultyFactor;
   };
 };

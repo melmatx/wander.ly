@@ -1,6 +1,6 @@
 import DateTime "mo:datetime/DateTime";
 import Principal "mo:base/Principal";
-import Types "../Types";
+import Types "../types";
 
 module {
   let examplePrincipal = "un4fu-tqaaa-aaaab-qadjq-cai";
@@ -17,7 +17,7 @@ module {
         timeEnd = DateTime.now().add(#hours(8)).toText();
         taskType = #DistanceBased;
         maxValue = 1600;
-        completedAt = "";
+        difficultyFactor = 1.5;
       },
       {
         id = "1";
@@ -29,7 +29,7 @@ module {
         timeEnd = DateTime.now().add(#hours(9)).toText();
         taskType = #StepBased;
         maxValue = 3000;
-        completedAt = "";
+        difficultyFactor = 1.4;
       },
       {
         id = "2";
@@ -41,7 +41,7 @@ module {
         timeEnd = DateTime.now().add(#hours(10)).toText();
         taskType = #TimeBased;
         maxValue = 1800;
-        completedAt = "";
+        difficultyFactor = 1.3;
       },
       {
         id = "3";
@@ -53,7 +53,7 @@ module {
         timeEnd = DateTime.now().add(#hours(11)).toText();
         taskType = #DistanceBased;
         maxValue = 3200;
-        completedAt = "";
+        difficultyFactor = 1.6;
       },
       {
         id = "4";
@@ -65,7 +65,7 @@ module {
         timeEnd = DateTime.now().add(#hours(8)).toText();
         taskType = #TimeBased;
         maxValue = 900;
-        completedAt = "";
+        difficultyFactor = 1.3;
       },
       {
         id = "5";
@@ -77,7 +77,7 @@ module {
         timeEnd = DateTime.now().add(#hours(14)).toText();
         taskType = #DistanceBased;
         maxValue = 2400;
-        completedAt = "";
+        difficultyFactor = 1.2;
       },
       {
         id = "6";
@@ -89,7 +89,7 @@ module {
         timeEnd = DateTime.now().add(#hours(17)).toText();
         taskType = #StepBased;
         maxValue = 2500;
-        completedAt = "";
+        difficultyFactor = 1.2;
       },
       {
         id = "7";
@@ -101,7 +101,7 @@ module {
         timeEnd = DateTime.now().add(#hours(15)).toText();
         taskType = #TimeBased;
         maxValue = 1200;
-        completedAt = "";
+        difficultyFactor = 1.3;
       },
       {
         id = "8";
@@ -113,7 +113,7 @@ module {
         timeEnd = DateTime.now().add(#hours(17)).toText();
         taskType = #DistanceBased;
         maxValue = 3200;
-        completedAt = "";
+        difficultyFactor = 1.3;
       },
       {
         id = "9";
@@ -125,7 +125,7 @@ module {
         timeEnd = DateTime.now().add(#hours(16)).toText();
         taskType = #TimeBased;
         maxValue = 600;
-        completedAt = "";
+        difficultyFactor = 1.2;
       },
       {
         id = "10";
@@ -137,7 +137,7 @@ module {
         timeEnd = DateTime.now().add(#hours(20)).toText();
         taskType = #DistanceBased;
         maxValue = 1600;
-        completedAt = "";
+        difficultyFactor = 1.4;
       },
       {
         id = "11";
@@ -149,7 +149,7 @@ module {
         timeEnd = DateTime.now().add(#hours(21)).toText();
         taskType = #StepBased;
         maxValue = 2000;
-        completedAt = "";
+        difficultyFactor = 1.5;
       },
       {
         id = "12";
@@ -161,7 +161,7 @@ module {
         timeEnd = DateTime.now().add(#hours(22)).toText();
         taskType = #TimeBased;
         maxValue = 900;
-        completedAt = "";
+        difficultyFactor = 1.4;
       },
       {
         id = "13";
@@ -173,7 +173,7 @@ module {
         timeEnd = DateTime.now().add(#hours(21)).toText();
         taskType = #DistanceBased;
         maxValue = 3200;
-        completedAt = "";
+        difficultyFactor = 1.5;
       },
       {
         id = "14";
@@ -185,8 +185,84 @@ module {
         timeEnd = DateTime.now().add(#hours(23)).toText();
         taskType = #TimeBased;
         maxValue = 1200;
-        completedAt = "";
+        difficultyFactor = 1.5;
       },
+    ];
+  };
+
+  public func getSampleAchievements() : [Types.AchievementWithId] {
+    [
+      {
+        id = "0";
+        name = "Marathoner";
+        description = "You've reached the monumental milestone of walking a total of 26.2 miles with us. Your perseverance is inspiring!";
+        emoji = "🏅";
+        points = 500;
+      },
+      {
+        id = "1";
+        name = "Endurance Expert";
+        description = "Walking for over 2 hours straight? That's no small feat. You're a true endurance expert.";
+        emoji = "⌛";
+        points = 300;
+      },
+      {
+        id = "2";
+        name = "Step Legend";
+        description = "100,000 steps? Your dedication to moving is off the charts. Welcome to the legend status.";
+        emoji = "🚀";
+        points = 1000;
+      },
+      {
+        id = "3";
+        name = "Community Pillar";
+        description = "You've supported 20 different local businesses by scanning their QR codes. Your commitment to local growth is unmatched.";
+        emoji = "🏛";
+        points = 200;
+      },
+      {
+        id = "4";
+        name = "Social Butterfly";
+        description = "You've made 50 valuable posts in the community, sparking discussions and connections. Your engagement is key to our vibrant community.";
+        emoji = "🦋";
+        points = 250;
+      },
+      {
+        id = "5";
+        name = "Event Enthusiast";
+        description = "Attending 20 local business events is no easy task. Your enthusiasm for community events is contagious!";
+        emoji = "🎉";
+        points = 300;
+      },
+      {
+        id = "6";
+        name = "Trendsetter";
+        description = "Your posts have been awarded by other users over 50 times! Your influence shapes our community.";
+        emoji = "📈";
+        points = 400;
+      },
+      {
+        id = "7";
+        name = "Pioneer Walker";
+        description = "You've explored and mapped out 100 miles of uncharted territory with us. Thanks for leading the way!";
+        emoji = "🌍";
+        points = 700;
+      },
+      {
+        id = "8";
+        name = "Master of Challenges";
+        description = "You've completed every single walking and engagement challenge we've thrown at you. Truly a master of challenges!";
+        emoji = "🏆";
+        points = 800;
+      },
+    ];
+  };
+
+  public func getSampleRewards() : [Types.RewardWithId] {
+    [
+      { id = "0"; name = "P500 GCash"; points = 100 },
+      { id = "1"; name = "P300 GCash"; points = 75 },
+      { id = "2"; name = "P100 GCash"; points = 50 },
     ];
   };
 
