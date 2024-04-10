@@ -23,25 +23,6 @@ const ActiveTask = ({ navigation, route }) => {
 
   const infoSheetRef = useRef(null);
 
-  const headerRight = useCallback(
-    () => (
-      <Button link onPress={onInfoPress}>
-        <Ionicons
-          name="information-circle-outline"
-          size={30}
-          color={colors.primary}
-        />
-      </Button>
-    ),
-    [onInfoPress]
-  );
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight,
-    });
-  }, [headerRight, navigation]);
-
   const onAnimationComplete = useCallback(() => {
     if (completedAt) {
       Burnt.alert({
@@ -53,14 +34,6 @@ const ActiveTask = ({ navigation, route }) => {
       });
     }
   }, [completedAt]);
-
-  const onInfoPress = useCallback(() => {
-    infoSheetRef.current?.expand();
-  }, []);
-
-  const handleInfoButton = useCallback(() => {
-    infoSheetRef.current?.close();
-  }, []);
 
   const onFriendWalk = useCallback(() => {
     console.log("Walk with a friend");
@@ -118,6 +91,33 @@ const ActiveTask = ({ navigation, route }) => {
     },
     [convertedProgress]
   );
+
+  const handleInfoButton = useCallback(() => {
+    infoSheetRef.current?.close();
+  }, []);
+
+  const onInfoPress = useCallback(() => {
+    infoSheetRef.current?.expand();
+  }, []);
+
+  const headerRight = useCallback(
+    () => (
+      <Button link onPress={onInfoPress}>
+        <Ionicons
+          name="information-circle-outline"
+          size={30}
+          color={colors.primary}
+        />
+      </Button>
+    ),
+    [onInfoPress]
+  );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight,
+    });
+  }, [headerRight, navigation]);
 
   return (
     <>

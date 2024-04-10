@@ -115,29 +115,36 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
         <SafeAreaView
           style={[globalStyles.flexFull, globalStyles.androidPadding]}
         >
+          <View
+            style={[
+              globalStyles.rowCenter,
+              globalStyles.spaceBetween,
+              { padding: sizes.large, paddingBottom: sizes.medium },
+            ]}
+          >
+            <View style={{ width: "80%" }}>
+              <Text h2>{item.place}</Text>
+            </View>
+
+            <Button link>
+              <Ionicons
+                name="close-circle"
+                size={35}
+                color="rgba(255,255,255,0.6)"
+                onPress={onClose}
+              />
+            </Button>
+          </View>
+
           <ScrollView
             contentContainerStyle={{
               padding: sizes.large,
+              paddingTop: sizes.medium,
               paddingBottom: FLOATING_BUTTON_HEIGHT,
               rowGap: sizes.xlarge,
             }}
             showsVerticalScrollIndicator={false}
           >
-            <View style={[globalStyles.rowCenter, globalStyles.spaceBetween]}>
-              <View style={{ width: "80%" }}>
-                <Text h2>{item.place}</Text>
-              </View>
-
-              <Button link>
-                <Ionicons
-                  name="close-circle"
-                  size={35}
-                  color="rgba(255,255,255,0.6)"
-                  onPress={onClose}
-                />
-              </Button>
-            </View>
-
             <Image
               source={item.image}
               contentFit="cover"

@@ -17,7 +17,7 @@ const AwardedPosts = () => {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
 
-  const HeaderComponent = useMemo(
+  const ListHeaderComponent = useMemo(
     () => (
       <LargeHeader
         icon={
@@ -58,7 +58,7 @@ const AwardedPosts = () => {
     >
       <FlatList
         data={posts}
-        ListHeaderComponent={HeaderComponent}
+        ListHeaderComponent={ListHeaderComponent}
         contentContainerStyle={{
           rowGap: sizes.xlarge,
           paddingHorizontal: sizes.large,

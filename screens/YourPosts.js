@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import * as Burnt from "burnt";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "react-native-ui-lib";
@@ -13,14 +13,14 @@ import LargeHeader from "../components/LargeHeader";
 import PostItem from "../components/PostItem";
 import posts from "../consts/samplePosts";
 
-const YourPosts = () => {
+const YourPosts = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
 
-  const HeaderComponent = useMemo(
+  const ListHeaderComponent = useMemo(
     () => (
       <LargeHeader
         icon={
@@ -47,7 +47,7 @@ const YourPosts = () => {
     setIsModalVisible(false);
   }, []);
 
-  const onClaimPoints = useCallback(() => {
+  const onClaimPoints = useCallback((item) => {
     Burnt.alert({
       title: "Claiming points",
       preset: "spinner",
@@ -74,7 +74,7 @@ const YourPosts = () => {
         <Button
           label="Claim Points"
           link
-          onPress={onClaimPoints}
+          onPress={() => onClaimPoints(item)}
           disabled={item.points === 0}
           style={{ opacity: item.points > 0 ? 1 : 0.5 }}
         >
@@ -90,6 +90,26 @@ const YourPosts = () => {
     [onItemPressed, onClaimPoints]
   );
 
+  const onClaimAll = useCallback(() => {
+    Burnt.alert({
+      title: "Points claimed",
+      preset: "done",
+      message: "10 points have been added to your account.",
+      duration: 0.8,
+    });
+  }, []);
+
+  const headerRight = useCallback(
+    () => <Button label="Claim All" link onPress={onClaimAll} />,
+    [onClaimAll]
+  );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight,
+    });
+  }, [headerRight, navigation]);
+
   return (
     <View
       style={[
@@ -99,7 +119,7 @@ const YourPosts = () => {
     >
       <FlatList
         data={posts}
-        ListHeaderComponent={HeaderComponent}
+        ListHeaderComponent={ListHeaderComponent}
         contentContainerStyle={{
           rowGap: sizes.xlarge,
           paddingHorizontal: sizes.large,
