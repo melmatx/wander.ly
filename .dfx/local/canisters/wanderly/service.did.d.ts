@@ -59,6 +59,17 @@ export interface Task {
   'maxValue' : number,
   'timeOfDay' : TimeOfDay,
 }
+export interface TaskPayload {
+  'title' : string,
+  'timeStart' : string,
+  'description' : string,
+  'emoji' : string,
+  'taskType' : TaskType,
+  'difficultyFactor' : number,
+  'timeEnd' : string,
+  'maxValue' : number,
+  'timeOfDay' : TimeOfDay,
+}
 export type TaskType = { 'TimeBased' : null } |
   { 'DistanceBased' : null } |
   { 'StepBased' : null };
@@ -125,6 +136,7 @@ export interface _SERVICE {
   'claimPointsByPost' : ActorMethod<[{ 'postId' : Id }], Result>,
   'completeTask' : ActorMethod<[{ 'taskId' : Id }], Result>,
   'createPost' : ActorMethod<[PostPayload], Result>,
+  'createTask' : ActorMethod<[TaskPayload], Result>,
   'getAchievementsByUser' : ActorMethod<
     [{ 'userId' : [] | [Principal] }],
     Array<[Id, UserAchievementResult]>

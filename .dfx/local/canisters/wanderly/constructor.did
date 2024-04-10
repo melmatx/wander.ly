@@ -66,6 +66,18 @@ type TaskType =
    StepBased;
    TimeBased;
  };
+type TaskPayload = 
+ record {
+   description: text;
+   difficultyFactor: float64;
+   emoji: text;
+   maxValue: float64;
+   taskType: TaskType;
+   timeEnd: text;
+   timeOfDay: TimeOfDay;
+   timeStart: text;
+   title: text;
+ };
 type Task = 
  record {
    description: text;
@@ -157,6 +169,7 @@ service : {
   claimPointsByPost: (record {postId: Id;}) -> (Result);
   completeTask: (record {taskId: Id;}) -> (Result);
   createPost: (PostPayload) -> (Result);
+  createTask: (TaskPayload) -> (Result);
   getAchievementsByUser: (record {userId: opt principal;}) ->
    (vec record {
           Id;

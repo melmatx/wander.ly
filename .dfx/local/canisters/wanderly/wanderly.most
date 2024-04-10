@@ -1,69 +1,69 @@
 // Version: 1.0.0
-type AchievementWithId__1 =
-  {description : Text; emoji : Text; id : Id__1; name : Text; points : Float};
-type Id__1 = Text;
-type PostAward__1 = {postId : Id__1; userId : Principal};
-type PostLike__1 = {postId : Id__1; userId : Principal};
-type PostWithId__1 =
+type AchievementWithId =
+  {description : Text; emoji : Text; id : Id; name : Text; points : Float};
+type Id = Text;
+type PostAward = {postId : Id; userId : Principal};
+type PostLike = {postId : Id; userId : Principal};
+type PostWithId =
   {
     content : Text;
-    id : Id__1;
+    id : Id;
     image : Text;
     place : Text;
     points : Float;
-    taskId : Id__1;
+    taskId : Id;
     userId : Principal
   };
-type RewardWithId__1 = Reward__1;
-type Reward__1 = {id : Id__1; name : Text; points : Float};
-type TaskType__1 = {#DistanceBased; #StepBased; #TimeBased};
-type TaskWithId__1 =
+type Reward = {id : Id; name : Text; points : Float};
+type RewardWithId = Reward;
+type TaskType = {#DistanceBased; #StepBased; #TimeBased};
+type TaskWithId =
   {
     description : Text;
     difficultyFactor : Float;
     emoji : Text;
-    id : Id__1;
+    id : Id;
     maxValue : Float;
-    taskType : TaskType__1;
+    taskType : TaskType;
     timeEnd : Text;
-    timeOfDay : TimeOfDay__1;
+    timeOfDay : TimeOfDay;
     timeStart : Text;
     title : Text
   };
-type TimeOfDay__1 = {#Afternoon; #Evening; #Morning};
-type UserAchievement__1 =
+type TimeOfDay = {#Afternoon; #Evening; #Morning};
+type UserAchievement =
   {
-    achievementId : Id__1;
+    achievementId : Id;
     completedAt : Text;
     receivedPoints : Float;
     userId : Principal
   };
-type UserCompletedTask__1 =
+type UserCompletedTask =
   {
     completedAt : Text;
     receivedPoints : Float;
-    taskId : Id__1;
+    taskId : Id;
     userId : Principal
   };
-type UserWithId__1 =
+type UserWithId =
   {country : ?Text; id : Principal; name : ?Text; points : Float};
 actor {
   stable achievements :
-    [var ?([var ?Id__1], [var ?AchievementWithId__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?AchievementWithId], [var Nat], [var Nat32])];
   stable postAwards :
-    [var ?([var ?Id__1], [var ?PostAward__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?PostAward], [var Nat], [var Nat32])];
   stable postLikes :
-    [var ?([var ?Id__1], [var ?PostLike__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?PostLike], [var Nat], [var Nat32])];
   stable posts :
-    [var ?([var ?Id__1], [var ?PostWithId__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?PostWithId], [var Nat], [var Nat32])];
   stable rewards :
-    [var ?([var ?Id__1], [var ?RewardWithId__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?RewardWithId], [var Nat], [var Nat32])];
   stable tasks :
-    [var ?([var ?Id__1], [var ?TaskWithId__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?TaskWithId], [var Nat], [var Nat32])];
   stable userAchievements :
-    [var ?([var ?Id__1], [var ?UserAchievement__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?UserAchievement], [var Nat], [var Nat32])];
   stable userCompletedTasks :
-    [var ?([var ?Id__1], [var ?UserCompletedTask__1], [var Nat], [var Nat32])];
+    [var ?([var ?Id], [var ?UserCompletedTask], [var Nat], [var Nat32])];
   stable users :
-    [var ?([var ?Principal], [var ?UserWithId__1], [var Nat], [var Nat32])]
+    [var ?([var ?Principal], [var ?UserWithId], [var Nat], [var Nat32])]
 };

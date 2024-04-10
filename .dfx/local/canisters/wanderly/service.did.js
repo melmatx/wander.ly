@@ -8,6 +8,27 @@ export const idlFactory = ({ IDL }) => {
     'image' : IDL.Text,
     'place' : IDL.Text,
   });
+  const TaskType = IDL.Variant({
+    'TimeBased' : IDL.Null,
+    'DistanceBased' : IDL.Null,
+    'StepBased' : IDL.Null,
+  });
+  const TimeOfDay = IDL.Variant({
+    'Afternoon' : IDL.Null,
+    'Morning' : IDL.Null,
+    'Evening' : IDL.Null,
+  });
+  const TaskPayload = IDL.Record({
+    'title' : IDL.Text,
+    'timeStart' : IDL.Text,
+    'description' : IDL.Text,
+    'emoji' : IDL.Text,
+    'taskType' : TaskType,
+    'difficultyFactor' : IDL.Float64,
+    'timeEnd' : IDL.Text,
+    'maxValue' : IDL.Float64,
+    'timeOfDay' : TimeOfDay,
+  });
   const Achievement = IDL.Record({
     'name' : IDL.Text,
     'description' : IDL.Text,
@@ -45,16 +66,6 @@ export const idlFactory = ({ IDL }) => {
     'id' : Id,
     'name' : IDL.Text,
     'points' : IDL.Float64,
-  });
-  const TaskType = IDL.Variant({
-    'TimeBased' : IDL.Null,
-    'DistanceBased' : IDL.Null,
-    'StepBased' : IDL.Null,
-  });
-  const TimeOfDay = IDL.Variant({
-    'Afternoon' : IDL.Null,
-    'Morning' : IDL.Null,
-    'Evening' : IDL.Null,
   });
   const TaskWithId = IDL.Record({
     'id' : Id,
@@ -139,6 +150,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'completeTask' : IDL.Func([IDL.Record({ 'taskId' : Id })], [Result], []),
     'createPost' : IDL.Func([PostPayload], [Result], []),
+    'createTask' : IDL.Func([TaskPayload], [Result], []),
     'getAchievementsByUser' : IDL.Func(
         [IDL.Record({ 'userId' : IDL.Opt(IDL.Principal) })],
         [IDL.Vec(IDL.Tuple(Id, UserAchievementResult))],

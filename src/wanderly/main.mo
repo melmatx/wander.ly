@@ -24,8 +24,8 @@ actor Wanderly {
   stable let postLikes = Map.new<Types.Id, Types.PostLike>();
   stable let postAwards = Map.new<Types.Id, Types.PostAward>();
 
-  private let initialPoints = 10.0;
-  private let awardPoints = 1.0;
+  let initialPoints = 10.0;
+  let awardPoints = 1.0;
 
   public shared ({ caller }) func _init() : async () {
     Init.initTasks(tasks);
@@ -78,6 +78,7 @@ actor Wanderly {
   };
 
   public func getAllPosts() : async [(Types.Id, Types.PostComplete)] {
+    // Get all posts with like and award count
     let completePosts = Service.getAllPosts(posts, postLikes, postAwards);
 
     return Map.toArray(completePosts);
@@ -103,6 +104,7 @@ actor Wanderly {
       Debug.trap("User not found!");
     };
 
+    // Filter completed tasks based on user id
     let filteredTasks = Service.getCompletedTasksOfUser(userCompletedTasks, tasks, user);
 
     return Map.toArray(filteredTasks);
@@ -120,6 +122,7 @@ actor Wanderly {
       Debug.trap("User not found!");
     };
 
+    // Filter achievements based on user id
     let filteredAchievements = Service.getAchievementsOfUser(userAchievements, achievements, user);
 
     return Map.toArray(filteredAchievements);
@@ -135,6 +138,7 @@ actor Wanderly {
       Debug.trap("User not found!");
     };
 
+    // Filter posts based on user id
     let filteredPosts = Service.getPostsOfUser(posts, user);
 
     return Map.toArray(filteredPosts);
@@ -149,12 +153,14 @@ actor Wanderly {
   };
 
   public func getLikesByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostLike)] {
+    // Filter likes based on post id
     let filteredLikes = Service.getLikesOfPost(postLikes, postId);
 
     return Map.toArray(filteredLikes);
   };
 
   public func getAwardsByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostAward)] {
+    // Filter awards based on post id
     let filteredAwards = Service.getAwardsOfPost(postAwards, postId);
 
     return Map.toArray(filteredAwards);
@@ -235,6 +241,7 @@ actor Wanderly {
     // Get the id from the payload if it exists, else use who called this func
     let userId = Option.get(userPayload.id, caller);
 
+    // Create user if it does not exist on the users map, else update it
     let currentUser = Map.update(
       users,
       phash,
@@ -244,6 +251,7 @@ actor Wanderly {
           case (null) {
             isNewUser := true;
 
+            // Creates a new user
             let newUser : Types.UserWithId = {
               userPayload with id = userId;
               points = initialPoints;
@@ -299,6 +307,7 @@ actor Wanderly {
       };
     };
 
+    // Overwrite the content of the post
     switch (
       Map.update(
         posts,
@@ -341,6 +350,11 @@ actor Wanderly {
         return #err({ message = "Post not found!" });
       };
       case (?post) {
+        // Make sure post is not by user
+        if (post.userId == caller) {
+          return #err({ message = "You can't like your own posts!" });
+        };
+
         // Check if post is already liked
         switch (
           Map.find(
@@ -397,6 +411,11 @@ actor Wanderly {
         return #err({ message = "Post not found!" });
       };
       case (?post) {
+        // Make sure post is not by user
+        if (post.userId == caller) {
+          return #err({ message = "You can't award your own posts!" });
+        };
+
         // Check if post is already awarded
         switch (
           Map.find(
@@ -439,6 +458,7 @@ actor Wanderly {
               postId;
             };
 
+            // Check if post award creation was successful
             switch (Map.add(postAwards, thash, newId, newPostAward)) {
               case (null) {
                 return #ok({ message = "Post awarded!" });
@@ -477,10 +497,15 @@ actor Wanderly {
         return #err({ message = "Post not found!" });
       };
       case (?post) {
+        // Check if user owns the post
         if (post.userId != caller) {
           return #err({
             message = "You are not authorized to claim points on this post!";
           });
+        };
+
+        if (post.points <= 0) {
+          return #err({ message = "No points to claim!" });
         };
 
         if (not Service.modifyUserPoints(users, caller, post.points, #add)) {
@@ -497,20 +522,31 @@ actor Wanderly {
   };
 
   public shared ({ caller }) func claimAllPoints() : async Result.Result<Types.MessageResult, Types.MessageResult> {
-    let userPosts = Map.filter(
-      posts,
-      thash,
-      func(id : Types.Id, post : Types.PostWithId) : Bool {
-        post.userId == caller;
-      },
-    );
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
 
-    for (post in Map.vals(userPosts)) {
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    let userPosts = Service.getPostsOfUser(posts, caller);
+
+    // Claim points for each post of the user
+    label claimLoop for (post in Map.vals(userPosts)) {
+      if (post.points <= 0) {
+        Debug.print("No points to claim for post " # debug_show (post.id));
+        continue claimLoop;
+      };
+
       if (not Service.modifyUserPoints(users, caller, post.points, #add)) {
         Debug.trap("Failed to add points for user!");
       };
 
-      if (not Service.modifyPostPoints(posts, post.id, 0, #deduct)) {
+      if (not Service.modifyPostPoints(posts, post.id, post.points, #deduct)) {
         Debug.trap("Failed to deduct points for post!");
       };
     };
@@ -553,6 +589,7 @@ actor Wanderly {
           receivedPoints = rewardPoints;
         };
 
+        // Check if completed task creation was successful
         switch (Map.add(userCompletedTasks, thash, newId, newUserCompletedTask)) {
           case (null) {
             return #ok({ message = "Task Completed!" });
@@ -603,6 +640,7 @@ actor Wanderly {
               Debug.trap("Failed to add points for user!");
             };
 
+            // Create new user achievement
             let newId : Types.Id = await Utils.generateUUID();
 
             let newUserAchievement : Types.UserAchievement = {
@@ -612,6 +650,7 @@ actor Wanderly {
               receivedPoints = achievement.points;
             };
 
+            // Check if user achievement creation was successful
             switch (Map.add(userAchievements, thash, newId, newUserAchievement)) {
               case (null) {
                 return #ok({ message = "Achievement awarded!" });
