@@ -572,30 +572,47 @@ actor Wanderly {
         return #err({ message = "Task not found!" });
       };
       case (?task) {
-        // Add points to user based on task reward calculation
-        let rewardPoints = Service.calculateRewardPoints(task);
-
-        if (not Service.modifyUserPoints(users, caller, rewardPoints, #add)) {
-          Debug.trap("Failed to add points for user!");
-        };
-
-        // Add completed task for user
-        let newId : Types.Id = await Utils.generateUUID();
-
-        let newUserCompletedTask : Types.UserCompletedTask = {
-          userId = caller;
-          taskId;
-          completedAt = DateTime.now().toText();
-          receivedPoints = rewardPoints;
-        };
-
-        // Check if completed task creation was successful
-        switch (Map.add(userCompletedTasks, thash, newId, newUserCompletedTask)) {
+        // Check if task is already completed
+        switch (
+          Map.find(
+            userCompletedTasks,
+            func(id : Types.Id, userCompletedTask : Types.UserCompletedTask) : Bool {
+              userCompletedTask.userId == caller and userCompletedTask.taskId == taskId;
+            },
+          )
+        ) {
           case (null) {
-            return #ok({ message = "Task Completed!" });
+            // Add points to user based on task reward calculation
+            let rewardPoints = Service.calculateRewardPoints(task);
+
+            if (not Service.modifyUserPoints(users, caller, rewardPoints, #add)) {
+              Debug.trap("Failed to add points for user!");
+            };
+
+            // Add completed task for user
+            let newId : Types.Id = await Utils.generateUUID();
+
+            let newUserCompletedTask : Types.UserCompletedTask = {
+              userId = caller;
+              taskId;
+              completedAt = DateTime.now().toText();
+              receivedPoints = rewardPoints;
+            };
+
+            // Check if completed task creation was successful
+            switch (Map.add(userCompletedTasks, thash, newId, newUserCompletedTask)) {
+              case (null) {
+                return #ok({ message = "Task Completed!" });
+              };
+              case (?postAward) {
+                Debug.trap("An error happened! (Task already completed?)");
+              };
+            };
           };
-          case (?postAward) {
-            Debug.trap("An error happened! (Task already completed?)");
+          case (?(id, userCompletedTask)) {
+            return #err({
+              message = "Task already completed!";
+            });
           };
         };
       };
