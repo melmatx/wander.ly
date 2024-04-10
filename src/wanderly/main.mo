@@ -189,13 +189,37 @@ actor Wanderly {
       points = 0.0;
     };
 
-    // Check if creation was successful
+    // Check if post creation was successful
     switch (Map.add(posts, thash, newId, newPost)) {
       case (null) {
         return #ok({ message = "Post created successfully!" });
       };
       case (?post) {
         return #err({ message = "Post already exists!" });
+      };
+    };
+  };
+
+  public shared ({ caller }) func createTask(taskPayload : Types.TaskPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Generate id
+    let newId : Types.Id = await Utils.generateUUID();
+
+    // Create new task
+    let newTask : Types.TaskWithId = {
+      taskPayload with id = newId;
+    };
+
+    // Check if task creation was successful
+    switch (Map.add(tasks, thash, newId, newTask)) {
+      case (null) {
+        return #ok({ message = "Task created successfully!" });
+      };
+      case (?task) {
+        return #err({ message = "Task already exists!" });
       };
     };
   };
@@ -328,7 +352,7 @@ actor Wanderly {
         ) {
           // If not liked, then Like the post
           case (null) {
-            let newId = await Utils.generateUUID();
+            let newId : Types.Id = await Utils.generateUUID();
 
             let newPostLike : Types.PostLike = {
               userId = caller;
@@ -408,7 +432,7 @@ actor Wanderly {
             };
 
             // Add new post award
-            let newId = await Utils.generateUUID();
+            let newId : Types.Id = await Utils.generateUUID();
 
             let newPostAward : Types.PostAward = {
               userId = caller;
@@ -520,7 +544,7 @@ actor Wanderly {
         };
 
         // Add completed task for user
-        let newId = await Utils.generateUUID();
+        let newId : Types.Id = await Utils.generateUUID();
 
         let newUserCompletedTask : Types.UserCompletedTask = {
           userId = caller;
@@ -579,7 +603,7 @@ actor Wanderly {
               Debug.trap("Failed to add points for user!");
             };
 
-            let newId = await Utils.generateUUID();
+            let newId : Types.Id = await Utils.generateUUID();
 
             let newUserAchievement : Types.UserAchievement = {
               userId = user;

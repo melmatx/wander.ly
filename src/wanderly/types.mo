@@ -92,6 +92,7 @@ module {
     description : Text;
     emoji : Text;
     maxValue : Float;
+    difficultyFactor : Float;
     timeStart : Text;
     timeEnd : Text;
     timeOfDay : TimeOfDay;
