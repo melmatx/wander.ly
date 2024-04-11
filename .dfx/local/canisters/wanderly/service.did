@@ -41,6 +41,19 @@ type UserAchievement =
    receivedPoints: float64;
    userId: principal;
  };
+type UpdateTaskPayload = 
+ record {
+   description: opt text;
+   difficultyFactor: opt float64;
+   emoji: opt text;
+   id: Id;
+   maxValue: opt float64;
+   taskType: opt TaskType;
+   timeEnd: opt text;
+   timeOfDay: opt TimeOfDay;
+   timeStart: opt text;
+   title: opt text;
+ };
 type TimeOfDay = 
  variant {
    Afternoon;
@@ -65,18 +78,6 @@ type TaskType =
    DistanceBased;
    StepBased;
    TimeBased;
- };
-type TaskPayload = 
- record {
-   description: text;
-   difficultyFactor: float64;
-   emoji: text;
-   maxValue: float64;
-   taskType: TaskType;
-   timeEnd: text;
-   timeOfDay: TimeOfDay;
-   timeStart: text;
-   title: text;
  };
 type Task = 
  record {
@@ -142,6 +143,18 @@ type PostAward =
  };
 type MessageResult = record {message: text;};
 type Id = text;
+type CreateTaskPayload = 
+ record {
+   description: text;
+   difficultyFactor: float64;
+   emoji: text;
+   maxValue: float64;
+   taskType: TaskType;
+   timeEnd: text;
+   timeOfDay: TimeOfDay;
+   timeStart: text;
+   title: text;
+ };
 type AchievementWithId = 
  record {
    description: text;
@@ -169,7 +182,7 @@ service : {
   claimPointsByPost: (record {postId: Id;}) -> (Result);
   completeTask: (record {taskId: Id;}) -> (Result);
   createPost: (PostPayload) -> (Result);
-  createTask: (TaskPayload) -> (Result);
+  createTask: (CreateTaskPayload) -> (Result);
   getAchievementsByUser: (record {userId: opt principal;}) ->
    (vec record {
           Id;
@@ -238,5 +251,6 @@ service : {
                         content: text;
                         postId: Id;
                       }) -> (Result);
+  updateTask: (UpdateTaskPayload) -> (Result);
   whoami: () -> (principal);
 }

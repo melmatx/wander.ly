@@ -87,7 +87,7 @@ module {
     country : ?Text;
   };
 
-  public type TaskPayload = {
+  public type CreateTaskPayload = {
     title : Text;
     description : Text;
     emoji : Text;
@@ -97,6 +97,19 @@ module {
     timeEnd : Text;
     timeOfDay : TimeOfDay;
     taskType : TaskType;
+  };
+
+  public type UpdateTaskPayload = {
+    id : Id;
+    title : ?Text;
+    description : ?Text;
+    emoji : ?Text;
+    maxValue : ?Float;
+    difficultyFactor : ?Float;
+    timeStart : ?Text;
+    timeEnd : ?Text;
+    timeOfDay : ?TimeOfDay;
+    taskType : ?TaskType;
   };
 
   public type PostPayload = {

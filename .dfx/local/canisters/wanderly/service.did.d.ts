@@ -15,6 +15,17 @@ export interface AchievementWithId {
   'emoji' : string,
   'points' : number,
 }
+export interface CreateTaskPayload {
+  'title' : string,
+  'timeStart' : string,
+  'description' : string,
+  'emoji' : string,
+  'taskType' : TaskType,
+  'difficultyFactor' : number,
+  'timeEnd' : string,
+  'maxValue' : number,
+  'timeOfDay' : TimeOfDay,
+}
 export type Id = string;
 export interface MessageResult { 'message' : string }
 export interface PostAward { 'userId' : Principal, 'postId' : Id }
@@ -59,17 +70,6 @@ export interface Task {
   'maxValue' : number,
   'timeOfDay' : TimeOfDay,
 }
-export interface TaskPayload {
-  'title' : string,
-  'timeStart' : string,
-  'description' : string,
-  'emoji' : string,
-  'taskType' : TaskType,
-  'difficultyFactor' : number,
-  'timeEnd' : string,
-  'maxValue' : number,
-  'timeOfDay' : TimeOfDay,
-}
 export type TaskType = { 'TimeBased' : null } |
   { 'DistanceBased' : null } |
   { 'StepBased' : null };
@@ -88,6 +88,18 @@ export interface TaskWithId {
 export type TimeOfDay = { 'Afternoon' : null } |
   { 'Morning' : null } |
   { 'Evening' : null };
+export interface UpdateTaskPayload {
+  'id' : Id,
+  'title' : [] | [string],
+  'timeStart' : [] | [string],
+  'description' : [] | [string],
+  'emoji' : [] | [string],
+  'taskType' : [] | [TaskType],
+  'difficultyFactor' : [] | [number],
+  'timeEnd' : [] | [string],
+  'maxValue' : [] | [number],
+  'timeOfDay' : [] | [TimeOfDay],
+}
 export interface UserAchievement {
   'completedAt' : string,
   'achievementId' : Id,
@@ -136,7 +148,7 @@ export interface _SERVICE {
   'claimPointsByPost' : ActorMethod<[{ 'postId' : Id }], Result>,
   'completeTask' : ActorMethod<[{ 'taskId' : Id }], Result>,
   'createPost' : ActorMethod<[PostPayload], Result>,
-  'createTask' : ActorMethod<[TaskPayload], Result>,
+  'createTask' : ActorMethod<[CreateTaskPayload], Result>,
   'getAchievementsByUser' : ActorMethod<
     [{ 'userId' : [] | [Principal] }],
     Array<[Id, UserAchievementResult]>
@@ -169,6 +181,7 @@ export interface _SERVICE {
     [{ 'content' : string, 'postId' : Id }],
     Result
   >,
+  'updateTask' : ActorMethod<[UpdateTaskPayload], Result>,
   'whoami' : ActorMethod<[], Principal>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

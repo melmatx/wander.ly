@@ -48,7 +48,7 @@ actor Wanderly {
         Debug.trap("User not found!");
       };
       case (?user) {
-        return user;
+        user;
       };
     };
   };
@@ -190,7 +190,8 @@ actor Wanderly {
 
     // Create new post
     let newPost : Types.PostWithId = {
-      postPayload with id = newId;
+      postPayload with
+      id = newId;
       userId = caller;
       points = 0.0;
     };
@@ -206,7 +207,7 @@ actor Wanderly {
     };
   };
 
-  public shared ({ caller }) func createTask(taskPayload : Types.TaskPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+  public shared ({ caller }) func createTask(taskPayload : Types.CreateTaskPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
       Debug.trap("Anonymous identity found!");
     };
@@ -226,6 +227,55 @@ actor Wanderly {
       };
       case (?task) {
         return #err({ message = "Task already exists!" });
+      };
+    };
+  };
+
+  public shared ({ caller }) func updateTask(taskPayload : Types.UpdateTaskPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if task exists
+    switch (Map.get(tasks, thash, taskPayload.id)) {
+      case (null) {
+        return #err({ message = "Task not found!" });
+      };
+      case (?task) {
+        // Overwrite for each field where the payload is not null
+        switch (
+          Map.update(
+            tasks,
+            thash,
+            taskPayload.id,
+            func(id : Types.Id, task : ?Types.TaskWithId) : ?Types.TaskWithId {
+              Option.map(
+                task,
+                func(t : Types.TaskWithId) : Types.TaskWithId {
+                  return {
+                    id = t.id;
+                    title = Option.get(taskPayload.title, t.title);
+                    description = Option.get(taskPayload.description, t.description);
+                    emoji = Option.get(taskPayload.emoji, t.emoji);
+                    maxValue = Option.get(taskPayload.maxValue, t.maxValue);
+                    difficultyFactor = Option.get(taskPayload.difficultyFactor, t.difficultyFactor);
+                    timeStart = Option.get(taskPayload.timeStart, t.timeStart);
+                    timeEnd = Option.get(taskPayload.timeEnd, t.timeEnd);
+                    timeOfDay = Option.get(taskPayload.timeOfDay, t.timeOfDay);
+                    taskType = Option.get(taskPayload.taskType, t.taskType);
+                  };
+                },
+              );
+            },
+          )
+        ) {
+          case (null) {
+            return #err({ message = "No changes made!" });
+          };
+          case (?task) {
+            return #ok({ message = "Task updated successfully!" });
+          };
+        };
       };
     };
   };
@@ -253,18 +303,22 @@ actor Wanderly {
 
             // Creates a new user
             let newUser : Types.UserWithId = {
-              userPayload with id = userId;
+              userPayload with
+              id = userId;
               points = initialPoints;
             };
 
             Option.make(newUser);
           };
           case (?user) {
-            // Updates the user
-            Option.make({
-              user with name = userPayload.name;
-              country = userPayload.country;
-            });
+            // Update the user with payload
+            let updatedUser : Types.UserWithId = {
+              user with
+              name = userPayload.name;
+              countr = userPayload.country;
+            };
+
+            Option.make(updatedUser);
           };
         };
       },

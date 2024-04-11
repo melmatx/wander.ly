@@ -18,7 +18,7 @@ export const idlFactory = ({ IDL }) => {
     'Morning' : IDL.Null,
     'Evening' : IDL.Null,
   });
-  const TaskPayload = IDL.Record({
+  const CreateTaskPayload = IDL.Record({
     'title' : IDL.Text,
     'timeStart' : IDL.Text,
     'description' : IDL.Text,
@@ -129,6 +129,18 @@ export const idlFactory = ({ IDL }) => {
     'country' : IDL.Opt(IDL.Text),
     'name' : IDL.Opt(IDL.Text),
   });
+  const UpdateTaskPayload = IDL.Record({
+    'id' : Id,
+    'title' : IDL.Opt(IDL.Text),
+    'timeStart' : IDL.Opt(IDL.Text),
+    'description' : IDL.Opt(IDL.Text),
+    'emoji' : IDL.Opt(IDL.Text),
+    'taskType' : IDL.Opt(TaskType),
+    'difficultyFactor' : IDL.Opt(IDL.Float64),
+    'timeEnd' : IDL.Opt(IDL.Text),
+    'maxValue' : IDL.Opt(IDL.Float64),
+    'timeOfDay' : IDL.Opt(TimeOfDay),
+  });
   return IDL.Service({
     '_init' : IDL.Func([], [], []),
     'addAchievementToUser' : IDL.Func(
@@ -150,7 +162,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'completeTask' : IDL.Func([IDL.Record({ 'taskId' : Id })], [Result], []),
     'createPost' : IDL.Func([PostPayload], [Result], []),
-    'createTask' : IDL.Func([TaskPayload], [Result], []),
+    'createTask' : IDL.Func([CreateTaskPayload], [Result], []),
     'getAchievementsByUser' : IDL.Func(
         [IDL.Record({ 'userId' : IDL.Opt(IDL.Principal) })],
         [IDL.Vec(IDL.Tuple(Id, UserAchievementResult))],
@@ -227,6 +239,7 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
+    'updateTask' : IDL.Func([UpdateTaskPayload], [Result], []),
     'whoami' : IDL.Func([], [IDL.Principal], []),
   });
 };
