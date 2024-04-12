@@ -139,7 +139,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
           <ScrollView
             contentContainerStyle={{
               padding: sizes.large,
-              paddingTop: sizes.medium,
+              paddingTop: sizes.small,
               paddingBottom: FLOATING_BUTTON_HEIGHT,
               rowGap: sizes.xlarge,
             }}
