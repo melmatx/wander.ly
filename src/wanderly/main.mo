@@ -26,8 +26,7 @@ actor Wanderly {
   stable let postLikes = Map.new<Types.Id, Types.PostLike>();
   stable let postAwards = Map.new<Types.Id, Types.PostAward>();
 
-  let initialPoints = 10.0;
-  let awardPoints = 1.0;
+  let initialPoints = 50.0;
 
   public shared ({ caller }) func _init() : async () {
     Init.initTasks(tasks);
@@ -536,6 +535,9 @@ actor Wanderly {
               { points = 0.0 },
             );
 
+            // Get points to award based on award type
+            let awardPoints = Service.getAwardPoints(awardType);
+
             // Check if the user has available balance
             if (currentUser.points < awardPoints) {
               Debug.trap("You don't have enough points!");
@@ -558,6 +560,7 @@ actor Wanderly {
               userId = caller;
               postId;
               awardType;
+              receivedPoints = awardPoints;
             };
 
             // Check if post award creation was successful

@@ -242,4 +242,18 @@ module {
     */
     return baseRate * task.maxValue * task.difficultyFactor;
   };
+
+  public func getAwardPoints(awardType : Types.AwardType) : Float {
+    switch (awardType) {
+      case (#Gold) {
+        30.0;
+      };
+      case (#Silver) {
+        20.0;
+      };
+      case (#Bronze) {
+        10.0;
+      };
+    };
+  };
 };

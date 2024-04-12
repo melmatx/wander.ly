@@ -2,6 +2,11 @@ export const idlFactory = ({ IDL }) => {
   const Id = IDL.Text;
   const MessageResult = IDL.Record({ 'message' : IDL.Text });
   const Result = IDL.Variant({ 'ok' : MessageResult, 'err' : MessageResult });
+  const AwardType = IDL.Variant({
+    'Gold' : IDL.Null,
+    'Bronze' : IDL.Null,
+    'Silver' : IDL.Null,
+  });
   const PostPayload = IDL.Record({
     'content' : IDL.Text,
     'taskId' : Id,
@@ -49,7 +54,12 @@ export const idlFactory = ({ IDL }) => {
     'emoji' : IDL.Text,
     'points' : IDL.Float64,
   });
-  const PostAward = IDL.Record({ 'userId' : IDL.Principal, 'postId' : Id });
+  const PostAward = IDL.Record({
+    'userId' : IDL.Principal,
+    'receivedPoints' : IDL.Float64,
+    'awardType' : AwardType,
+    'postId' : Id,
+  });
   const PostLike = IDL.Record({ 'userId' : IDL.Principal, 'postId' : Id });
   const PostComplete = IDL.Record({
     'id' : Id,
@@ -153,7 +163,11 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
-    'awardPost' : IDL.Func([IDL.Record({ 'postId' : Id })], [Result], []),
+    'awardPost' : IDL.Func(
+        [IDL.Record({ 'awardType' : AwardType, 'postId' : Id })],
+        [Result],
+        [],
+      ),
     'claimAllPoints' : IDL.Func([], [Result], []),
     'claimPointsByPost' : IDL.Func(
         [IDL.Record({ 'postId' : Id })],

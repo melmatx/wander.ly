@@ -67,6 +67,7 @@ module {
     userId : Principal;
     postId : Id;
     awardType : AwardType;
+    receivedPoints : Float;
   };
 
   public type UserCompletedTask = {

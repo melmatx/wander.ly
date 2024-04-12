@@ -15,6 +15,9 @@ export interface AchievementWithId {
   'emoji' : string,
   'points' : number,
 }
+export type AwardType = { 'Gold' : null } |
+  { 'Bronze' : null } |
+  { 'Silver' : null };
 export interface CreateTaskPayload {
   'title' : string,
   'timeStart' : string,
@@ -28,7 +31,12 @@ export interface CreateTaskPayload {
 }
 export type Id = string;
 export interface MessageResult { 'message' : string }
-export interface PostAward { 'userId' : Principal, 'postId' : Id }
+export interface PostAward {
+  'userId' : Principal,
+  'receivedPoints' : number,
+  'awardType' : AwardType,
+  'postId' : Id,
+}
 export interface PostComplete {
   'id' : Id,
   'content' : string,
@@ -143,7 +151,10 @@ export interface _SERVICE {
     [{ 'achievementId' : Id, 'userId' : [] | [Principal] }],
     Result
   >,
-  'awardPost' : ActorMethod<[{ 'postId' : Id }], Result>,
+  'awardPost' : ActorMethod<
+    [{ 'awardType' : AwardType, 'postId' : Id }],
+    Result
+  >,
   'claimAllPoints' : ActorMethod<[], Result>,
   'claimPointsByPost' : ActorMethod<[{ 'postId' : Id }], Result>,
   'completeTask' : ActorMethod<[{ 'taskId' : Id }], Result>,

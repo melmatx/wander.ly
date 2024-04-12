@@ -1,8 +1,15 @@
 // Version: 1.0.0
 type AchievementWithId =
   {description : Text; emoji : Text; id : Id; name : Text; points : Float};
+type AwardType = {#Bronze; #Gold; #Silver};
 type Id = Text;
-type PostAward = {postId : Id; userId : Principal};
+type PostAward =
+  {
+    awardType : AwardType;
+    postId : Id;
+    receivedPoints : Float;
+    userId : Principal
+  };
 type PostLike = {postId : Id; userId : Principal};
 type PostWithId =
   {
@@ -14,8 +21,7 @@ type PostWithId =
     taskId : Id;
     userId : Principal
   };
-type Reward = {id : Id; name : Text; points : Float};
-type RewardWithId = Reward;
+type RewardWithId = {id : Id; name : Text; points : Float};
 type TaskType = {#DistanceBased; #StepBased; #TimeBased};
 type TaskWithId =
   {
