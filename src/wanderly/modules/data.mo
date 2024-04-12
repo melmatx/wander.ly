@@ -1,11 +1,16 @@
-import DateTime "mo:datetime/DateTime";
+import LocalDateTime "mo:datetime/LocalDateTime";
 import Principal "mo:base/Principal";
 import Types "../types";
+import Utils "../utils";
 
 module {
-  let examplePrincipal = "un4fu-tqaaa-aaaab-qadjq-cai";
+  public let dateFormat = "YYYY-MM-DDTHH:mm:ss"; // Do not add Z at the end
+
+  public let timeZone = #fixed(#hours(8)); // UTC+8
 
   public func getSampleTasks() : [Types.TaskWithId] {
+    let today = Utils.clearLocalTime(LocalDateTime.now(timeZone));
+    let textFormat = #custom({ format = dateFormat; locale = null });
     [
       {
         id = "0";
@@ -13,8 +18,8 @@ module {
         timeOfDay = #Morning;
         description = "Start your day with a calm 1600-meter walk to greet the sunrise.";
         emoji = "🌅";
-        timeStart = DateTime.now().add(#hours(5)).toText();
-        timeEnd = DateTime.now().add(#hours(8)).toText();
+        timeStart = today.add(#hours(5)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(8)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
         maxValue = 1600;
         difficultyFactor = 1.5;
@@ -25,8 +30,8 @@ module {
         timeOfDay = #Morning;
         description = "Aim for 3,000 steps to energize your morning routine.";
         emoji = "👟";
-        timeStart = DateTime.now().add(#hours(6)).toText();
-        timeEnd = DateTime.now().add(#hours(9)).toText();
+        timeStart = today.add(#hours(6)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(9)).toTextFormatted(textFormat);
         taskType = #StepBased;
         maxValue = 3000;
         difficultyFactor = 1.4;
@@ -37,8 +42,8 @@ module {
         title = "Park Explorer";
         description = "Explore a nearby park for 30 minutes, discovering a new route each time.";
         emoji = "🌳";
-        timeStart = DateTime.now().add(#hours(7)).toText();
-        timeEnd = DateTime.now().add(#hours(10)).toText();
+        timeStart = today.add(#hours(7)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(10)).toTextFormatted(textFormat);
         taskType = #TimeBased;
         maxValue = 1800;
         difficultyFactor = 1.3;
@@ -49,8 +54,8 @@ module {
         title = "Morning Challenge";
         description = "Push for a quick 3200-meter walk to boost your metabolism.";
         emoji = "🏃";
-        timeStart = DateTime.now().add(#hours(6)).toText();
-        timeEnd = DateTime.now().add(#hours(11)).toText();
+        timeStart = today.add(#hours(6)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(11)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
         maxValue = 3200;
         difficultyFactor = 1.6;
@@ -61,8 +66,8 @@ module {
         title = "Quiet Time Walk";
         description = "Take a 15-minute walk in silence, practicing mindfulness.";
         emoji = "🧘";
-        timeStart = DateTime.now().add(#hours(5)).toText();
-        timeEnd = DateTime.now().add(#hours(8)).toText();
+        timeStart = today.add(#hours(5)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(8)).toTextFormatted(textFormat);
         taskType = #TimeBased;
         maxValue = 900;
         difficultyFactor = 1.3;
@@ -73,8 +78,8 @@ module {
         title = "Lunch Loop";
         description = "A brisk 2400-meter walk post-lunch to aid digestion.";
         emoji = "🍽️";
-        timeStart = DateTime.now().add(#hours(11)).toText();
-        timeEnd = DateTime.now().add(#hours(14)).toText();
+        timeStart = today.add(#hours(11)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(14)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
         maxValue = 2400;
         difficultyFactor = 1.2;
@@ -85,8 +90,8 @@ module {
         title = "Step It Up";
         description = "Accumulate an additional 2,500 steps in your afternoon activities.";
         emoji = "👣";
-        timeStart = DateTime.now().add(#hours(12)).toText();
-        timeEnd = DateTime.now().add(#hours(17)).toText();
+        timeStart = today.add(#hours(12)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(17)).toTextFormatted(textFormat);
         taskType = #StepBased;
         maxValue = 2500;
         difficultyFactor = 1.2;
@@ -97,8 +102,8 @@ module {
         title = "Nature's Midday";
         description = "Spend 20 minutes walking in a natural setting, appreciating the daylight.";
         emoji = "🌞";
-        timeStart = DateTime.now().add(#hours(11)).toText();
-        timeEnd = DateTime.now().add(#hours(15)).toText();
+        timeStart = today.add(#hours(11)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(15)).toTextFormatted(textFormat);
         taskType = #TimeBased;
         maxValue = 1200;
         difficultyFactor = 1.3;
@@ -109,8 +114,8 @@ module {
         title = "Urban Explorer";
         description = "Discover a new neighborhood or area in your city with a 3200-meter walk.";
         emoji = "🏙️";
-        timeStart = DateTime.now().add(#hours(12)).toText();
-        timeEnd = DateTime.now().add(#hours(17)).toText();
+        timeStart = today.add(#hours(12)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(17)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
         maxValue = 3200;
         difficultyFactor = 1.3;
@@ -121,8 +126,8 @@ module {
         title = "Afternoon Reset";
         description = "A 10-minute walk to clear your mind and refocus for the rest of the day.";
         emoji = "🔄";
-        timeStart = DateTime.now().add(#hours(13)).toText();
-        timeEnd = DateTime.now().add(#hours(16)).toText();
+        timeStart = today.add(#hours(13)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(16)).toTextFormatted(textFormat);
         taskType = #TimeBased;
         maxValue = 600;
         difficultyFactor = 1.2;
@@ -133,8 +138,8 @@ module {
         title = "Sunset Wind Down";
         description = "A relaxing 1600-meter walk to wind down as the sun sets.";
         emoji = "🌇";
-        timeStart = DateTime.now().add(#hours(17)).toText();
-        timeEnd = DateTime.now().add(#hours(20)).toText();
+        timeStart = today.add(#hours(17)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(20)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
         maxValue = 1600;
         difficultyFactor = 1.4;
@@ -145,8 +150,8 @@ module {
         title = "Evening Steps";
         description = "Gather the last 2,000 steps to meet your daily goal.";
         emoji = "🎯";
-        timeStart = DateTime.now().add(#hours(18)).toText();
-        timeEnd = DateTime.now().add(#hours(21)).toText();
+        timeStart = today.add(#hours(18)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(21)).toTextFormatted(textFormat);
         taskType = #StepBased;
         maxValue = 2000;
         difficultyFactor = 1.5;
@@ -157,8 +162,8 @@ module {
         title = "Night Sky Gazer";
         description = "15-minute walk under the night sky, stargazing and decompressing.";
         emoji = "🌌";
-        timeStart = DateTime.now().add(#hours(19)).toText();
-        timeEnd = DateTime.now().add(#hours(22)).toText();
+        timeStart = today.add(#hours(19)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(22)).toTextFormatted(textFormat);
         taskType = #TimeBased;
         maxValue = 900;
         difficultyFactor = 1.4;
@@ -169,8 +174,8 @@ module {
         title = "Reflective Walk";
         description = "A peaceful 3200-meter walk to reflect on your day and plan for tomorrow.";
         emoji = "🤔";
-        timeStart = DateTime.now().add(#hours(17)).toText();
-        timeEnd = DateTime.now().add(#hours(21)).toText();
+        timeStart = today.add(#hours(17)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(21)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
         maxValue = 3200;
         difficultyFactor = 1.5;
@@ -181,8 +186,8 @@ module {
         title = "Moonlit Serenity";
         description = "End your day with a 20-minute serene walk under the moonlight.";
         emoji = "🌜";
-        timeStart = DateTime.now().add(#hours(20)).toText();
-        timeEnd = DateTime.now().add(#hours(23)).toText();
+        timeStart = today.add(#hours(20)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(23)).toTextFormatted(textFormat);
         taskType = #TimeBased;
         maxValue = 1200;
         difficultyFactor = 1.5;
@@ -267,6 +272,7 @@ module {
   };
 
   public func getSamplePosts() : [Types.PostWithId] {
+    let examplePrincipal = "un4fu-tqaaa-aaaab-qadjq-cai";
     [
       {
         id = "0";

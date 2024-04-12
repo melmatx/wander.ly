@@ -178,6 +178,7 @@ export const idlFactory = ({ IDL }) => {
     'getAllPosts' : IDL.Func([], [IDL.Vec(IDL.Tuple(Id, PostComplete))], []),
     'getAllRewards' : IDL.Func([], [IDL.Vec(IDL.Tuple(Id, RewardWithId))], []),
     'getAllTasks' : IDL.Func([], [IDL.Vec(IDL.Tuple(Id, TaskWithId))], []),
+    'getAllTasksToday' : IDL.Func([], [IDL.Vec(IDL.Tuple(Id, TaskWithId))], []),
     'getAllUserAchievements' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(Id, UserAchievement))],

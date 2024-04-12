@@ -1,0 +1,69 @@
+// Version: 1.0.0
+type AchievementWithId =
+  {description : Text; emoji : Text; id : Id; name : Text; points : Float};
+type Id = Text;
+type PostAward = {postId : Id; userId : Principal};
+type PostLike = {postId : Id; userId : Principal};
+type PostWithId =
+  {
+    content : Text;
+    id : Id;
+    image : Text;
+    place : Text;
+    points : Float;
+    taskId : Id;
+    userId : Principal
+  };
+type Reward = {id : Id; name : Text; points : Float};
+type RewardWithId = Reward;
+type TaskType = {#DistanceBased; #StepBased; #TimeBased};
+type TaskWithId =
+  {
+    description : Text;
+    difficultyFactor : Float;
+    emoji : Text;
+    id : Id;
+    maxValue : Float;
+    taskType : TaskType;
+    timeEnd : Text;
+    timeOfDay : TimeOfDay;
+    timeStart : Text;
+    title : Text
+  };
+type TimeOfDay = {#Afternoon; #Evening; #Morning};
+type UserAchievement =
+  {
+    achievementId : Id;
+    completedAt : Text;
+    receivedPoints : Float;
+    userId : Principal
+  };
+type UserCompletedTask =
+  {
+    completedAt : Text;
+    receivedPoints : Float;
+    taskId : Id;
+    userId : Principal
+  };
+type UserWithId =
+  {country : ?Text; id : Principal; name : ?Text; points : Float};
+actor {
+  stable achievements :
+    [var ?([var ?Id], [var ?AchievementWithId], [var Nat], [var Nat32])];
+  stable postAwards :
+    [var ?([var ?Id], [var ?PostAward], [var Nat], [var Nat32])];
+  stable postLikes :
+    [var ?([var ?Id], [var ?PostLike], [var Nat], [var Nat32])];
+  stable posts :
+    [var ?([var ?Id], [var ?PostWithId], [var Nat], [var Nat32])];
+  stable rewards :
+    [var ?([var ?Id], [var ?RewardWithId], [var Nat], [var Nat32])];
+  stable tasks :
+    [var ?([var ?Id], [var ?TaskWithId], [var Nat], [var Nat32])];
+  stable userAchievements :
+    [var ?([var ?Id], [var ?UserAchievement], [var Nat], [var Nat32])];
+  stable userCompletedTasks :
+    [var ?([var ?Id], [var ?UserCompletedTask], [var Nat], [var Nat32])];
+  stable users :
+    [var ?([var ?Principal], [var ?UserWithId], [var Nat], [var Nat32])]
+};

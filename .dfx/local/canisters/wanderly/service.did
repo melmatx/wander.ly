@@ -212,6 +212,10 @@ service : {
                             Id;
                             TaskWithId;
                           });
+  getAllTasksToday: () -> (vec record {
+                                 Id;
+                                 TaskWithId;
+                               });
   getAllUserAchievements: () -> (vec record {
                                        Id;
                                        UserAchievement;

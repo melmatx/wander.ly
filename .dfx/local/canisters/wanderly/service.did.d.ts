@@ -159,6 +159,7 @@ export interface _SERVICE {
   'getAllPosts' : ActorMethod<[], Array<[Id, PostComplete]>>,
   'getAllRewards' : ActorMethod<[], Array<[Id, RewardWithId]>>,
   'getAllTasks' : ActorMethod<[], Array<[Id, TaskWithId]>>,
+  'getAllTasksToday' : ActorMethod<[], Array<[Id, TaskWithId]>>,
   'getAllUserAchievements' : ActorMethod<[], Array<[Id, UserAchievement]>>,
   'getAllUserCompletedTasks' : ActorMethod<[], Array<[Id, UserCompletedTask]>>,
   'getAllUsers' : ActorMethod<[], Array<[Principal, UserWithId]>>,

@@ -1,9 +1,11 @@
+import Data "modules/data";
 import Init "modules/init";
 import Service "modules/service";
 import Types "types";
 import Utils "utils";
 
 import DateTime "mo:datetime/DateTime";
+import LocalDateTime "mo:datetime/LocalDateTime";
 import Map "mo:map/Map";
 import { phash } "mo:map/Map";
 import { thash } "mo:map/Map";
@@ -59,6 +61,12 @@ actor Wanderly {
 
   public func getAllTasks() : async [(Types.Id, Types.TaskWithId)] {
     return Map.toArray(tasks);
+  };
+
+  public func getAllTasksToday() : async [(Types.Id, Types.TaskWithId)] {
+    let tasksToday = Service.getAllTasksToday(tasks);
+
+    return Map.toArray(tasksToday);
   };
 
   public func getAllUserCompletedTasks() : async [(Types.Id, Types.UserCompletedTask)] {
@@ -212,6 +220,20 @@ actor Wanderly {
       Debug.trap("Anonymous identity found!");
     };
 
+    // Check if time start is valid
+    let timeStart = DateTime.fromText(taskPayload.timeStart, Data.dateFormat);
+
+    if (Option.isNull(timeStart)) {
+      Debug.trap("Invalid time start");
+    };
+
+    // Check if time end is valid
+    let timeEnd = DateTime.fromText(taskPayload.timeEnd, Data.dateFormat);
+
+    if (Option.isNull(timeEnd)) {
+      Debug.trap("Invalid time end");
+    };
+
     // Generate id
     let newId : Types.Id = await Utils.generateUUID();
 
@@ -242,6 +264,28 @@ actor Wanderly {
         return #err({ message = "Task not found!" });
       };
       case (?task) {
+        // Check if time start is in payload
+        switch (taskPayload.timeStart) {
+          case (null) {};
+          case (?timeStart) {
+            // Check if time start is valid
+            if (Option.isNull(DateTime.fromText(timeStart, Data.dateFormat))) {
+              Debug.trap("Invalid time start");
+            };
+          };
+        };
+
+        // Check if time end is in payload
+        switch (taskPayload.timeEnd) {
+          case (null) {};
+          case (?timeEnd) {
+            // Check if time end is valid
+            if (Option.isNull(DateTime.fromText(timeEnd, Data.dateFormat))) {
+              Debug.trap("Invalid time end");
+            };
+          };
+        };
+
         // Overwrite for each field where the payload is not null
         switch (
           Map.update(
@@ -639,6 +683,41 @@ actor Wanderly {
         return #err({ message = "Task not found!" });
       };
       case (?task) {
+        // Convert timeStart to LocalDateTime object
+        let timeStart : DateTime.DateTime = do {
+          switch (DateTime.fromText(task.timeStart, Data.dateFormat)) {
+            case (null) {
+              Debug.trap("Invalid time start");
+            };
+            case (?date) {
+              Debug.print("Time start " # debug_show (date.toText()));
+              date;
+            };
+          };
+        };
+
+        // Convert timeEnd to LocalDateTime object
+        let timeEnd : DateTime.DateTime = do {
+          switch (DateTime.fromText(task.timeEnd, Data.dateFormat)) {
+            case (null) {
+              Debug.trap("Invalid time end");
+            };
+            case (?date) {
+              Debug.print("Time end " # debug_show (date.toText()));
+              date;
+            };
+          };
+        };
+
+        // Get current time for today in UTC format to compare timeStart and timeEnd (since they are also in UTC)
+        let currentTime = DateTime.fromComponents(LocalDateTime.now(Data.timeZone).toComponents());
+        Debug.print("Current time " # debug_show (currentTime.toText()));
+
+        // Check if task is available
+        if (currentTime.compare(timeStart) == #less or currentTime.compare(timeEnd) == #greater) {
+          return #err({ message = "Task is not available to complete!" });
+        };
+
         // Check if task is already completed
         switch (
           Map.find(
@@ -662,7 +741,7 @@ actor Wanderly {
             let newUserCompletedTask : Types.UserCompletedTask = {
               userId = caller;
               taskId;
-              completedAt = DateTime.now().toText();
+              completedAt = LocalDateTime.now(Data.timeZone).toText();
               receivedPoints = rewardPoints;
             };
 
@@ -730,7 +809,7 @@ actor Wanderly {
             let newUserAchievement : Types.UserAchievement = {
               userId = user;
               achievementId;
-              completedAt = DateTime.now().toText();
+              completedAt = LocalDateTime.now(Data.timeZone).toText();
               receivedPoints = achievement.points;
             };
 

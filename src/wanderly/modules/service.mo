@@ -1,11 +1,54 @@
+import Data "data";
 import Types "../types";
+
+import DateTime "mo:datetime/DateTime";
+import Map "mo:map/Map";
 import { thash } "mo:map/Map";
 import { phash } "mo:map/Map";
-import Map "mo:map/Map";
+
+import Debug "mo:base/Debug";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 
 module {
+  public func getAllTasksToday(map : Map.Map<Types.Id, Types.TaskWithId>) : Map.Map<Types.Id, Types.TaskWithId> {
+    return Map.filter(
+      map,
+      thash,
+      func(id : Types.Id, task : Types.TaskWithId) : Bool {
+        // Convert timeStart to day number
+        let dayStart : Nat = do {
+          switch (DateTime.fromText(task.timeStart, Data.dateFormat)) {
+            case (null) {
+              Debug.trap("Invalid time start");
+            };
+            case (?date) {
+              date.dayOfYear();
+            };
+          };
+        };
+
+        // Convert timeEnd to day number
+        let dayEnd : Nat = do {
+          switch (DateTime.fromText(task.timeEnd, Data.dateFormat)) {
+            case (null) {
+              Debug.trap("Invalid time end");
+            };
+            case (?date) {
+              date.dayOfYear();
+            };
+          };
+        };
+
+        // Get day today
+        let today = DateTime.now().dayOfYear();
+
+        // Check if task is for today
+        return today >= dayStart and today <= dayEnd;
+      },
+    );
+  };
+
   public func getAllPosts(map : Map.Map<Types.Id, Types.PostWithId>, postLikes : Map.Map<Types.Id, Types.PostLike>, postAwards : Map.Map<Types.Id, Types.PostAward>) : Map.Map<Types.Id, Types.PostComplete> {
     return Map.map(
       map,
