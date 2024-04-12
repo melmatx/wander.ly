@@ -683,7 +683,7 @@ actor Wanderly {
         return #err({ message = "Task not found!" });
       };
       case (?task) {
-        // Convert timeStart to LocalDateTime object
+        // Convert timeStart to DateTime object
         let timeStart : DateTime.DateTime = do {
           switch (DateTime.fromText(task.timeStart, Data.dateFormat)) {
             case (null) {
@@ -696,7 +696,7 @@ actor Wanderly {
           };
         };
 
-        // Convert timeEnd to LocalDateTime object
+        // Convert timeEnd to DateTime object
         let timeEnd : DateTime.DateTime = do {
           switch (DateTime.fromText(task.timeEnd, Data.dateFormat)) {
             case (null) {
