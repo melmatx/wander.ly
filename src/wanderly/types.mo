@@ -13,6 +13,12 @@ module {
     #TimeBased;
   };
 
+  public type AwardType = {
+    #Gold;
+    #Silver;
+    #Bronze;
+  };
+
   public type User = {
     name : ?Text;
     country : ?Text;
@@ -39,7 +45,6 @@ module {
   };
 
   public type Reward = {
-    id : Id;
     name : Text;
     points : Float;
   };
@@ -61,6 +66,7 @@ module {
   public type PostAward = {
     userId : Principal;
     postId : Id;
+    awardType : AwardType;
   };
 
   public type UserCompletedTask = {

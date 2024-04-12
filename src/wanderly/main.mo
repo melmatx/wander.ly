@@ -491,7 +491,10 @@ actor Wanderly {
     };
   };
 
-  public shared ({ caller }) func awardPost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+  public shared ({ caller }) func awardPost({
+    postId : Types.Id;
+    awardType : Types.AwardType;
+  }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
       Debug.trap("Anonymous identity found!");
     };
@@ -554,6 +557,7 @@ actor Wanderly {
             let newPostAward : Types.PostAward = {
               userId = caller;
               postId;
+              awardType;
             };
 
             // Check if post award creation was successful
