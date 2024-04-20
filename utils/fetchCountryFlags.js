@@ -1,3 +1,5 @@
+import { Alert } from "react-native";
+
 const fetchCountryFlags = async () => {
   try {
     const response = await fetch(
@@ -11,7 +13,7 @@ const fetchCountryFlags = async () => {
       value: country.name,
     }));
   } catch (error) {
-    console.error("Failed to fetch country flags:", error);
+    Alert.alert("Failed to fetch country flags:", error);
     return []; // Return an empty array or appropriate default value on error
   }
 };

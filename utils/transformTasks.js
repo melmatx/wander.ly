@@ -1,4 +1,8 @@
 const transformTasks = (tasks) => {
+  if (!tasks) {
+    return [];
+  }
+
   // Group tasks by time of day
   const sections = tasks.reduce((acc, task) => {
     let group = acc.find((g) => g.title === task.timeOfDay);

@@ -14,11 +14,11 @@ import * as WebBrowser from "expo-web-browser";
 import { create } from "zustand";
 
 import useProfileStore from "./useProfileStore";
-import getBackendActor from "../src/actor";
+import getPlatformNetwork from "../consts/network";
+import { getBackendActor } from "../src/actor";
 
 const initialState = {
   baseKey: "",
-  identity: "",
   principal: "",
   isReady: false,
   isFetching: false,
@@ -26,7 +26,7 @@ const initialState = {
 
 const useAuthStore = create((set, get) => ({
   ...initialState,
-  fetchKeyAndIdentity: async () => {
+  fetchKeyAndPrincipal: async () => {
     set({ isFetching: true });
 
     // Get base key
@@ -40,20 +40,6 @@ const useAuthStore = create((set, get) => ({
       SecureStore.setItem("baseKey", JSON.stringify(baseKey.toJSON()));
     }
 
-    // Check if testing
-    const isTesting = await AsyncStorage.getItem("isTesting");
-
-    if (isTesting) {
-      set({
-        baseKey,
-        identity: "testIdentity",
-        principal: "testPrincipal",
-        isReady: true,
-        isFetching: false,
-      });
-      return;
-    }
-
     // Get identity from delegation
     const delegation = await AsyncStorage.getItem("delegation");
 
@@ -64,11 +50,14 @@ const useAuthStore = create((set, get) => ({
       if (isDelegationValid(chain)) {
         const id = new DelegationIdentity(baseKey, chain);
 
+        // Set identity and fetch profile
+        await useProfileStore.getState().fetchProfile(id);
+
         // Get principal
         const principal = await getBackendActor(id).whoami();
 
         // Set identity with the base key
-        set({ identity: id, principal: principal.toText() });
+        set({ principal: principal.toText() });
       } else {
         await AsyncStorage.removeItem("delegation");
       }
@@ -76,7 +65,7 @@ const useAuthStore = create((set, get) => ({
 
     set({ baseKey, isReady: true, isFetching: false });
   },
-  setIdentity: async (delegation) => {
+  getPrincipal: async (delegation) => {
     set({ isFetching: true });
 
     // Decode delegation from uri result
@@ -96,15 +85,21 @@ const useAuthStore = create((set, get) => ({
     // Dismiss the browser
     WebBrowser.dismissBrowser();
 
+    // Initialize the data
+    try {
+      await getBackendActor(id)._init();
+      console.log("Populating with data...");
+    } catch (err) {
+      console.log(err);
+    }
+
+    // Set identity and fetch profile
+    await useProfileStore.getState().fetchProfile(id);
+
     // Get principal
     const principal = await getBackendActor(id).whoami();
 
-    set({ identity: id, principal: principal.toText(), isFetching: false });
-  },
-  loginTest: async () => {
-    await AsyncStorage.setItem("isTesting", "true");
-
-    set({ identity: "testIdentity", principal: "testPrincipal" });
+    set({ principal: principal.toText(), isFetching: false });
   },
   login: async () => {
     if (!get().baseKey) {
@@ -116,7 +111,7 @@ const useAuthStore = create((set, get) => ({
 
     // Create url for internet identity integration
     const url = new URL(
-      (process.env.EXPO_PUBLIC_TUNNEL_URL1 || "http://127.0.0.1:4943") +
+      (process.env.EXPO_PUBLIC_TUNNEL_URL1 || getPlatformNetwork()) +
         `/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION}`
     );
 
@@ -125,7 +120,7 @@ const useAuthStore = create((set, get) => ({
       // Must not be the same as the internet identity integration canister (127.0.0.1 OR localhost)
       // `http://127.0.0.1:4943/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
 
-      (process.env.EXPO_PUBLIC_TUNNEL_URL2 || "http://localhost:4943") +
+      (process.env.EXPO_PUBLIC_TUNNEL_URL2 || getPlatformNetwork(true)) +
         `/?canisterId=${process.env.EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY}`
     );
     url.searchParams.set(
@@ -145,17 +140,10 @@ const useAuthStore = create((set, get) => ({
   logout: async () => {
     await AsyncStorage.removeItem("delegation");
     await AsyncStorage.removeItem("isTutorialDone");
-    await AsyncStorage.removeItem("isTesting");
-    await useProfileStore.getState().clearProfile();
 
-    set({ identity: "", principal: "" });
-  },
-  getActor: () => {
-    if (!get().identity) {
-      throw new Error("Identity not set");
-    }
+    useProfileStore.getState().clearProfile();
 
-    return getBackendActor(get().identity);
+    set({ principal: "" });
   },
 }));
 

@@ -1,20 +1,31 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Burnt from "burnt";
 import { CameraView, useCameraPermissions } from "expo-camera/next";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Text } from "react-native-ui-lib";
+import { useShallow } from "zustand/react/shallow";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
+import { getBackendActor } from "../src/actor";
+import useProfileStore from "../stores/useProfileStore";
 
 const ScanCode = ({ route }) => {
-  const [code, setCode] = useState("");
+  const [prevCode, setPrevCode] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
   const [torch, toggleTorch] = useReducer((state) => !state, false);
   const [permission, requestPermission] = useCameraPermissions();
 
   const stackView = route.params?.stackView;
 
+  const { identity, fetchProfile } = useProfileStore(
+    useShallow((state) => ({
+      identity: state.identity,
+      fetchProfile: state.fetchProfile,
+    }))
+  );
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -22,16 +33,52 @@ const ScanCode = ({ route }) => {
   }, []);
 
   const onQRScanned = useCallback(
-    ({ data }) => {
+    async ({ data }) => {
       console.log(data);
-      if (data === code) {
+
+      if (data === prevCode || isFetching) {
         return;
       }
-      // Do something with the scanned QR code
+      setPrevCode(data);
+      setIsFetching(true);
 
-      setCode(data);
+      Burnt.alert({
+        title: "Redeeming points...",
+        preset: "spinner",
+        shouldDismissByTap: false,
+      });
+
+      try {
+        const { ok, err } = await getBackendActor(identity).redeemReward({
+          code: data,
+        });
+
+        if (err) {
+          Burnt.alert({
+            title: err.message,
+            preset: "error",
+            duration: 0.8,
+          });
+          return;
+        }
+
+        Burnt.dismissAllAlerts();
+
+        Burnt.alert({
+          title: ok.message,
+          preset: "custom",
+          icon: { ios: { name: "checkmark.seal.fill" } },
+          duration: 0.8,
+        });
+
+        await fetchProfile();
+      } catch (error) {
+        Alert.alert("Failed to redeem reward", error);
+      } finally {
+        setIsFetching(false);
+      }
     },
-    [code]
+    [fetchProfile, identity, isFetching, prevCode]
   );
 
   return (
@@ -42,6 +89,7 @@ const ScanCode = ({ route }) => {
           enableTorch={torch}
           barCodeScannerSettings={{
             barCodeTypes: ["qr"],
+            interval: 500,
           }}
           onBarcodeScanned={onQRScanned}
           mute

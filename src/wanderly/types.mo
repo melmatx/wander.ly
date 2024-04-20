@@ -19,10 +19,16 @@ module {
     #Bronze;
   };
 
+  public type LikeType = {
+    #Like;
+    #Dislike;
+  };
+
   public type User = {
     name : ?Text;
     country : ?Text;
     points : Float;
+    createdAt : Text;
   };
 
   public type Task = {
@@ -46,15 +52,16 @@ module {
 
   public type Reward = {
     name : Text;
+    code : Text;
     points : Float;
   };
 
   public type Post = {
     userId : Principal;
     taskId : Id;
+    title : Text;
     content : Text;
-    place : Text;
-    image : Text;
+    imageKey : Text;
     points : Float;
   };
 
@@ -121,17 +128,9 @@ module {
 
   public type PostPayload = {
     taskId : Id;
+    title : Text;
     content : Text;
-    place : Text;
-    image : Text;
-  };
-
-  public type UserCompletedTaskResult = UserCompletedTask and {
-    task : Task;
-  };
-
-  public type UserAchievementResult = UserAchievement and {
-    achievement : Achievement;
+    imageKey : Text;
   };
 
   public type UserWithId = User and { id : Principal };
@@ -144,8 +143,27 @@ module {
 
   public type PostWithId = Post and { id : Id };
 
-  public type PostComplete = PostWithId and {
+  public type UserResult = UserWithId and {
+    achievements : Nat;
+  };
+
+  public type PostResult = PostWithId and {
+    task : ?TaskWithId;
     likes : Nat;
     awards : Nat;
+    isLiked : Bool;
+    isAwarded : Bool;
+  };
+
+  public type AchievementResult = AchievementWithId and {
+    userAchievement : ?UserAchievement;
+  };
+
+  public type UserCompletedTaskResult = UserCompletedTask and {
+    task : Task;
+  };
+
+  public type UserAchievementResult = UserAchievement and {
+    achievement : Achievement;
   };
 };

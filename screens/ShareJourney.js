@@ -1,9 +1,10 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { CameraType } from "expo-camera";
-import { CameraView, useCameraPermissions } from "expo-camera/next";
+import * as Burnt from "burnt";
+import { Camera, CameraType, FlashMode, ImageType } from "expo-camera";
 import { Image } from "expo-image";
 import { manipulateAsync, FlipType } from "expo-image-manipulator";
+import * as Location from "expo-location";
 import React, {
   useCallback,
   useEffect,
@@ -19,28 +20,71 @@ import { Button, Text } from "react-native-ui-lib";
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
 import FormInput from "../components/FormInput";
+import Routes from "../navigation/Routes";
+import { getBackendActor } from "../src/actor";
+import useProfileStore from "../stores/useProfileStore";
+import uploadFile from "../utils/uploadFile";
 
-const ShareJourney = () => {
+const flashReducer = (state) => {
+  // switch between torch, auto, and off
+  switch (state) {
+    case FlashMode.torch:
+      return FlashMode.auto;
+    case FlashMode.auto:
+      return FlashMode.off;
+    case FlashMode.off:
+      return FlashMode.torch;
+    default:
+      return FlashMode.off;
+  }
+};
+
+const ShareJourney = ({ navigation, route }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [preview, setPreview] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
-  const [torch, toggleTorch] = useReducer((state) => !state, false);
+  const [flashMode, toggleFlashMode] = useReducer(flashReducer, FlashMode.off);
   const [type, toggleType] = useReducer(
     (state) => (state === CameraType.back ? CameraType.front : CameraType.back),
     CameraType.back
   );
 
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const identity = useProfileStore((state) => state.identity);
+  const insets = useSafeAreaInsets();
+
   const cameraRef = useRef(null);
   const detailsSheetRef = useRef(null);
 
-  const insets = useSafeAreaInsets();
+  const taskId = route.params?.taskId;
 
   useEffect(() => {
     requestPermission();
   }, []);
+
+  const flashIcon = useMemo(() => {
+    switch (flashMode) {
+      case FlashMode.torch:
+        return "flashlight";
+      case FlashMode.auto:
+        return "flash";
+      default:
+        return "flash-off";
+    }
+  }, [flashMode]);
+
+  const flashColor = useMemo(() => {
+    switch (flashMode) {
+      case FlashMode.torch:
+        return colors.primary;
+      case FlashMode.off:
+        return colors.gray;
+      default:
+        return "white";
+    }
+  }, [flashMode]);
 
   const onCameraReady = useCallback(() => {
     setIsCameraReady(true);
@@ -54,8 +98,11 @@ const ShareJourney = () => {
     setIsLoading(true);
 
     try {
-      let picture = await cameraRef.current?.takePictureAsync({ base64: true });
+      let picture = await cameraRef.current?.takePictureAsync({
+        imageType: ImageType.jpg,
+      });
 
+      // Flip the image if the camera is front
       if (type === CameraType.front) {
         picture = await manipulateAsync(
           picture.uri,
@@ -64,6 +111,19 @@ const ShareJourney = () => {
         );
       }
       setPreview(picture);
+
+      // Get the location of the user
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+      });
+      const address = await Location.reverseGeocodeAsync({
+        ...location.coords,
+        accuracy: 1,
+      });
+
+      // Set the title to the location
+      setTitle(`${address[0].street} ${address[0].city}, ${address[0].region}`);
+
       detailsSheetRef.current?.expand();
     } catch (error) {
       console.log(error);
@@ -72,6 +132,64 @@ const ShareJourney = () => {
       setIsLoading(false);
     }
   }, [isCameraReady, type]);
+
+  const uploadJourney = useCallback(
+    async (file) => {
+      Burnt.alert({
+        title: "Uploading journey...",
+        preset: "spinner",
+        shouldDismissByTap: false,
+      });
+
+      const batch_name = `journey-${Date.now()}`;
+
+      try {
+        await uploadFile(batch_name, file);
+
+        const { ok, err } = await getBackendActor(identity).createPost({
+          taskId,
+          title: title.trim(),
+          content: description.trim(),
+          imageKey: batch_name,
+        });
+
+        Burnt.dismissAllAlerts();
+
+        if (err) {
+          Burnt.alert({
+            title: err.message,
+            preset: "error",
+            duration: 0.8,
+          });
+          return;
+        }
+
+        Burnt.alert({
+          title: ok.message,
+          preset: "done",
+          duration: 0.8,
+        });
+
+        navigation.navigate(Routes.COMMUNITY, { refresh: true });
+      } catch (err) {
+        Burnt.dismissAllAlerts();
+        Alert.alert("Error", err);
+      }
+    },
+    [title, description, taskId, navigation]
+  );
+
+  const handlePostJourney = useCallback(async () => {
+    if (!title || !description || !preview) {
+      Alert.alert("Please fill all the fields.");
+      return;
+    }
+
+    const response = await fetch(preview.uri);
+    const blob = await response.blob();
+
+    uploadJourney(blob);
+  }, [title, description, preview, uploadJourney]);
 
   const onCloseDetailsSheet = useCallback(() => {
     Keyboard.dismiss();
@@ -92,13 +210,12 @@ const ShareJourney = () => {
         ]}
       >
         {permission?.granted ? (
-          <CameraView
+          <Camera
             ref={cameraRef}
             style={globalStyles.flexFull}
             onCameraReady={onCameraReady}
-            enableTorch={torch}
-            facing={type}
-            mute
+            flashMode={flashMode}
+            type={type}
           >
             <View
               style={[
@@ -112,17 +229,15 @@ const ShareJourney = () => {
               ]}
             >
               <Button
-                onPress={toggleTorch}
-                backgroundColor={torch ? "white" : "rgba(255,255,255,0.2)"}
-                disabled={type === CameraType.front}
-                disabledBackgroundColor={colors.dark}
+                onPress={toggleFlashMode}
+                backgroundColor={
+                  flashMode === FlashMode.torch && type === CameraType.back
+                    ? "white"
+                    : "rgba(255,255,255,0.2)"
+                }
                 enableShadow
               >
-                <Ionicons
-                  name="flashlight"
-                  size={35}
-                  color={torch ? colors.primary : "white"}
-                />
+                <Ionicons name={flashIcon} size={35} color={flashColor} />
               </Button>
 
               <Button
@@ -149,7 +264,7 @@ const ShareJourney = () => {
                 <Ionicons name="camera-reverse" size={35} color="white" />
               </Button>
             </View>
-          </CameraView>
+          </Camera>
         ) : (
           <View style={globalStyles.flexCenter}>
             <Text h3 color={colors.gray}>
@@ -186,11 +301,12 @@ const ShareJourney = () => {
           )}
           <FormInput
             value={title}
-            setData={setTitle}
             item={{
               label: "Title",
               placeholder: "Enter the title",
-              h2: true,
+              isViewing: true,
+              color: "gray",
+              h3: true,
             }}
           />
 
@@ -201,13 +317,14 @@ const ShareJourney = () => {
               label: "Description",
               placeholder: "Enter the description",
               isTextArea: true,
-              h2: true,
+              h3: true,
             }}
           />
 
           <Button
             label="Post Journey"
             style={{ marginVertical: sizes.large }}
+            onPress={handlePostJourney}
           />
         </BottomSheetScrollView>
       </BottomSheet>

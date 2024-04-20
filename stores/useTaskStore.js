@@ -1,15 +1,36 @@
+import { Alert } from "react-native";
 import { create } from "zustand";
 
-import tasks from "../consts/sampleTasks";
+import useProfileStore from "./useProfileStore";
+import { getBackendActor } from "../src/actor";
+import normalizeTasksData from "../utils/normalizeTasksData";
 
 const initialState = {
   currentId: null,
-  tasks,
+  tasks: [],
+  isFetching: true,
   cancelFn: null,
 };
 
 const useTaskStore = create((set, get) => ({
   ...initialState,
+  setTasks: (tasks) => set({ tasks }),
+  fetchTasks: async () => {
+    set({ isFetching: true });
+
+    try {
+      // Fetch tasks from ICP
+      const identity = useProfileStore.getState().identity;
+      const fetchedTasks = await getBackendActor(identity).getAllTasksToday();
+      const normalizedTasks = normalizeTasksData(fetchedTasks);
+
+      set({ tasks: normalizedTasks, isFetching: false });
+    } catch (error) {
+      Alert.alert("Failed to fetch tasks", error);
+    } finally {
+      set({ isFetching: false });
+    }
+  },
   setCurrentTask: (id) => set({ currentId: id }),
   getCurrentTask: () => get().tasks.find((t) => t.id === get().currentId),
   removeCurrentTask: () => set({ currentId: null }),

@@ -40,29 +40,29 @@ const ActiveTask = ({ navigation, route }) => {
   }, []);
 
   const onShareTask = useCallback(() => {
-    navigation.navigate(Routes.SHARE_JOURNEY);
-  }, [navigation]);
+    navigation.navigate(Routes.SHARE_JOURNEY, { taskId: task.id });
+  }, [navigation, task.id]);
 
   const renderHint = useMemo(() => {
-    const progress = convertAltValue(task.type, currentProgress);
-    const maxValue = convertAltValue(task.type, task.maxValue);
+    const progress = convertAltValue(task.taskType, currentProgress);
+    const maxValue = convertAltValue(task.taskType, task.maxValue);
     const remaining = maxValue - progress;
-    const unit = getTaskUnit(task.type, remaining);
+    const unit = getTaskUnit(task.taskType, remaining);
 
     return (
       <Text h4 color={colors.gray} flex center>
         You need to walk {remaining} more {unit} to reach your goal.
       </Text>
     );
-  }, [currentProgress, task.maxValue, task.type]);
+  }, [currentProgress, task.maxValue, task.taskType]);
 
   const title = useMemo(
-    () => getTaskUnit(task.type, currentProgress),
-    [currentProgress, task.type]
+    () => getTaskUnit(task.taskType, currentProgress),
+    [currentProgress, task.taskType]
   );
 
   const convertedProgress = useMemo(() => {
-    if (task.type === TaskTypes.TIME) {
+    if (task.taskType === TaskTypes.TIME) {
       return convertSecToMin(currentProgress);
     }
 
@@ -79,7 +79,7 @@ const ActiveTask = ({ navigation, route }) => {
       }
 
       // Convert time to minutes
-      if (task.type === TaskTypes.TIME) {
+      if (task.taskType === TaskTypes.TIME) {
         return convertedProgress;
       }
 

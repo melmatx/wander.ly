@@ -1,5 +1,7 @@
+import TaskTypes from "../consts/taskTypes";
+
 const convertAltValue = (type, value) => {
-  if (type === "time-based") {
+  if (type === TaskTypes.TIME) {
     return Math.floor(value / 60); // convert seconds to minutes
   }
 

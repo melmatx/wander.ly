@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Burnt from "burnt";
+import { format } from "date-fns";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useMemo, useRef } from "react";
@@ -13,12 +14,14 @@ import AppHeader from "../components/AppHeader";
 import CardFlip from "../components/CardFlip";
 import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
+import useProfileStore from "../stores/useProfileStore";
 import authenticateLocally from "../utils/authenticateLocally";
 
 const { width, height } = Dimensions.get("window");
 
 const Wallet = ({ navigation }) => {
   const principal = useAuthStore((state) => state.principal);
+  const profile = useProfileStore((state) => state.profile);
 
   const cardRef = useRef(null);
   const qrCodeRef = useRef(null);
@@ -39,8 +42,16 @@ const Wallet = ({ navigation }) => {
     navigation.navigate(Routes.REWARDS);
   }, [navigation]);
 
-  const onDonatePoints = useCallback(() => {
-    console.log("Donate Points");
+  const onDonatePoints = useCallback(async () => {
+    await authenticateLocally({
+      onSuccess: () =>
+        Burnt.alert({
+          title: "Points Donated",
+          preset: "done",
+          message: "You have successfully donated points",
+          duration: 0.8,
+        }),
+    });
   }, []);
 
   const renderWalletShimmer = useMemo(
@@ -99,7 +110,7 @@ const Wallet = ({ navigation }) => {
         >
           <View style={{ rowGap: sizes.small }}>
             <Text h2 color="lightcyan">
-              0.00
+              {profile.points.toFixed(2)}
             </Text>
             <Text h4 color="lightcyan">
               Total Points
@@ -107,12 +118,12 @@ const Wallet = ({ navigation }) => {
           </View>
 
           <Text h2 color="azure">
-            04/20
+            {format(profile.createdAt, "MM/dd")}
           </Text>
         </View>
       </LinearGradient>
     ),
-    []
+    [profile]
   );
 
   const renderWalletBack = useMemo(
@@ -164,7 +175,7 @@ const Wallet = ({ navigation }) => {
         </View>
       </LinearGradient>
     ),
-    []
+    [principal]
   );
 
   return (

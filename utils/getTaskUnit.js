@@ -1,13 +1,15 @@
+import TaskTypes from "../consts/taskTypes";
+
 const TASK_UNITS = {
-  "distance-based": {
+  [TaskTypes.DISTANCE]: {
     singular: "meter",
     plural: "meters",
   },
-  "step-based": {
+  [TaskTypes.STEP]: {
     singular: "step",
     plural: "steps",
   },
-  "time-based": {
+  [TaskTypes.TIME]: {
     singular: "minute",
     plural: "minutes",
   },
@@ -15,6 +17,10 @@ const TASK_UNITS = {
 
 const getTaskUnit = (type, value) => {
   const unitType = TASK_UNITS[type];
+
+  if (!unitType) {
+    throw new Error(`Invalid task type: ${JSON.stringify(type)}`);
+  }
 
   // const units =
   //   useAlt && unitType.alternative ? unitType.alternative : unitType.standard;

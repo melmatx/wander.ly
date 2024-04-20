@@ -42,7 +42,7 @@ const useCurrentProgress = () => {
 
   // Update progress for distance-based tasks
   useEffect(() => {
-    if (currentTask.type === TaskTypes.DISTANCE && !cancelFn) {
+    if (currentTask.taskType === TaskTypes.DISTANCE && !cancelFn) {
       const subscribeToLocation = async () => {
         let permissionsGranted = false;
 
@@ -79,7 +79,7 @@ const useCurrentProgress = () => {
       subscribeToLocation();
 
       setCancelFn(() => {
-        if (currentTask.type === TaskTypes.DISTANCE) {
+        if (currentTask.taskType === TaskTypes.DISTANCE) {
           (async () => {
             const isRegistered =
               await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
@@ -103,7 +103,7 @@ const useCurrentProgress = () => {
 
   // Update progress for step-based tasks
   useEffect(() => {
-    if (currentTask.type === TaskTypes.STEP && !cancelFn) {
+    if (currentTask.taskType === TaskTypes.STEP && !cancelFn) {
       const subscribeToPedometer = async () => {
         const isAvailable = await Pedometer.isAvailableAsync();
 
@@ -141,7 +141,7 @@ const useCurrentProgress = () => {
 
   // Update progress for time-based tasks
   useEffect(() => {
-    if (currentTask.type === TaskTypes.TIME && !cancelFn) {
+    if (currentTask.taskType === TaskTypes.TIME && !cancelFn) {
       console.log("Starting timer");
       const interval = setInterval(() => {
         const task = useTaskStore.getState().getCurrentTask();
@@ -190,7 +190,21 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 
     // Get initial location if not set
     if (!initialLatitude || !initialLongitude) {
-      const location = await Location.getCurrentPositionAsync();
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
+
+      if (!location) {
+        await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+
+        Burnt.toast({
+          title: "Location Error",
+          message: "Unable to get initial location",
+          preset: "error",
+          duration: 1.5,
+        });
+        return;
+      }
 
       initialLatitude = location.coords.latitude;
       initialLongitude = location.coords.longitude;

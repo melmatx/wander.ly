@@ -15,13 +15,13 @@ type PostWithId =
   {
     content : Text;
     id : Id;
-    image : Text;
-    place : Text;
+    imageKey : Text;
     points : Float;
     taskId : Id;
+    title : Text;
     userId : Principal
   };
-type RewardWithId = {id : Id; name : Text; points : Float};
+type RewardWithId = {code : Text; id : Id; name : Text; points : Float};
 type TaskType = {#DistanceBased; #StepBased; #TimeBased};
 type TaskWithId =
   {
@@ -52,7 +52,13 @@ type UserCompletedTask =
     userId : Principal
   };
 type UserWithId =
-  {country : ?Text; id : Principal; name : ?Text; points : Float};
+  {
+    country : ?Text;
+    createdAt : Text;
+    id : Principal;
+    name : ?Text;
+    points : Float
+  };
 actor {
   stable achievements :
     [var ?([var ?Id], [var ?AchievementWithId], [var Nat], [var Nat32])];

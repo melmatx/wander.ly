@@ -1,24 +1,60 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
-import * as Burnt from "burnt";
-import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
-import { FlatList, View } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
+import { ActivityIndicator, Alert, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button } from "react-native-ui-lib";
+import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import CommunityModal from "../components/CommunityModal";
 import GradientIcon from "../components/GradientIcon";
 import LargeHeader from "../components/LargeHeader";
 import PostItem from "../components/PostItem";
-import posts from "../consts/samplePosts";
+import PostSyncContext from "../contexts/PostSyncContext";
+import usePostActions from "../hooks/usePostActions";
+import { getBackendActor } from "../src/actor";
+import useProfileStore from "../stores/useProfileStore";
+import normalizePostsData from "../utils/normalizePostsData";
 
 const YourPosts = ({ navigation }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const { claimAllPostPoints } = usePostActions({
+    setPostsFromArg: setPosts,
+    setSelectedPostFromArg: setSelectedPost,
+  });
+  const identity = useProfileStore((state) => state.identity);
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    const fetchYourPosts = async () => {
+      setIsFetching(true);
+      try {
+        // Fetch your posts from ICP
+        const posts = await getBackendActor(identity).getPostsByUser({
+          userId: [],
+        });
+        const normalizedPosts = normalizePostsData(posts);
+
+        setPosts(normalizedPosts);
+      } catch (error) {
+        Alert.alert("Failed to fetch your posts", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchYourPosts();
+  }, [identity]);
 
   const ListHeaderComponent = useMemo(
     () => (
@@ -38,6 +74,17 @@ const YourPosts = ({ navigation }) => {
     []
   );
 
+  const ListEmptyComponent = useMemo(
+    () => (
+      <View style={[globalStyles.flexCenter, { padding: sizes.large }]}>
+        <Text h4 color={colors.gray}>
+          No posts yet.
+        </Text>
+      </View>
+    ),
+    []
+  );
+
   const onItemPressed = useCallback((post) => {
     setSelectedPost(post);
     setIsModalVisible(true);
@@ -47,62 +94,27 @@ const YourPosts = ({ navigation }) => {
     setIsModalVisible(false);
   }, []);
 
-  const onClaimPoints = useCallback((item) => {
-    Burnt.alert({
-      title: "Claiming points",
-      preset: "spinner",
-      message: "10 points to be claimed!",
-      shouldDismissByTap: false,
-    });
-
-    // Simulating a delay
-    setTimeout(() => {
-      Burnt.dismissAllAlerts();
-
-      Burnt.alert({
-        title: "Points claimed",
-        preset: "done",
-        message: "10 points have been added to your account.",
-        duration: 0.8,
-      });
-    }, 1500);
-  }, []);
-
   const renderItem = useCallback(
     ({ item }) => (
-      <PostItem item={item} onPress={() => onItemPressed(item)}>
-        <Button
-          label="Claim Points"
-          link
-          onPress={() => onClaimPoints(item)}
-          disabled={item.points === 0}
-          style={{ opacity: item.points > 0 ? 1 : 0.5 }}
-        >
-          <Ionicons
-            name="gift"
-            size={20}
-            color={item.points > 0 ? colors.primary : colors.gray}
-            style={{ marginRight: sizes.small }}
-          />
-        </Button>
-      </PostItem>
+      <PostItem item={item} onPress={() => onItemPressed(item)} isUser />
     ),
-    [onItemPressed, onClaimPoints]
+    [onItemPressed]
   );
 
-  const onClaimAll = useCallback(() => {
-    Burnt.alert({
-      title: "Points claimed",
-      preset: "done",
-      message: "10 points have been added to your account.",
-      duration: 0.8,
-    });
-  }, []);
+  const headerRight = useCallback(() => {
+    if (isFetching) {
+      return null;
+    }
 
-  const headerRight = useCallback(
-    () => <Button label="Claim All" link onPress={onClaimAll} />,
-    [onClaimAll]
-  );
+    return (
+      <Button
+        label="Claim All"
+        link
+        onPress={claimAllPostPoints}
+        disabled={posts.every((post) => post.points === 0)}
+      />
+    );
+  }, [claimAllPostPoints, isFetching, posts]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -110,22 +122,38 @@ const YourPosts = ({ navigation }) => {
     });
   }, [headerRight, navigation]);
 
+  if (isFetching) {
+    return (
+      <View style={[globalStyles.flexFull, { paddingTop: headerHeight }]}>
+        {ListHeaderComponent}
+
+        <View style={[globalStyles.flexCenter, { rowGap: sizes.large }]}>
+          <ActivityIndicator size="large" />
+          <Text style={{ color: colors.gray }}>Loading Your Posts...</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <View
-      style={[
-        globalStyles.flexFull,
-        { paddingTop: headerHeight, paddingBottom: insets.bottom },
-      ]}
-    >
-      <FlatList
-        data={posts}
-        ListHeaderComponent={ListHeaderComponent}
-        contentContainerStyle={{
-          rowGap: sizes.xlarge,
-          paddingHorizontal: sizes.large,
-        }}
-        renderItem={renderItem}
-      />
+    <PostSyncContext.Provider value={{ setPosts, setSelectedPost }}>
+      <View
+        style={[
+          globalStyles.flexFull,
+          { paddingTop: headerHeight, paddingBottom: insets.bottom },
+        ]}
+      >
+        <FlatList
+          data={posts}
+          ListHeaderComponent={ListHeaderComponent}
+          ListEmptyComponent={ListEmptyComponent}
+          contentContainerStyle={{
+            rowGap: sizes.xlarge,
+            paddingHorizontal: sizes.large,
+          }}
+          renderItem={renderItem}
+        />
+      </View>
 
       <CommunityModal
         item={selectedPost}
@@ -133,7 +161,7 @@ const YourPosts = ({ navigation }) => {
         onClose={onCloseModal}
         isUser
       />
-    </View>
+    </PostSyncContext.Provider>
   );
 };
 

@@ -4,6 +4,10 @@ import Types "../types";
 import Map "mo:map/Map";
 import { thash } "mo:map/Map";
 import Debug "mo:base/Debug";
+import Iter "mo:base/Iter";
+import Nat "mo:base/Nat";
+import Float "mo:base/Float";
+import LocalDateTime "mo:datetime/LocalDateTime";
 
 module {
   public func initTasks(tasks : Map.Map<Types.Id, Types.TaskWithId>) {
@@ -40,6 +44,32 @@ module {
     };
   };
 
+  public func initUserAchievements(userAchievements : Map.Map<Types.Id, Types.UserAchievement>, userId : Principal) {
+    let sampleAchievements = Data.getSampleAchievements();
+
+    for (i in Iter.range(0, 5)) {
+      let userAchievementId = "userAchievement-" # Nat.toText(i);
+
+      let newUserAchievement : Types.UserAchievement = {
+        userId;
+        achievementId = sampleAchievements[i].id;
+        completedAt = LocalDateTime.now(Data.timeZone).toText();
+        receivedPoints = 20 * (Float.fromInt(i) + 1);
+      };
+
+      let currentUserAchievement = Map.add(userAchievements, thash, userAchievementId, newUserAchievement);
+
+      switch (currentUserAchievement) {
+        case (null) {
+          Debug.print("User achievement " # debug_show (userAchievementId) # " added");
+        };
+        case (?userAchievement) {
+          Debug.trap("Failed adding user achievement " # debug_show (userAchievementId));
+        };
+      };
+    };
+  };
+
   public func initRewards(rewards : Map.Map<Types.Id, Types.RewardWithId>) {
     let sampleRewards = Data.getSampleRewards();
 
@@ -57,8 +87,8 @@ module {
     };
   };
 
-  public func initPosts(posts : Map.Map<Types.Id, Types.PostWithId>) {
-    let samplePosts = Data.getSamplePosts();
+  public func initPosts(posts : Map.Map<Types.Id, Types.PostWithId>, userId : Principal) {
+    let samplePosts = Data.getSamplePosts(userId);
 
     for (post in samplePosts.vals()) {
       let currentPost = Map.add(posts, thash, post.id, post);
@@ -67,7 +97,7 @@ module {
         case (null) {
           Debug.print("Post " # debug_show (post.id) # " added");
         };
-        case (?task) {
+        case (?post) {
           Debug.trap("Failed adding post " # debug_show (post.id));
         };
       };

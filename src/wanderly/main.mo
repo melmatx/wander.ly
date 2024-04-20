@@ -14,6 +14,7 @@ import Debug "mo:base/Debug";
 import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
+import Iter "mo:base/Iter";
 
 actor Wanderly {
   stable let users = Map.new<Principal, Types.UserWithId>();
@@ -26,82 +27,83 @@ actor Wanderly {
   stable let postLikes = Map.new<Types.Id, Types.PostLike>();
   stable let postAwards = Map.new<Types.Id, Types.PostAward>();
 
-  let initialPoints = 50.0;
+  let INITIAL_POINTS = 50.0;
 
   public shared ({ caller }) func _init() : async () {
-    Init.initTasks(tasks);
-    Init.initAchievements(achievements);
-    Init.initRewards(rewards);
-    Init.initPosts(posts);
-
     ignore await updateOrCreateUser({
       id = ?caller;
       name = null;
       country = null;
     });
+
+    Init.initTasks(tasks);
+    Init.initAchievements(achievements);
+    Init.initUserAchievements(userAchievements, caller);
+    Init.initRewards(rewards);
+    Init.initPosts(posts, caller);
   };
 
-  public shared ({ caller }) func getUser({ id : ?Principal }) : async Types.UserWithId {
+  public shared ({ caller }) func getUser({ id : ?Principal }) : async Types.UserResult {
     let userId = Option.get(id, caller);
 
-    switch (Map.get(users, phash, userId)) {
-      case (null) {
-        Debug.trap("User not found!");
-      };
-      case (?user) {
-        user;
-      };
-    };
+    // Filter achievements based on user id
+    let achievementsOfUser = Service.getAchievementsOfUser(userAchievements, userId);
+
+    // Get user with number of achievements
+    return Service.getUserResult(users, achievementsOfUser, userId);
   };
 
-  public func getAllUsers() : async [(Principal, Types.UserWithId)] {
-    return Map.toArray(users);
+  public func getAllUsers() : async [Types.UserWithId] {
+    return Iter.toArray(Map.vals(users));
   };
 
-  public func getAllTasks() : async [(Types.Id, Types.TaskWithId)] {
-    return Map.toArray(tasks);
+  public func getAllTasks() : async [Types.TaskWithId] {
+    return Iter.toArray(Map.vals(tasks));
   };
 
-  public func getAllTasksToday() : async [(Types.Id, Types.TaskWithId)] {
+  public func getAllTasksToday() : async [Types.TaskWithId] {
     let tasksToday = Service.getAllTasksToday(tasks);
 
-    return Map.toArray(tasksToday);
+    return Iter.toArray(Map.vals(tasksToday));
   };
 
-  public func getAllUserCompletedTasks() : async [(Types.Id, Types.UserCompletedTask)] {
-    return Map.toArray(userCompletedTasks);
+  public func getAllUserCompletedTasks() : async [Types.UserCompletedTask] {
+    return Iter.toArray(Map.vals(userCompletedTasks));
   };
 
-  public func getAllAchievements() : async [(Types.Id, Types.AchievementWithId)] {
-    return Map.toArray(achievements);
+  public shared ({ caller }) func getAllAchievements() : async [Types.AchievementResult] {
+    // Get achievements with user achievement
+    let achievementsWithUser = Service.getAllAchievementsWithUser(achievements, userAchievements, caller);
+
+    return Iter.toArray(Map.vals(achievementsWithUser));
   };
 
-  public func getAllUserAchievements() : async [(Types.Id, Types.UserAchievement)] {
-    return Map.toArray(userAchievements);
+  public func getAllUserAchievements() : async [Types.UserAchievement] {
+    return Iter.toArray(Map.vals(userAchievements));
   };
 
-  public func getAllRewards() : async [(Types.Id, Types.RewardWithId)] {
-    return Map.toArray(rewards);
+  public func getAllRewards() : async [Types.RewardWithId] {
+    return Iter.toArray(Map.vals(rewards));
   };
 
-  public func getAllPosts() : async [(Types.Id, Types.PostComplete)] {
-    // Get all posts with like and award count
-    let completePosts = Service.getAllPosts(posts, postLikes, postAwards);
+  public shared ({ caller }) func getAllPosts() : async [Types.PostResult] {
+    // Get all posts with task, as well as like and award count
+    let completePosts = Service.getAllPostsResult(posts, tasks, postLikes, postAwards, caller);
 
-    return Map.toArray(completePosts);
+    return Iter.toArray(Map.vals(completePosts));
   };
 
-  public func getAllPostLikes() : async [(Types.Id, Types.PostLike)] {
-    return Map.toArray(postLikes);
+  public func getAllPostLikes() : async [Types.PostLike] {
+    return Iter.toArray(Map.vals(postLikes));
   };
 
-  public func getAllPostAwards() : async [(Types.Id, Types.PostAward)] {
-    return Map.toArray(postAwards);
+  public func getAllPostAwards() : async [Types.PostAward] {
+    return Iter.toArray(Map.vals(postAwards));
   };
 
   public shared ({ caller }) func getCompletedTasksByUser({
     userId : ?Principal;
-  }) : async [(Types.Id, Types.UserCompletedTaskResult)] {
+  }) : async [Types.UserCompletedTaskResult] {
     let user = Option.get(userId, caller);
 
     // Check if user exists
@@ -112,14 +114,14 @@ actor Wanderly {
     };
 
     // Filter completed tasks based on user id
-    let filteredTasks = Service.getCompletedTasksOfUser(userCompletedTasks, tasks, user);
+    let completedTasksByUser = Service.getCompletedTasksResultOfUser(userCompletedTasks, tasks, user);
 
-    return Map.toArray(filteredTasks);
+    return Iter.toArray(Map.vals(completedTasksByUser));
   };
 
   public shared ({ caller }) func getAchievementsByUser({
     userId : ?Principal;
-  }) : async [(Types.Id, Types.UserAchievementResult)] {
+  }) : async [Types.UserAchievementResult] {
     let user = Option.get(userId, caller);
 
     // Check if user exists
@@ -130,12 +132,12 @@ actor Wanderly {
     };
 
     // Filter achievements based on user id
-    let filteredAchievements = Service.getAchievementsOfUser(userAchievements, achievements, user);
+    let achievementsByUser = Service.getAchievementsResultOfUser(userAchievements, achievements, user);
 
-    return Map.toArray(filteredAchievements);
+    return Iter.toArray(Map.vals(achievementsByUser));
   };
 
-  public shared ({ caller }) func getPostsByUser({ userId : ?Principal }) : async [(Types.Id, Types.PostWithId)] {
+  public shared ({ caller }) func getPostsByUser({ userId : ?Principal }) : async [Types.PostResult] {
     let user = Option.get(userId, caller);
 
     // Check if user exists
@@ -145,10 +147,56 @@ actor Wanderly {
       Debug.trap("User not found!");
     };
 
-    // Filter posts based on user id
-    let filteredPosts = Service.getPostsOfUser(posts, user);
+    // Filter posts based on user id, includes related data
+    let postsByUser = Service.getPostsResultOfUser(posts, tasks, postLikes, postAwards, user);
 
-    return Map.toArray(filteredPosts);
+    return Iter.toArray(Map.vals(postsByUser));
+  };
+
+  public shared ({ caller }) func getPostLikesByUser({ userId : ?Principal }) : async [Types.PostResult] {
+    let user = Option.get(userId, caller);
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, user), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Filter post likes based on user id, includes related data
+    let postLikesByUser = Service.getPostLikesResultOfUser(postLikes, posts, tasks, postAwards, user);
+
+    return Iter.toArray(Map.vals(postLikesByUser));
+  };
+
+  public shared ({ caller }) func getPostAwardsByUser({ userId : ?Principal }) : async [Types.PostResult] {
+    let user = Option.get(userId, caller);
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, user), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Filter post awards based on user id, includes related data
+    let postAwardsByUser = Service.getPostAwardsResultOfUser(postAwards, posts, tasks, postLikes, user);
+
+    return Iter.toArray(Map.vals(postAwardsByUser));
+  };
+
+  public func getLikesByPost({ postId : Types.Id }) : async [Types.PostLike] {
+    // Filter likes based on post id
+    let filteredLikes = Service.getLikesOfPost(postLikes, postId);
+
+    return Iter.toArray(Map.vals(filteredLikes));
+  };
+
+  public func getAwardsByPost({ postId : Types.Id }) : async [Types.PostAward] {
+    // Filter awards based on post id
+    let filteredAwards = Service.getAwardsOfPost(postAwards, postId);
+
+    return Iter.toArray(Map.vals(filteredAwards));
   };
 
   public func getTaskById({ id : Types.Id }) : async ?Types.TaskWithId {
@@ -157,20 +205,6 @@ actor Wanderly {
 
   public func getPostById({ id : Types.Id }) : async ?Types.PostWithId {
     return Map.get(posts, thash, id);
-  };
-
-  public func getLikesByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostLike)] {
-    // Filter likes based on post id
-    let filteredLikes = Service.getLikesOfPost(postLikes, postId);
-
-    return Map.toArray(filteredLikes);
-  };
-
-  public func getAwardsByPost({ postId : Types.Id }) : async [(Types.Id, Types.PostAward)] {
-    // Filter awards based on post id
-    let filteredAwards = Service.getAwardsOfPost(postAwards, postId);
-
-    return Map.toArray(filteredAwards);
   };
 
   public shared ({ caller }) func createPost(postPayload : Types.PostPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
@@ -204,7 +238,7 @@ actor Wanderly {
     };
 
     // Check if post creation was successful
-    switch (Map.add(posts, thash, newId, newPost)) {
+    switch (Map.addFront(posts, thash, newId, newPost)) {
       case (null) {
         return #ok({ message = "Post created successfully!" });
       };
@@ -242,7 +276,7 @@ actor Wanderly {
     };
 
     // Check if task creation was successful
-    switch (Map.add(tasks, thash, newId, newTask)) {
+    switch (Map.addFront(tasks, thash, newId, newTask)) {
       case (null) {
         return #ok({ message = "Task created successfully!" });
       };
@@ -313,7 +347,7 @@ actor Wanderly {
           )
         ) {
           case (null) {
-            return #err({ message = "No changes made!" });
+            Debug.trap("An error happened! (Task not updated)");
           };
           case (?task) {
             return #ok({ message = "Task updated successfully!" });
@@ -323,7 +357,7 @@ actor Wanderly {
     };
   };
 
-  public shared ({ caller }) func updateOrCreateUser(userPayload : Types.UserPayload) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+  public shared ({ caller }) func updateOrCreateUser(userPayload : Types.UserPayload) : async Result.Result<Types.MessageResult and { user : ?Types.UserWithId }, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
       Debug.trap("Anonymous identity found!");
     };
@@ -348,7 +382,8 @@ actor Wanderly {
             let newUser : Types.UserWithId = {
               userPayload with
               id = userId;
-              points = initialPoints;
+              points = INITIAL_POINTS;
+              createdAt = LocalDateTime.now(Data.timeZone).toText();
             };
 
             Option.make(newUser);
@@ -358,7 +393,7 @@ actor Wanderly {
             let updatedUser : Types.UserWithId = {
               user with
               name = userPayload.name;
-              countr = userPayload.country;
+              country = userPayload.country;
             };
 
             Option.make(updatedUser);
@@ -368,9 +403,9 @@ actor Wanderly {
     );
 
     if (isNewUser) {
-      return #ok({ message = "New user created!" });
+      return #ok({ message = "New user created!"; user = currentUser });
     } else {
-      return #ok({ message = "User updated!" });
+      return #ok({ message = "User updated!"; user = currentUser });
     };
   };
 
@@ -421,7 +456,7 @@ actor Wanderly {
       )
     ) {
       case (null) {
-        return #err({ message = "No changes made!" });
+        Debug.trap("An error happened! (Post not updated)");
       };
       case (?post) {
         return #ok({ message = "Post successfully updated!" });
@@ -429,7 +464,48 @@ actor Wanderly {
     };
   };
 
-  public shared ({ caller }) func likeOrDislikePost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+  public shared ({ caller }) func deletePost({ postId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    // Check if post exists
+    switch (Map.get(posts, thash, postId)) {
+      case (null) {
+        return #err({ message = "Post not found!" });
+      };
+      case (?post) {
+        // Check if user owns the post
+        if (post.userId != caller) {
+          return #err({
+            message = "You are not authorized to update this post!";
+          });
+        };
+      };
+    };
+
+    // Delete the post
+    switch (Map.remove(posts, thash, postId)) {
+      case (null) {
+        Debug.trap("An error happened! (Post already deleted?)");
+      };
+      case (?post) {
+        return #ok({ message = "Post deleted!" });
+      };
+    };
+  };
+
+  public shared ({ caller }) func likeOrDislikePost({
+    postId : Types.Id;
+    likeType : Types.LikeType;
+  }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
       Debug.trap("Anonymous identity found!");
     };
@@ -449,41 +525,49 @@ actor Wanderly {
       case (?post) {
         // Make sure post is not by user
         if (post.userId == caller) {
-          return #err({ message = "You can't like your own posts!" });
+          return #err({ message = "You can't like your own post!" });
         };
 
         // Check if post is already liked
-        switch (
-          Map.find(
-            postLikes,
-            func(id : Types.Id, postLike : Types.PostLike) : Bool {
-              postLike.userId == caller and postLike.postId == postId;
-            },
-          )
-        ) {
-          // If not liked, then Like the post
-          case (null) {
-            let newId : Types.Id = await Utils.generateUUID();
+        let previousLike = Service.getPostLikeOfUser(postLikes, post.id, caller);
 
-            let newPostLike : Types.PostLike = {
-              userId = caller;
-              postId;
-            };
-
-            switch (Map.add(postLikes, thash, newId, newPostLike)) {
+        switch (likeType) {
+          case (#Like) {
+            switch (previousLike) {
               case (null) {
-                return #ok({ message = "Post liked!" });
+                // Like the post
+                let newId : Types.Id = await Utils.generateUUID();
+
+                let newPostLike : Types.PostLike = {
+                  userId = caller;
+                  postId;
+                };
+
+                // Check if post like creation was successful
+                switch (Map.addFront(postLikes, thash, newId, newPostLike)) {
+                  case (null) {
+                    return #ok({ message = "Post liked!" });
+                  };
+                  case (?postLike) {
+                    Debug.trap("An error happened! (Post already liked?)");
+                  };
+                };
               };
-              case (?postLike) {
-                Debug.trap("An error happened! (Post already liked?)");
+              case (?(id, postLike)) {
+                return #err({ message = "Post already liked!" });
               };
             };
           };
-          // Unlike the post
-          case (?(id, postLike)) {
-            Map.delete(postLikes, thash, id);
+          case (#Dislike) {
+            switch (previousLike) {
+              case (null) {};
+              case (?(id, postLike)) {
+                // Unlike the post
+                Map.delete(postLikes, thash, id);
+              };
+            };
 
-            return #ok({ message = "Post unliked!" });
+            return #ok({ message = "Post disliked!" });
           };
         };
       };
@@ -517,14 +601,9 @@ actor Wanderly {
         };
 
         // Check if post is already awarded
-        switch (
-          Map.find(
-            postAwards,
-            func(id : Types.Id, postAward : Types.PostAward) : Bool {
-              postAward.userId == caller and postAward.postId == postId;
-            },
-          )
-        ) {
+        let previousAward = Service.getPostAwardOfUser(postAwards, post.id, caller);
+
+        switch (previousAward) {
           case (null) {
             // Check if user has available points
             let currentUser = Option.getMapped(
@@ -564,7 +643,7 @@ actor Wanderly {
             };
 
             // Check if post award creation was successful
-            switch (Map.add(postAwards, thash, newId, newPostAward)) {
+            switch (Map.addFront(postAwards, thash, newId, newPostAward)) {
               case (null) {
                 return #ok({ message = "Post awarded!" });
               };
@@ -753,7 +832,7 @@ actor Wanderly {
             };
 
             // Check if completed task creation was successful
-            switch (Map.add(userCompletedTasks, thash, newId, newUserCompletedTask)) {
+            switch (Map.addFront(userCompletedTasks, thash, newId, newUserCompletedTask)) {
               case (null) {
                 return #ok({ message = "Task Completed!" });
               };
@@ -768,6 +847,41 @@ actor Wanderly {
             });
           };
         };
+      };
+    };
+  };
+
+  public shared ({ caller }) func redeemReward({ code : Text }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+    if (Utils.isUserAnonymous(caller)) {
+      Debug.trap("Anonymous identity found!");
+    };
+
+    // Check if user exists
+    let userExists = Option.get(Map.contains(users, phash, caller), false);
+
+    if (not userExists) {
+      Debug.trap("User not found!");
+    };
+
+    switch (
+      Map.find(
+        rewards,
+        func(id : Types.Id, reward : Types.RewardWithId) : Bool {
+          reward.code == code;
+        },
+      )
+    ) {
+      case (null) {
+        return #err({ message = "Reward not found!" });
+      };
+      case (?(id, reward)) {
+        if (not Service.modifyUserPoints(users, caller, reward.points, #add)) {
+          Debug.trap("Failed to add points for user!");
+        };
+
+        return #ok({
+          message = "Redeemed " # debug_show (reward.points) # " points successfully!";
+        });
       };
     };
   };
@@ -821,7 +935,7 @@ actor Wanderly {
             };
 
             // Check if user achievement creation was successful
-            switch (Map.add(userAchievements, thash, newId, newUserAchievement)) {
+            switch (Map.addFront(userAchievements, thash, newId, newUserAchievement)) {
               case (null) {
                 return #ok({ message = "Achievement awarded!" });
               };

@@ -14,8 +14,7 @@ import useAuthStore from "../stores/useAuthStore";
 const Login = () => {
   const [logoLoaded, setLogoLoaded] = useState(false);
 
-  // const login = useAuthStore((state) => state.login);
-  const login = useAuthStore((state) => state.loginTest);
+  const login = useAuthStore((state) => state.login);
   const isFetching = useAuthStore((state) => state.isFetching);
 
   return (

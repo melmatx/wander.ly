@@ -14,7 +14,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Share from "react-native-share";
 import { Button, Text } from "react-native-ui-lib";
@@ -61,16 +61,25 @@ const Explore = ({ navigation }) => {
 
   const insets = useSafeAreaInsets();
   const bottomTabHeight = useBottomTabBarHeight();
-  const { tasks, currentTask, setCurrentTask, cancelFn, setCancelFn } =
-    useTaskStore(
-      useShallow((state) => ({
-        tasks: transformTasks(state.tasks),
-        currentTask: state.getCurrentTask(),
-        setCurrentTask: state.setCurrentTask,
-        cancelFn: state.cancelFn,
-        setCancelFn: state.setCancelFn,
-      }))
-    );
+  const {
+    tasks,
+    fetchTasks,
+    isFetching,
+    currentTask,
+    setCurrentTask,
+    cancelFn,
+    setCancelFn,
+  } = useTaskStore(
+    useShallow((state) => ({
+      tasks: transformTasks(state.tasks),
+      fetchTasks: state.fetchTasks,
+      isFetching: state.isFetching,
+      currentTask: state.getCurrentTask(),
+      setCurrentTask: state.setCurrentTask,
+      cancelFn: state.cancelFn,
+      setCancelFn: state.setCancelFn,
+    }))
+  );
 
   const cameraRef = useRef(null);
   const sectionListRef = useRef(null);
@@ -91,12 +100,18 @@ const Explore = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
+      // Request location permission
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission to access location was denied");
         return;
       }
+
+      // Move camera to user location
       onLocateUser();
+
+      // Fetch tasks
+      await fetchTasks();
     })();
   }, []);
 
@@ -443,33 +458,42 @@ const Explore = ({ navigation }) => {
           />
         )}
 
-        {(!currentTask || !isMapShown) && (
-          <>
-            <View style={{ padding: sizes.large }}>
-              <ChipHeader
-                data={FILTERS}
-                selected={selectedFilter}
-                onPress={setSelectedFilter}
-                activeColor={sectionColors[selectedFilter]}
-              />
-            </View>
+        {isFetching ? (
+          <View
+            style={[globalStyles.center, { top: "20%", rowGap: sizes.large }]}
+          >
+            <ActivityIndicator size="large" />
+            <Text style={{ color: colors.gray }}>Loading Tasks...</Text>
+          </View>
+        ) : (
+          (!currentTask || !isMapShown) && (
+            <>
+              <View style={{ padding: sizes.large }}>
+                <ChipHeader
+                  data={FILTERS}
+                  selected={selectedFilter}
+                  onPress={setSelectedFilter}
+                  activeColor={sectionColors[selectedFilter]}
+                />
+              </View>
 
-            <BottomSheetSectionList
-              ref={sectionListRef}
-              sections={filteredTasks}
-              keyExtractor={(_, index) => `task-${index}`}
-              contentContainerStyle={{
-                rowGap: sizes.medium,
-                paddingTop: sizes.small,
-                paddingBottom: bottomTabHeight + sizes.large,
-                paddingHorizontal: sizes.large,
-              }}
-              style={{ borderRadius: sizes.xlarge }}
-              renderSectionHeader={renderSectionHeader}
-              renderItem={renderItem}
-              stickySectionHeadersEnabled={false}
-            />
-          </>
+              <BottomSheetSectionList
+                ref={sectionListRef}
+                sections={filteredTasks}
+                keyExtractor={(_, index) => `task-${index}`}
+                contentContainerStyle={{
+                  rowGap: sizes.medium,
+                  paddingTop: sizes.small,
+                  paddingBottom: bottomTabHeight + sizes.large,
+                  paddingHorizontal: sizes.large,
+                }}
+                style={{ borderRadius: sizes.xlarge }}
+                renderSectionHeader={renderSectionHeader}
+                renderItem={renderItem}
+                stickySectionHeadersEnabled={false}
+              />
+            </>
+          )
         )}
       </BottomSheet>
 

@@ -13,12 +13,12 @@ import Rewards from "../screens/Rewards";
 import ScanCode from "../screens/ScanCode";
 import ShareJourney from "../screens/ShareJourney";
 import YourPosts from "../screens/YourPosts";
-import useAuthStore from "../stores/useAuthStore";
+import useProfileStore from "../stores/useProfileStore";
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigation = () => {
-  const identity = useAuthStore((state) => state.identity);
+  const identity = useProfileStore((state) => state.identity);
 
   return (
     <Stack.Navigator

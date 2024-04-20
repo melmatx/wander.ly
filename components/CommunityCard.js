@@ -2,19 +2,27 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { BlurView } from "expo-blur";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { forwardRef, memo, useCallback } from "react";
+import React, { forwardRef, memo, useCallback, useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
+import getImageSource from "../utils/getImageSource";
 
 const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
+  const imageSource = useMemo(() => {
+    if (!item) {
+      return null;
+    }
+    return getImageSource(item.imageKey, item.id);
+  }, [item?.imageKey, item?.id]);
+
   const handleInfoPress = useCallback(() => {
     if (!item) {
       return;
     }
     onInfoPress(item);
-  }, [item?.task, onInfoPress]);
+  }, [item, onInfoPress]);
 
   if (!item) {
     return null;
@@ -28,7 +36,7 @@ const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
       experimentalBlurMethod="dimezisBlurView"
     >
       <ImageBackground
-        source={item.image}
+        source={imageSource}
         style={style.image}
         transition={100}
         cachePolicy="memory-disk"
@@ -49,7 +57,7 @@ const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
         </Text>
 
         <Text h4 center color={colors.gray}>
-          {item.place}
+          {item.title}
         </Text>
       </View>
     </BlurView>

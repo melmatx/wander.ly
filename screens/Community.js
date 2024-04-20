@@ -1,8 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useScrollToTop } from "@react-navigation/native";
-import * as Burnt from "burnt";
 import { format } from "date-fns";
 import React, {
   useCallback,
@@ -12,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import {
+  ActivityIndicator,
   Alert,
   LogBox,
   SafeAreaView,
@@ -31,15 +30,21 @@ import GradientIcon from "../components/GradientIcon";
 import InfoSheetContent from "../components/InfoSheetContent";
 import OverlayLabel from "../components/OverlayLabel";
 import tutorials from "../consts/communityTutorial";
-import posts from "../consts/samplePosts";
-import authenticateLocally from "../utils/authenticateLocally";
+import LikeTypes from "../consts/likeTypes";
+import PostSyncContext from "../contexts/PostSyncContext";
+import usePostActions from "../hooks/usePostActions";
+import { getBackendActor } from "../src/actor";
+import useProfileStore from "../stores/useProfileStore";
+import normalizePostsData from "../utils/normalizePostsData";
 
 // Workaround for bug when quickly swiping cards
 LogBox.ignoreLogs([
   "Sending `onAnimatedValueUpdate` with no listeners registered.",
 ]);
 
-const Community = () => {
+const Community = ({ navigation, route }) => {
+  const [posts, setPosts] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
   const [cardIndex, setCardIndex] = useState(0);
   const [isSwipingBack, setIsSwipingBack] = useState(false);
   const [swipedAllCards, setSwipedAllCards] = useState(false);
@@ -48,6 +53,12 @@ const Community = () => {
   const [isTutorialVisible, setIsTutorialVisible] = useState(false);
   const [currentTargetIndex, setCurrentTargetIndex] = useState(0);
 
+  const { awardPost, likeOrDislikePost } = usePostActions({
+    item: posts[cardIndex],
+    setPostsFromArg: setPosts,
+    setSelectedPostFromArg: setSelectedPost,
+  });
+  const identity = useProfileStore((state) => state.identity);
   const targets = useRef({});
   const swiperRef = useRef(null);
   const taskSheetRef = useRef(null);
@@ -56,23 +67,49 @@ const Community = () => {
   const { height } = useWindowDimensions();
 
   useEffect(() => {
+    fetchPosts();
+
+    // Reset params
+    navigation.setParams({ refresh: null });
+  }, [fetchPosts, route.params?.refresh]);
+
+  useEffect(() => {
     (async () => {
+      // Show tutorial if it's the first time
       const isTutorialDone = await AsyncStorage.getItem("isTutorialDone");
 
       if (!isTutorialDone) {
         showTutorial();
         await AsyncStorage.setItem("isTutorialDone", "true");
       }
-      // showTutorial();
     })();
   }, []);
 
-  const onRefresh = useCallback(() => {
+  const fetchPosts = useCallback(async () => {
+    console.log("Fetching posts...");
+    setIsFetching(true);
+
+    try {
+      // Fetch posts from ICP
+      const posts = await getBackendActor(identity).getAllPosts();
+      const normalizedPosts = normalizePostsData(posts);
+
+      setPosts(normalizedPosts);
+    } catch (error) {
+      Alert.alert("Failed to fetch posts", error);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [identity]);
+
+  const onRefresh = useCallback(async () => {
+    await fetchPosts();
+
     setCardIndex(0);
     setSwipedAllCards(false);
 
     swiperRef.current?.jumpToCardIndex(0);
-  }, []);
+  }, [fetchPosts]);
 
   const onSwiped = useCallback(() => {
     if (isSwipingBack) {
@@ -94,58 +131,19 @@ const Community = () => {
     swiperRef.current?.swipeBack();
   }, []);
 
-  const onSwipedRight = useCallback((index) => {
-    Burnt.alert({
-      title: "Post Liked",
-      preset: "heart",
-      message: "You loved this post",
-      duration: 0.5,
-    });
-  }, []);
+  const onSwipedRight = useCallback(
+    (index) => likeOrDislikePost({ type: LikeTypes.LIKE }),
+    [likeOrDislikePost]
+  );
 
-  const onSwipedLeft = useCallback((index) => {
-    Burnt.alert({
-      title: "Post Disliked",
-      preset: "custom",
-      icon: { ios: { name: "heart.slash" } },
-      duration: 0.5,
-    });
-  }, []);
-
-  const onAward = useCallback(async () => {
-    await authenticateLocally({
-      onSuccess: () =>
-        Burnt.alert({
-          title: "Post Awarded",
-          preset: "custom",
-          icon: { ios: { name: "star.circle.fill" } },
-          message: "1 point awarded for this post",
-          duration: 0.8,
-        }),
-      onError: onSwipedBack,
-      errorOnUnavailable: false,
-    });
-  }, [onSwipedBack]);
+  const onSwipedLeft = useCallback(
+    (index) => likeOrDislikePost({ type: LikeTypes.DISLIKE }),
+    [likeOrDislikePost]
+  );
 
   const onSwipedTop = useCallback(
-    (index) => {
-      Alert.alert(
-        "Award Post",
-        "Are you sure you want to award 1 point to the post?",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-            onPress: onSwipedBack,
-          },
-          {
-            text: "Confirm",
-            onPress: onAward,
-          },
-        ]
-      );
-    },
-    [onAward, onSwipedBack]
+    (index) => awardPost({ onFail: onSwipedBack }),
+    [awardPost, onSwipedBack]
   );
 
   const swipeLeft = useCallback(() => {
@@ -229,9 +227,9 @@ const Community = () => {
     []
   );
 
-  const handleInfoPress = useCallback((task) => {
+  const handleInfoPress = useCallback((post) => {
     taskSheetRef.current.expand();
-    setSelectedPost(task);
+    setSelectedPost(post);
   }, []);
 
   const renderCard = useCallback(
@@ -239,14 +237,31 @@ const Community = () => {
     [handleInfoPress]
   );
 
-  useScrollToTop(
-    useRef({
-      scrollToTop: onRefresh,
-    })
-  );
+  if (isFetching) {
+    return (
+      <SafeAreaView
+        style={[globalStyles.flexFull, globalStyles.androidPadding]}
+      >
+        <AppHeader />
+
+        <View
+          style={[
+            globalStyles.flexCenter,
+            {
+              paddingBottom: bottomTabHeight + sizes.xxlarge,
+              rowGap: sizes.large,
+            },
+          ]}
+        >
+          <ActivityIndicator size="large" />
+          <Text style={{ color: colors.gray }}>Loading Posts...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <>
+    <PostSyncContext.Provider value={{ setPosts, setSelectedPost }}>
       <SafeAreaView
         style={[globalStyles.flexFull, globalStyles.androidPadding]}
       >
@@ -278,7 +293,7 @@ const Community = () => {
           <Swiper
             ref={swiperRef}
             cards={posts}
-            keyExtractor={(card) => card.id.toString()}
+            keyExtractor={(card) => card?.id}
             cardIndex={cardIndex}
             onSwiped={onSwiped}
             onSwipedLeft={onSwipedLeft}
@@ -313,11 +328,15 @@ const Community = () => {
             <View
               style={[
                 globalStyles.flexCenter,
-                { paddingBottom: bottomTabHeight + sizes.xxlarge },
+                {
+                  paddingBottom: bottomTabHeight + sizes.xxlarge,
+                  rowGap: sizes.large,
+                },
               ]}
               pointerEvents="box-none"
             >
-              <Text h3 color={colors.gray}>
+              <Ionicons name="star" size={75} color="gray" />
+              <Text h3 semibold>
                 You're all out!
               </Text>
             </View>
@@ -400,20 +419,22 @@ const Community = () => {
         onClose={handleCloseModal}
       />
 
-      <FeatureHighlight
-        visible={isTutorialVisible}
-        title={tutorials[currentTargetIndex].title}
-        message={tutorials[currentTargetIndex].message}
-        confirmButtonProps={{
-          label:
-            currentTargetIndex === tutorials.length - 1 ? "Got it!" : "Next",
-          onPress: moveNext,
-        }}
-        getTarget={() => targets.current[currentTargetIndex]}
-        onBackgroundPress={moveNext}
-        innerPadding={sizes.xxlarge}
-      />
-    </>
+      {isTutorialVisible && (
+        <FeatureHighlight
+          visible={isTutorialVisible}
+          title={tutorials[currentTargetIndex].title}
+          message={tutorials[currentTargetIndex].message}
+          confirmButtonProps={{
+            label:
+              currentTargetIndex === tutorials.length - 1 ? "Got it!" : "Next",
+            onPress: moveNext,
+          }}
+          getTarget={() => targets.current[currentTargetIndex]}
+          onBackgroundPress={moveNext}
+          innerPadding={sizes.xxlarge}
+        />
+      )}
+    </PostSyncContext.Provider>
   );
 };
 export default Community;

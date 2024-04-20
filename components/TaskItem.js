@@ -46,7 +46,7 @@ const TaskItem = ({ item, onPress, isUser = true }) => {
 
     return (
       <Text color={colors.gray}>
-        {format(item.timeStart, "h:mm a")} - {format(item.timeEnd, "h:mm a")}
+        {`${item.timeStart && format(item.timeStart, "h:mm a")} - ${item.timeEnd && format(item.timeEnd, "h:mm a")}`}
       </Text>
     );
   }, [item.completedAt, item.timeStart, item.timeEnd]);

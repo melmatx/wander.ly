@@ -18,6 +18,13 @@
         "node_compatibility": true
       }
     },
+    "storage": {
+      "main": "src/storage/main.mo",
+      "type": "motoko",
+      "declarations": {
+        "node_compatibility": true
+      }
+    },
     "ii_integration": {
       "type": "assets",
       "source": ["src/ii_integration/assets", "src/ii_integration/dist"]

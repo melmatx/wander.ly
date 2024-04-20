@@ -1,15 +1,44 @@
 import { useHeaderHeight } from "@react-navigation/elements";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import RewardItem from "../components/RewardItem";
-import rewards from "../consts/sampleRewards";
+import { getBackendActor } from "../src/actor";
+import useProfileStore from "../stores/useProfileStore";
 
 const Rewards = () => {
+  const [rewards, setRewards] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const identity = useProfileStore((state) => state.identity);
   const headerHeight = useHeaderHeight();
+
+  useEffect(() => {
+    const fetchRewards = async () => {
+      setIsFetching(true);
+      try {
+        // Fetch rewards from ICP
+        const rewards = await getBackendActor(identity).getAllRewards();
+
+        setRewards(rewards);
+      } catch (error) {
+        Alert.alert("Failed to fetch rewards", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchRewards();
+  }, [identity]);
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -21,6 +50,22 @@ const Rewards = () => {
     ),
     []
   );
+
+  if (isFetching) {
+    return (
+      <View style={globalStyles.flexFull}>
+        <LinearGradient
+          colors={[colors.primary, "rgba(0,0,0,0.3)"]}
+          style={[StyleSheet.absoluteFill, { zIndex: -1, bottom: "80%" }]}
+        />
+
+        <View style={[globalStyles.flexCenter, { rowGap: sizes.large }]}>
+          <ActivityIndicator size="large" />
+          <Text style={{ color: colors.gray }}>Loading Rewards...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View

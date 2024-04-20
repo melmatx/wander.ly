@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
+import { ImageBackground } from "expo-image";
 import React, {
   memo,
   useCallback,
@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useReducer,
 } from "react";
 import {
   Alert,
@@ -28,19 +29,25 @@ import TaskItem from "./TaskItem";
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
 import usePostActions from "../hooks/usePostActions";
+import getImageSource from "../utils/getImageSource";
 
 const FLOATING_BUTTON_HEIGHT = 100;
 
 const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
   const [description, setDescription] = useState("");
+  const [isExpanded, toggleExpanded] = useReducer((state) => !state, false);
 
   const insets = useSafeAreaInsets();
-  const { sharePost } = usePostActions(item);
+  const { updatePostContent, deletePost, sharePost } = usePostActions({ item });
 
   const previousDescription = useRef("");
   const editSheetRef = useRef(null);
 
   const snapPoints = useMemo(() => ["50%"], []);
+  const imageSource = useMemo(
+    () => getImageSource(item?.imageKey, item?.id),
+    [item?.imageKey, item?.id]
+  );
 
   useEffect(() => {
     if (!item) {
@@ -62,7 +69,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
     editSheetRef.current?.expand();
   }, []);
 
-  const onFinishEdit = useCallback(() => {
+  const onFinishEdit = useCallback(async () => {
     // Check if the description is the same as the previous one
     if (description === previousDescription.current) {
       console.log("No changes for description");
@@ -70,22 +77,30 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
       return;
     }
 
-    // Save the new description (Needed only if there are no online changes and not saved yet)
-    previousDescription.current = description;
+    // Save the new description
+    const err = await updatePostContent({ content: description });
+
+    // Change the previous description
+    if (!err) {
+      previousDescription.current = description;
+    }
 
     // Close the sheet
     onCloseSheet();
-  }, [description, onCloseSheet]);
+  }, [description, onCloseSheet, updatePostContent]);
 
   const onCancelEdit = useCallback(() => {
     setDescription(previousDescription.current);
   }, []);
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => {
     // Delete the post
+    const err = await deletePost();
 
-    onClose();
-  }, []);
+    if (!err) {
+      onClose();
+    }
+  }, [deletePost, onClose]);
 
   const onDeletePost = useCallback(() => {
     Alert.alert("Delete Post", "Are you sure you want to delete this post?", [
@@ -123,7 +138,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
             ]}
           >
             <View style={{ width: "80%" }}>
-              <Text h2>{item.place}</Text>
+              <Text h2>{item.title}</Text>
             </View>
 
             <Button link>
@@ -145,15 +160,32 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
             }}
             showsVerticalScrollIndicator={false}
           >
-            <Image
-              source={item.image}
+            <ImageBackground
+              source={imageSource}
               contentFit="cover"
               transition={100}
               style={{
-                aspectRatio: 1,
+                aspectRatio: isExpanded ? 0.75 : 1,
                 borderRadius: sizes.medium,
+                padding: sizes.medium,
+                overflow: "hidden",
+                justifyContent: "flex-end",
+                alignItems: "flex-end",
               }}
-            />
+            >
+              <Button
+                onPress={toggleExpanded}
+                backgroundColor="rgba(255,255,255,0.2)"
+                enableShadow
+                round
+              >
+                <Ionicons
+                  name={isExpanded ? "contract" : "expand"}
+                  size={20}
+                  color="white"
+                />
+              </Button>
+            </ImageBackground>
 
             <View
               style={{
@@ -189,7 +221,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
                   />
                 </Button>
               )}
-              <SocialActions likeCount={item.likes} awardCount={item.awards} />
+              <SocialActions item={item} />
             </View>
 
             <View
@@ -273,7 +305,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
               label: "Description",
               placeholder: "Enter the description",
               isTextArea: true,
-              h2: true,
+              h3: true,
             }}
           />
 

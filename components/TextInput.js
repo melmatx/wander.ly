@@ -58,7 +58,7 @@ const TextInput = (props) => {
         props.fieldStyle,
       ]}
       readOnly={props.isViewing}
-      autoCapitalize={props.isEmail ? "none" : "words"}
+      autoCapitalize={props.isEmail ? "none" : "sentences"}
       secureTextEntry={props.isPassword && !props.arePasswordsVisible}
       trailingAccessory={!props.isViewing && trailingAccessory}
       validationMessageStyle={{

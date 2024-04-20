@@ -3,6 +3,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useScrollToTop } from "@react-navigation/native";
 import * as Burnt from "burnt";
 import { format } from "date-fns";
+import Graphemer from "graphemer";
 import React, {
   useCallback,
   useEffect,
@@ -11,8 +12,16 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, Keyboard, SafeAreaView, ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from "react-native";
 import { AnimatedScanner, Avatar, Button, Text } from "react-native-ui-lib";
+import { useShallow } from "zustand/react/shallow";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import AppHeader from "../components/AppHeader";
@@ -24,11 +33,12 @@ import avatarColorsConfig from "../consts/avatarConfig";
 import palette from "../consts/profilePalette";
 import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
+import useProfileStore from "../stores/useProfileStore";
 import fetchCountryFlags from "../utils/fetchCountryFlags";
 
 const profileState = {
-  name: "Mel Mathew",
-  country: "Philippines",
+  name: "",
+  country: "",
 };
 
 const Profile = ({ navigation }) => {
@@ -36,6 +46,7 @@ const Profile = ({ navigation }) => {
     (state, newState) => ({ ...state, ...newState }),
     profileState
   );
+
   const [isViewing, setIsViewing] = useState(true);
   const [countries, setCountries] = useState([]);
 
@@ -44,12 +55,40 @@ const Profile = ({ navigation }) => {
   const infoSheetRef = useRef(null);
   const scrollViewRef = useRef(null);
 
+  const { profile, isFetching, updateProfile } = useProfileStore(
+    useShallow((state) => ({
+      isFetching: state.isFetching,
+      profile: state.profile,
+      updateProfile: state.updateProfile,
+    }))
+  );
   const logout = useAuthStore((state) => state.logout);
   const bottomTabHeight = useBottomTabBarHeight();
 
   useEffect(() => {
+    // Fetch profile
+    console.log(profile);
+    setProfileData(profile);
+  }, [profile]);
+
+  useEffect(() => {
+    // Fetch countries
     fetchCountryFlags().then(setCountries);
   }, []);
+
+  const avatarLabel = useMemo(() => {
+    if (!profileData.name) {
+      return "😄";
+    }
+
+    return profileData.name
+      .split(" ")
+      .map((name) => {
+        const splitter = new Graphemer();
+        return splitter.splitGraphemes(name)[0];
+      })
+      .join("");
+  }, [profileData.name]);
 
   const banners = useMemo(
     () => [
@@ -69,7 +108,7 @@ const Profile = ({ navigation }) => {
         ),
         customDescription: (
           <Text profile>
-            🏆 <Text>0</Text>
+            🏆 <Text>{profile.achievements.toString()}</Text>
           </Text>
         ),
       },
@@ -86,7 +125,7 @@ const Profile = ({ navigation }) => {
         description: "Carbon emissions saved",
       },
     ],
-    [navigation]
+    [navigation, profile.achievements]
   );
 
   const postsTabs = useMemo(
@@ -140,7 +179,7 @@ const Profile = ({ navigation }) => {
     previousState.current = profileData;
   }, [profileData]);
 
-  const onFinishEdit = useCallback(() => {
+  const onFinishEdit = useCallback(async () => {
     // Check if there are no changes to the profile
     const hasNoChanges = Object.keys(profileData).every(
       (key) => profileData[key] === previousState.current[key]
@@ -153,21 +192,12 @@ const Profile = ({ navigation }) => {
 
     // Update profile
     Burnt.alert({
-      title: "Updating profile",
+      title: "Updating profile...",
       preset: "spinner",
       shouldDismissByTap: false,
     });
 
-    // Simulating a delay
-    setTimeout(() => {
-      Burnt.dismissAllAlerts();
-
-      Burnt.alert({
-        title: "Profile updated",
-        preset: "done",
-        duration: 0.8,
-      });
-    }, 1000);
+    await updateProfile(profileData);
   }, [profileData]);
 
   const onEditProfile = useCallback(() => {
@@ -231,7 +261,11 @@ const Profile = ({ navigation }) => {
     <SafeAreaView style={[globalStyles.flexFull, globalStyles.androidPadding]}>
       <AppHeader>
         <Button link onPress={onProfilePress}>
-          <Avatar size={35} label="MP" autoColorsConfig={avatarColorsConfig} />
+          <Avatar
+            size={35}
+            label={avatarLabel}
+            autoColorsConfig={avatarColorsConfig}
+          />
         </Button>
       </AppHeader>
 
@@ -321,7 +355,8 @@ const Profile = ({ navigation }) => {
         </View>
 
         <Text color={colors.gray} center>
-          Member since {format(new Date(), "MMMM yyyy")}
+          Member since{" "}
+          {profile.createdAt && format(profile.createdAt, "MMMM yyyy")}
         </Text>
       </ScrollView>
 
@@ -330,50 +365,68 @@ const Profile = ({ navigation }) => {
         index={-1}
         snapPoints={["85%"]}
         enablePanDownToClose
-        footerComponent={renderSheetFooter}
+        footerComponent={!isFetching && renderSheetFooter}
         onClose={onCancelEdit}
       >
-        <View
-          style={{
-            alignSelf: "flex-end",
-            paddingHorizontal: sizes.xlarge,
-            height: sizes.xlarge,
-          }}
-        >
-          {!isViewing && <Button link label="Cancel" onPress={onCancelEdit} />}
-        </View>
+        {isFetching ? (
+          <View
+            style={[globalStyles.center, { top: "20%", rowGap: sizes.large }]}
+          >
+            <ActivityIndicator size="large" />
+            <Text style={{ color: colors.gray }}>Loading Profile...</Text>
+          </View>
+        ) : (
+          <>
+            <View
+              style={{
+                alignSelf: "flex-end",
+                paddingHorizontal: sizes.xlarge,
+                height: sizes.xlarge,
+              }}
+            >
+              {!isViewing && (
+                <Button link label="Cancel" onPress={onCancelEdit} />
+              )}
+            </View>
 
-        <View style={{ rowGap: sizes.large, padding: sizes.large }}>
-          <Avatar
-            size={100}
-            label="MP"
-            autoColorsConfig={avatarColorsConfig}
-            containerStyle={{ alignSelf: "center" }}
-          />
+            <View style={{ rowGap: sizes.large, padding: sizes.large }}>
+              <Avatar
+                size={100}
+                label={avatarLabel}
+                autoColorsConfig={avatarColorsConfig}
+                containerStyle={{ alignSelf: "center" }}
+              />
 
-          <FormInput
-            value={profileData.name}
-            setData={(name) => setProfileData({ name })}
-            item={{ label: "Name", isViewing }}
-          />
-          <FormInput
-            value={profileData.country}
-            setData={(country) => setProfileData({ country })}
-            item={{
-              label: "Country",
-              isViewing,
-              isDropdown: true,
-              dropdownData: [
-                {
-                  label: "Please select a country:",
-                  value: "",
-                  disabled: true,
-                },
-                ...countries,
-              ],
-            }}
-          />
-        </View>
+              <FormInput
+                value={profileData.name}
+                setData={(name) => setProfileData({ name })}
+                item={{
+                  label: "Name",
+                  placeholder: "Add name",
+                  isViewing,
+                }}
+              />
+              <FormInput
+                value={profileData.country}
+                setData={(country) => setProfileData({ country })}
+                item={{
+                  label: "Country",
+                  placeholder: "Add country",
+                  isViewing,
+                  isDropdown: true,
+                  dropdownData: [
+                    {
+                      label: "Please select a country:",
+                      value: "",
+                      disabled: true,
+                    },
+                    ...countries,
+                  ],
+                }}
+              />
+            </View>
+          </>
+        )}
       </BottomSheet>
 
       <BottomSheet ref={infoSheetRef} detached>

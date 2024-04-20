@@ -8,11 +8,12 @@ export interface Achievement {
   'emoji' : string,
   'points' : number,
 }
-export interface AchievementWithId {
+export interface AchievementResult {
   'id' : Id,
   'name' : string,
   'description' : string,
   'emoji' : string,
+  'userAchievement' : [] | [UserAchievement],
   'points' : number,
 }
 export type AwardType = { 'Gold' : null } |
@@ -30,6 +31,8 @@ export interface CreateTaskPayload {
   'timeOfDay' : TimeOfDay,
 }
 export type Id = string;
+export type LikeType = { 'Like' : null } |
+  { 'Dislike' : null };
 export interface MessageResult { 'message' : string }
 export interface PostAward {
   'userId' : Principal,
@@ -37,36 +40,48 @@ export interface PostAward {
   'awardType' : AwardType,
   'postId' : Id,
 }
-export interface PostComplete {
-  'id' : Id,
-  'content' : string,
-  'userId' : Principal,
-  'likes' : bigint,
-  'taskId' : Id,
-  'awards' : bigint,
-  'image' : string,
-  'place' : string,
-  'points' : number,
-}
 export interface PostLike { 'userId' : Principal, 'postId' : Id }
 export interface PostPayload {
+  'title' : string,
   'content' : string,
+  'imageKey' : string,
   'taskId' : Id,
-  'image' : string,
-  'place' : string,
+}
+export interface PostResult {
+  'id' : Id,
+  'title' : string,
+  'isLiked' : boolean,
+  'content' : string,
+  'userId' : Principal,
+  'task' : [] | [TaskWithId],
+  'likes' : bigint,
+  'isAwarded' : boolean,
+  'imageKey' : string,
+  'taskId' : Id,
+  'awards' : bigint,
+  'points' : number,
 }
 export interface PostWithId {
   'id' : Id,
+  'title' : string,
   'content' : string,
   'userId' : Principal,
+  'imageKey' : string,
   'taskId' : Id,
-  'image' : string,
-  'place' : string,
   'points' : number,
 }
 export type Result = { 'ok' : MessageResult } |
   { 'err' : MessageResult };
-export interface RewardWithId { 'id' : Id, 'name' : string, 'points' : number }
+export type Result_1 = {
+    'ok' : { 'user' : [] | [UserWithId], 'message' : string }
+  } |
+  { 'err' : MessageResult };
+export interface RewardWithId {
+  'id' : Id,
+  'code' : string,
+  'name' : string,
+  'points' : number,
+}
 export interface Task {
   'title' : string,
   'timeStart' : string,
@@ -139,10 +154,19 @@ export interface UserPayload {
   'country' : [] | [string],
   'name' : [] | [string],
 }
+export interface UserResult {
+  'id' : Principal,
+  'country' : [] | [string],
+  'name' : [] | [string],
+  'createdAt' : string,
+  'achievements' : bigint,
+  'points' : number,
+}
 export interface UserWithId {
   'id' : Principal,
   'country' : [] | [string],
   'name' : [] | [string],
+  'createdAt' : string,
   'points' : number,
 }
 export interface _SERVICE {
@@ -160,35 +184,48 @@ export interface _SERVICE {
   'completeTask' : ActorMethod<[{ 'taskId' : Id }], Result>,
   'createPost' : ActorMethod<[PostPayload], Result>,
   'createTask' : ActorMethod<[CreateTaskPayload], Result>,
+  'deletePost' : ActorMethod<[{ 'postId' : Id }], Result>,
   'getAchievementsByUser' : ActorMethod<
     [{ 'userId' : [] | [Principal] }],
-    Array<[Id, UserAchievementResult]>
+    Array<UserAchievementResult>
   >,
-  'getAllAchievements' : ActorMethod<[], Array<[Id, AchievementWithId]>>,
-  'getAllPostAwards' : ActorMethod<[], Array<[Id, PostAward]>>,
-  'getAllPostLikes' : ActorMethod<[], Array<[Id, PostLike]>>,
-  'getAllPosts' : ActorMethod<[], Array<[Id, PostComplete]>>,
-  'getAllRewards' : ActorMethod<[], Array<[Id, RewardWithId]>>,
-  'getAllTasks' : ActorMethod<[], Array<[Id, TaskWithId]>>,
-  'getAllTasksToday' : ActorMethod<[], Array<[Id, TaskWithId]>>,
-  'getAllUserAchievements' : ActorMethod<[], Array<[Id, UserAchievement]>>,
-  'getAllUserCompletedTasks' : ActorMethod<[], Array<[Id, UserCompletedTask]>>,
-  'getAllUsers' : ActorMethod<[], Array<[Principal, UserWithId]>>,
-  'getAwardsByPost' : ActorMethod<[{ 'postId' : Id }], Array<[Id, PostAward]>>,
+  'getAllAchievements' : ActorMethod<[], Array<AchievementResult>>,
+  'getAllPostAwards' : ActorMethod<[], Array<PostAward>>,
+  'getAllPostLikes' : ActorMethod<[], Array<PostLike>>,
+  'getAllPosts' : ActorMethod<[], Array<PostResult>>,
+  'getAllRewards' : ActorMethod<[], Array<RewardWithId>>,
+  'getAllTasks' : ActorMethod<[], Array<TaskWithId>>,
+  'getAllTasksToday' : ActorMethod<[], Array<TaskWithId>>,
+  'getAllUserAchievements' : ActorMethod<[], Array<UserAchievement>>,
+  'getAllUserCompletedTasks' : ActorMethod<[], Array<UserCompletedTask>>,
+  'getAllUsers' : ActorMethod<[], Array<UserWithId>>,
+  'getAwardsByPost' : ActorMethod<[{ 'postId' : Id }], Array<PostAward>>,
   'getCompletedTasksByUser' : ActorMethod<
     [{ 'userId' : [] | [Principal] }],
-    Array<[Id, UserCompletedTaskResult]>
+    Array<UserCompletedTaskResult>
   >,
-  'getLikesByPost' : ActorMethod<[{ 'postId' : Id }], Array<[Id, PostLike]>>,
+  'getLikesByPost' : ActorMethod<[{ 'postId' : Id }], Array<PostLike>>,
+  'getPostAwardsByUser' : ActorMethod<
+    [{ 'userId' : [] | [Principal] }],
+    Array<PostResult>
+  >,
   'getPostById' : ActorMethod<[{ 'id' : Id }], [] | [PostWithId]>,
+  'getPostLikesByUser' : ActorMethod<
+    [{ 'userId' : [] | [Principal] }],
+    Array<PostResult>
+  >,
   'getPostsByUser' : ActorMethod<
     [{ 'userId' : [] | [Principal] }],
-    Array<[Id, PostWithId]>
+    Array<PostResult>
   >,
   'getTaskById' : ActorMethod<[{ 'id' : Id }], [] | [TaskWithId]>,
-  'getUser' : ActorMethod<[{ 'id' : [] | [Principal] }], UserWithId>,
-  'likeOrDislikePost' : ActorMethod<[{ 'postId' : Id }], Result>,
-  'updateOrCreateUser' : ActorMethod<[UserPayload], Result>,
+  'getUser' : ActorMethod<[{ 'id' : [] | [Principal] }], UserResult>,
+  'likeOrDislikePost' : ActorMethod<
+    [{ 'likeType' : LikeType, 'postId' : Id }],
+    Result
+  >,
+  'redeemReward' : ActorMethod<[{ 'code' : string }], Result>,
+  'updateOrCreateUser' : ActorMethod<[UserPayload], Result_1>,
   'updatePostContent' : ActorMethod<
     [{ 'content' : string, 'postId' : Id }],
     Result

@@ -1,21 +1,49 @@
 import { useHeaderHeight } from "@react-navigation/elements";
-import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import CommunityModal from "../components/CommunityModal";
 import GradientIcon from "../components/GradientIcon";
 import LargeHeader from "../components/LargeHeader";
 import PostItem from "../components/PostItem";
-import posts from "../consts/samplePosts";
+import PostSyncContext from "../contexts/PostSyncContext";
+import { getBackendActor } from "../src/actor";
+import useProfileStore from "../stores/useProfileStore";
+import normalizePostsData from "../utils/normalizePostsData";
 
 const LikedPosts = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const identity = useProfileStore((state) => state.identity);
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    const fetchAwardedPosts = async () => {
+      setIsFetching(true);
+      try {
+        // Fetch awarded posts from ICP
+        const posts = await getBackendActor(identity).getPostLikesByUser({
+          userId: [],
+        });
+        const normalizedPosts = normalizePostsData(posts);
+
+        setPosts(normalizedPosts);
+      } catch (error) {
+        Alert.alert("Failed to fetch awarded posts", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchAwardedPosts();
+  }, [identity]);
 
   const ListHeaderComponent = useMemo(
     () => (
@@ -35,6 +63,17 @@ const LikedPosts = () => {
     []
   );
 
+  const ListEmptyComponent = useMemo(
+    () => (
+      <View style={[globalStyles.flexCenter, { padding: sizes.large }]}>
+        <Text h4 color={colors.gray}>
+          No posts liked yet.
+        </Text>
+      </View>
+    ),
+    []
+  );
+
   const onItemPressed = useCallback((post) => {
     setSelectedPost(post);
     setIsModalVisible(true);
@@ -49,29 +88,45 @@ const LikedPosts = () => {
     [onItemPressed]
   );
 
-  return (
-    <View
-      style={[
-        globalStyles.flexFull,
-        { paddingTop: headerHeight, paddingBottom: insets.bottom },
-      ]}
-    >
-      <FlatList
-        data={posts}
-        ListHeaderComponent={ListHeaderComponent}
-        contentContainerStyle={{
-          rowGap: sizes.xlarge,
-          paddingHorizontal: sizes.large,
-        }}
-        renderItem={renderItem}
-      />
+  if (isFetching) {
+    return (
+      <View style={[globalStyles.flexFull, { paddingTop: headerHeight }]}>
+        {ListHeaderComponent}
 
-      <CommunityModal
-        item={selectedPost}
-        visible={isModalVisible}
-        onClose={onCloseModal}
-      />
-    </View>
+        <View style={[globalStyles.flexCenter, { rowGap: sizes.large }]}>
+          <ActivityIndicator size="large" />
+          <Text style={{ color: colors.gray }}>Loading Liked Posts...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <PostSyncContext.Provider value={{ setPosts, setSelectedPost }}>
+      <View
+        style={[
+          globalStyles.flexFull,
+          { paddingTop: headerHeight, paddingBottom: insets.bottom },
+        ]}
+      >
+        <FlatList
+          data={posts}
+          ListHeaderComponent={ListHeaderComponent}
+          ListEmptyComponent={ListEmptyComponent}
+          contentContainerStyle={{
+            rowGap: sizes.xlarge,
+            paddingHorizontal: sizes.large,
+          }}
+          renderItem={renderItem}
+        />
+
+        <CommunityModal
+          item={selectedPost}
+          visible={isModalVisible}
+          onClose={onCloseModal}
+        />
+      </View>
+    </PostSyncContext.Provider>
   );
 };
 

@@ -18,28 +18,29 @@ import useAuthStore from "./stores/useAuthStore";
 
 SplashScreen.preventAutoHideAsync();
 
-Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_DOWNLOAD_TOKEN);
+Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN);
 
 export default function App() {
-  const { isReady, identity, setIdentity, fetchKeyAndIdentity } = useAuthStore(
-    useShallow((state) => ({
-      isReady: state.isReady,
-      identity: state.identity,
-      setIdentity: state.setIdentity,
-      fetchKeyAndIdentity: state.fetchKeyAndIdentity,
-    }))
-  );
+  const { isReady, principal, getPrincipal, fetchKeyAndPrincipal } =
+    useAuthStore(
+      useShallow((state) => ({
+        isReady: state.isReady,
+        principal: state.principal,
+        getPrincipal: state.getPrincipal,
+        fetchKeyAndPrincipal: state.fetchKeyAndPrincipal,
+      }))
+    );
 
   const [assets] = useAssets(assetList);
 
   useEffect(() => {
     const handleSetIdentity = async ({ url }) => {
-      if (url && !identity) {
+      if (url && !principal) {
         const { queryParams } = Linking.parse(url);
         const delegation = queryParams.delegation;
 
         if (delegation) {
-          setIdentity(delegation);
+          getPrincipal(delegation);
           console.log("Done setting identity");
         }
       }
@@ -50,12 +51,13 @@ export default function App() {
     return () => {
       subscription.remove();
     };
-  }, [identity]);
+  }, [principal]);
 
   useEffect(() => {
-    fetchKeyAndIdentity();
+    console.log("Fetching key and principal...");
+    fetchKeyAndPrincipal();
 
-    console.log("Unregistering all tasks");
+    console.log("Unregistering all tasks...");
     (async () => await TaskManager.unregisterAllTasksAsync())();
   }, []);
 
