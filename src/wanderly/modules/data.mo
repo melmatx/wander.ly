@@ -16,24 +16,24 @@ module {
         id = "task-0";
         title = "Sunrise Stroll";
         timeOfDay = #Morning;
-        description = "Start your day with a calm 1600-meter walk to greet the sunrise.";
+        description = "Start your day with a calm 100-meter walk to greet the sunrise.";
         emoji = "🌅";
         timeStart = today.add(#hours(5)).toTextFormatted(textFormat);
         timeEnd = today.add(#hours(8)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
-        maxValue = 1600;
+        maxValue = 100;
         difficultyFactor = 1.5;
       },
       {
         id = "task-1";
         title = "Step Fresh";
         timeOfDay = #Morning;
-        description = "Aim for 3,000 steps to energize your morning routine.";
+        description = "Aim for 500 steps to energize your morning routine.";
         emoji = "👟";
         timeStart = today.add(#hours(6)).toTextFormatted(textFormat);
         timeEnd = today.add(#hours(9)).toTextFormatted(textFormat);
         taskType = #StepBased;
-        maxValue = 3000;
+        maxValue = 500;
         difficultyFactor = 1.4;
       },
       {
