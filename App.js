@@ -33,6 +33,11 @@ export default function App() {
 
   const [assets] = useAssets(assetList);
 
+  // In case the app is stuck in splash screen
+  // useEffect(() => {
+  //   logout();
+  // }, []);
+
   useEffect(() => {
     const handleSetIdentity = async ({ url }) => {
       if (url && !principal) {

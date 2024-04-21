@@ -91,6 +91,7 @@ const Profile = ({ navigation }) => {
 
     return profileData.name
       .split(" ")
+      .slice(0, 2)
       .map((name) => {
         const splitter = new Graphemer();
         return splitter.splitGraphemes(name)[0];

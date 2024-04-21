@@ -10,7 +10,7 @@ const initialState = {
   isFetching: false,
 };
 
-const excludedKeys = new Set(["id", "points"]);
+const userPayload = new Set(["name", "country"]);
 
 const useProfileStore = create((set, get) => ({
   ...initialState,
@@ -34,9 +34,9 @@ const useProfileStore = create((set, get) => ({
   },
   updateProfile: async (profileData) => {
     const newData = Object.entries(profileData).reduce((acc, [key, value]) => {
-      if (!excludedKeys.has(key)) {
+      if (userPayload.has(key)) {
         // Put values in an array so that its an opt format
-        acc[key] = value.trim() === "" ? [] : [value];
+        acc[key] = value.trim?.() === "" ? [] : [value];
       }
       return acc;
     }, {});
@@ -54,7 +54,7 @@ const useProfileStore = create((set, get) => ({
       throw new Error(err);
     }
 
-    const profile = normalizeUserData(ok.user[0]);
+    const updatedProfile = normalizeUserData(ok.user[0]);
 
     // Show success alert
     Burnt.dismissAllAlerts();
@@ -64,7 +64,7 @@ const useProfileStore = create((set, get) => ({
       duration: 0.8,
     });
 
-    set({ profile });
+    set((state) => ({ profile: { ...state.profile, ...updatedProfile } }));
   },
   clearProfile: () => {
     set({ ...initialState });

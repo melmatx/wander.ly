@@ -23,7 +23,7 @@ const useCurrentProgress = () => {
   );
 
   const showAlertRef = useRef(true);
-  const pedometerAvailableRef = useRef(false);
+  const pedometerAvailableRef = useRef(true);
 
   // Show toast when task starts
   useEffect(() => {
@@ -200,11 +200,6 @@ const useCurrentProgress = () => {
             if (!showAlertRef.current) {
               showAlertRef.current = true;
             }
-
-            // Set pedometer availability to true
-            if (!pedometerAvailableRef.current) {
-              pedometerAvailableRef.current = true;
-            }
           });
         } else {
           Burnt.toast({
@@ -213,6 +208,8 @@ const useCurrentProgress = () => {
             preset: "error",
             duration: 1.5,
           });
+
+          pedometerAvailableRef.current = false;
         }
       };
 
