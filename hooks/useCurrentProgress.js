@@ -175,6 +175,7 @@ const useCurrentProgress = () => {
           showAlertRef.current = false;
           return;
         }
+        Burnt.dismissAllAlerts();
 
         // Update progress every second
         updateProgress(task.id, task.progress + 1);
@@ -190,8 +191,6 @@ const useCurrentProgress = () => {
         if (isAvailable) {
           console.log("Subscribing to pedometer");
           return Pedometer.watchStepCount((result) => {
-            Burnt.dismissAllAlerts();
-
             useTaskStore
               .getState()
               .updateStepCount(currentTask.id, result.steps);

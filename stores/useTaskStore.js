@@ -153,8 +153,6 @@ const useTaskStore = create((set, get) => ({
         duration: 1.5,
       });
 
-      await useProfileStore.getState().fetchProfile();
-
       // Complete task locally
       set((state) => ({
         tasks: state.tasks.map((t) =>
@@ -167,6 +165,9 @@ const useTaskStore = create((set, get) => ({
             : t
         ),
       }));
+
+      console.log("Task completed", task);
+      await useProfileStore.getState().fetchProfile();
       return;
     }
 

@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { format, isToday } from "date-fns";
+import { format, isAfter, isBefore, isToday } from "date-fns";
 import React, { memo, useMemo } from "react";
 import { View } from "react-native";
 import { Button, Text } from "react-native-ui-lib";
@@ -7,10 +7,9 @@ import { Button, Text } from "react-native-ui-lib";
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 
 const TaskItem = ({ item, onPress, isUser = true }) => {
-  // const isUnavailable = isBefore(new Date(), item.timeStart);
-  // const isExpired = isAfter(new Date(), item.timeEnd);
-  // const isDisabled = isExpired || isUnavailable;
-  const isDisabled = false;
+  const isUnavailable = isBefore(new Date(), item.timeStart);
+  const isExpired = isAfter(new Date(), item.timeEnd);
+  const isDisabled = isExpired || isUnavailable;
 
   const renderActionButton = useMemo(() => {
     if (isUser && item.completedAt) {
