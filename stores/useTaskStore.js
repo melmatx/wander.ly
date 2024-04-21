@@ -1,3 +1,4 @@
+import * as Burnt from "burnt";
 import { Alert } from "react-native";
 import { create } from "zustand";
 
@@ -80,10 +81,26 @@ const useTaskStore = create((set, get) => ({
 
     console.log("Updating location for task", task);
     set((state) => ({
-      tasks: state.tasks.map((t) => (t.id === id ? { ...t, location } : t)),
+      tasks: state.tasks.map((t) =>
+        t.id === id ? { ...t, location, locationUpdatedAt: Date.now() } : t
+      ),
     }));
   },
-  updateProgress: (id, value) => {
+  updateStepCount: (id, stepCount) => {
+    const task = get().getTask(id);
+
+    if (!task) {
+      return;
+    }
+
+    console.log("User is walking", stepCount, "steps");
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === id ? { ...t, stepCount, stepCountUpdatedAt: Date.now() } : t
+      ),
+    }));
+  },
+  updateProgress: async (id, value) => {
     const task = get().getTask(id);
 
     if (!task) {
@@ -104,24 +121,58 @@ const useTaskStore = create((set, get) => ({
       return;
     }
 
-    set((state) => {
-      if (value >= task.maxValue) {
-        console.log("Task completed");
-        return {
-          tasks: state.tasks.map((t) =>
-            t.id === id
-              ? { ...t, progress: task.maxValue, completedAt: new Date() }
-              : t
-          ),
-        };
+    if (value >= task.maxValue) {
+      // Complete task in ICP
+      Burnt.alert({
+        title: "Completing Task...",
+        preset: "spinner",
+        shouldDismissByTap: false,
+      });
+
+      const identity = useProfileStore.getState().identity;
+      const { ok, err } = await getBackendActor(identity).completeTask({
+        taskId: id,
+      });
+
+      Burnt.dismissAllAlerts();
+
+      if (err) {
+        Burnt.alert({
+          title: err.message,
+          preset: "error",
+          duration: 0.8,
+        });
+        return { error: err };
       }
 
-      return {
+      Burnt.alert({
+        title: "Goal Reached",
+        message: ok.message,
+        preset: "custom",
+        icon: { ios: { name: "medal" } },
+        duration: 1,
+      });
+
+      // Complete task locally
+      set((state) => ({
         tasks: state.tasks.map((t) =>
-          t.id === id ? { ...t, progress: value } : t
+          t.id === id
+            ? {
+                ...t,
+                progress: task.maxValue,
+                completedAt: ok.userCompletedTask.completedAt,
+              }
+            : t
         ),
-      };
-    });
+      }));
+    }
+
+    // Update progress locally
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === id ? { ...t, progress: value } : t
+      ),
+    }));
   },
   setCancelFn: (fn) => set({ cancelFn: fn }),
 }));

@@ -83,6 +83,7 @@ const Explore = ({ navigation }) => {
 
   const cameraRef = useRef(null);
   const sectionListRef = useRef(null);
+  const tasksSheetRef = useRef(null);
   const eventSheetRef = useRef(null);
   const goalSheetRef = useRef(null);
 
@@ -157,13 +158,31 @@ const Explore = ({ navigation }) => {
     setCancelFn(null);
     setCurrentTask(null);
 
-    Burnt.toast({
-      title: "Task Cancelled",
-      message: "Awww maybe later? :(",
-      preset: "error",
-      duration: 1,
-    });
-  }, [cancelFn, setCancelFn, setCurrentTask]);
+    // Reset task sheet
+    tasksSheetRef.current?.snapToIndex(1);
+
+    if (currentTask.completedAt) {
+      Burnt.toast({
+        title: "Task Completed",
+        message: "Great job! Keep it up! :)",
+        preset: "custom",
+        duration: 1,
+        icon: {
+          ios: {
+            name: "medal",
+            color: colors.primary,
+          },
+        },
+      });
+    } else {
+      Burnt.toast({
+        title: "Task Cancelled",
+        message: "Awww maybe later? :(",
+        preset: "error",
+        duration: 1,
+      });
+    }
+  }, [cancelFn, currentTask?.completedAt, setCancelFn, setCurrentTask]);
 
   const onTaskPress = useCallback((item) => {
     eventSheetRef.current?.close();
@@ -268,7 +287,7 @@ const Explore = ({ navigation }) => {
 
         <View style={[globalStyles.rowCenter, { columnGap: sizes.xlarge }]}>
           <Button
-            label="Cancel"
+            label={currentTask.completedAt ? "Complete" : "Cancel"}
             onPress={onCancelTask}
             outline
             outlineColor={colors.primary}
@@ -440,6 +459,7 @@ const Explore = ({ navigation }) => {
       </Mapbox.MapView>
 
       <BottomSheet
+        ref={tasksSheetRef}
         snapPoints={snapPoints}
         index={1}
         zIndex={2}

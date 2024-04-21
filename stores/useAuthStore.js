@@ -50,11 +50,11 @@ const useAuthStore = create((set, get) => ({
       if (isDelegationValid(chain)) {
         const id = new DelegationIdentity(baseKey, chain);
 
-        // Set identity and fetch profile
-        await useProfileStore.getState().fetchProfile(id);
-
         // Get principal
         const principal = await getBackendActor(id).whoami();
+
+        // Set identity and fetch profile
+        await useProfileStore.getState().fetchProfile(id);
 
         // Set identity with the base key
         set({ principal: principal.toText() });
@@ -93,11 +93,11 @@ const useAuthStore = create((set, get) => ({
       console.log(err);
     }
 
-    // Set identity and fetch profile
-    await useProfileStore.getState().fetchProfile(id);
-
     // Get principal
     const principal = await getBackendActor(id).whoami();
+
+    // Set identity and fetch profile
+    await useProfileStore.getState().fetchProfile(id);
 
     set({ principal: principal.toText(), isFetching: false });
   },

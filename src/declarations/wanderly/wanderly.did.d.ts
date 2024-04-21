@@ -76,6 +76,14 @@ export type Result_1 = {
     'ok' : { 'user' : [] | [UserWithId], 'message' : string }
   } |
   { 'err' : MessageResult };
+export type Result_2 = {
+    'ok' : { 'userCompletedTask' : UserCompletedTask, 'message' : string }
+  } |
+  { 'err' : MessageResult };
+export type Result_3 = {
+    'ok' : { 'userAchievement' : UserAchievement, 'message' : string }
+  } |
+  { 'err' : MessageResult };
 export interface RewardWithId {
   'id' : Id,
   'code' : string,
@@ -173,7 +181,7 @@ export interface _SERVICE {
   '_init' : ActorMethod<[], undefined>,
   'addAchievementToUser' : ActorMethod<
     [{ 'achievementId' : Id, 'userId' : [] | [Principal] }],
-    Result
+    Result_3
   >,
   'awardPost' : ActorMethod<
     [{ 'awardType' : AwardType, 'postId' : Id }],
@@ -181,7 +189,7 @@ export interface _SERVICE {
   >,
   'claimAllPoints' : ActorMethod<[], Result>,
   'claimPointsByPost' : ActorMethod<[{ 'postId' : Id }], Result>,
-  'completeTask' : ActorMethod<[{ 'taskId' : Id }], Result>,
+  'completeTask' : ActorMethod<[{ 'taskId' : Id }], Result_2>,
   'createPost' : ActorMethod<[PostPayload], Result>,
   'createTask' : ActorMethod<[CreateTaskPayload], Result>,
   'deletePost' : ActorMethod<[{ 'postId' : Id }], Result>,

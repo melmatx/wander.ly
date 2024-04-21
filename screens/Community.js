@@ -53,18 +53,18 @@ const Community = ({ navigation, route }) => {
   const [isTutorialVisible, setIsTutorialVisible] = useState(false);
   const [currentTargetIndex, setCurrentTargetIndex] = useState(0);
 
+  const targets = useRef({});
+  const swiperRef = useRef(null);
+  const taskSheetRef = useRef(null);
+
+  const { height } = useWindowDimensions();
   const { awardPost, likeOrDislikePost } = usePostActions({
     item: posts[cardIndex],
     setPostsFromArg: setPosts,
     setSelectedPostFromArg: setSelectedPost,
   });
   const identity = useProfileStore((state) => state.identity);
-  const targets = useRef({});
-  const swiperRef = useRef(null);
-  const taskSheetRef = useRef(null);
-
   const bottomTabHeight = useBottomTabBarHeight();
-  const { height } = useWindowDimensions();
 
   useEffect(() => {
     fetchPosts();

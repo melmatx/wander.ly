@@ -33,6 +33,7 @@ import avatarColorsConfig from "../consts/avatarConfig";
 import palette from "../consts/profilePalette";
 import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
+import useEcoStore from "../stores/useEcoStore";
 import useProfileStore from "../stores/useProfileStore";
 import fetchCountryFlags from "../utils/fetchCountryFlags";
 
@@ -60,6 +61,13 @@ const Profile = ({ navigation }) => {
       isFetching: state.isFetching,
       profile: state.profile,
       updateProfile: state.updateProfile,
+    }))
+  );
+  const { distanceWalked, treesSaved, carbonEmissionsSaved } = useEcoStore(
+    useShallow((state) => ({
+      distanceWalked: state.distanceWalked,
+      treesSaved: state.treesSaved,
+      carbonEmissionsSaved: state.carbonEmissionsSaved,
     }))
   );
   const logout = useAuthStore((state) => state.logout);
@@ -113,19 +121,25 @@ const Profile = ({ navigation }) => {
         ),
       },
       {
-        title: "1500km",
+        title: `${distanceWalked}km`,
         description: "Distance walked",
       },
       {
-        title: "200",
+        title: treesSaved,
         description: "Trees saved",
       },
       {
-        title: "200lbs",
+        title: `${carbonEmissionsSaved}kg`,
         description: "Carbon emissions saved",
       },
     ],
-    [navigation, profile.achievements]
+    [
+      carbonEmissionsSaved,
+      distanceWalked,
+      navigation,
+      profile.achievements,
+      treesSaved,
+    ]
   );
 
   const postsTabs = useMemo(

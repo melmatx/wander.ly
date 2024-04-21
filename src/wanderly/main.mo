@@ -751,7 +751,7 @@ actor Wanderly {
     };
   };
 
-  public shared ({ caller }) func completeTask({ taskId : Types.Id }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+  public shared ({ caller }) func completeTask({ taskId : Types.Id }) : async Result.Result<Types.MessageResult and { userCompletedTask : Types.UserCompletedTask }, Types.MessageResult> {
     if (Utils.isUserAnonymous(caller)) {
       Debug.trap("Anonymous identity found!");
     };
@@ -776,7 +776,7 @@ actor Wanderly {
               Debug.trap("Invalid time start");
             };
             case (?date) {
-              Debug.print("Time start " # debug_show (date.toText()));
+              // Debug.print("Time start " # debug_show (date.toText()));
               date;
             };
           };
@@ -789,7 +789,7 @@ actor Wanderly {
               Debug.trap("Invalid time end");
             };
             case (?date) {
-              Debug.print("Time end " # debug_show (date.toText()));
+              // Debug.print("Time end " # debug_show (date.toText()));
               date;
             };
           };
@@ -797,7 +797,7 @@ actor Wanderly {
 
         // Get current time for today in UTC format to compare timeStart and timeEnd (since they are also in UTC)
         let currentTime = DateTime.fromComponents(LocalDateTime.now(Data.timeZone).toComponents());
-        Debug.print("Current time " # debug_show (currentTime.toText()));
+        // Debug.print("Current time " # debug_show (currentTime.toText()));
 
         // Check if task is available
         if (currentTime.compare(timeStart) == #less or currentTime.compare(timeEnd) == #greater) {
@@ -834,7 +834,10 @@ actor Wanderly {
             // Check if completed task creation was successful
             switch (Map.addFront(userCompletedTasks, thash, newId, newUserCompletedTask)) {
               case (null) {
-                return #ok({ message = "Task Completed!" });
+                return #ok({
+                  message = "Congratulations! You earned " # debug_show (rewardPoints) # " points.";
+                  userCompletedTask = newUserCompletedTask;
+                });
               };
               case (?postAward) {
                 Debug.trap("An error happened! (Task already completed?)");
@@ -889,7 +892,7 @@ actor Wanderly {
   public shared ({ caller }) func addAchievementToUser({
     userId : ?Principal;
     achievementId : Types.Id;
-  }) : async Result.Result<Types.MessageResult, Types.MessageResult> {
+  }) : async Result.Result<Types.MessageResult and { userAchievement : Types.UserAchievement }, Types.MessageResult> {
     // Get user from either payload or who called the func
     let user = Option.get(userId, caller);
 
@@ -937,7 +940,10 @@ actor Wanderly {
             // Check if user achievement creation was successful
             switch (Map.addFront(userAchievements, thash, newId, newUserAchievement)) {
               case (null) {
-                return #ok({ message = "Achievement awarded!" });
+                return #ok({
+                  message = "Awarded " # debug_show (achievement.points) # " points successfully!";
+                  userAchievement = newUserAchievement;
+                });
               };
               case (?userAchievement) {
                 Debug.trap("An error happened! (Achievement already awarded?)");

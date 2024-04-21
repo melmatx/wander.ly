@@ -1,13 +1,19 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as Burnt from "burnt";
-import React, { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-import { View } from "react-native";
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Alert, View } from "react-native";
 import CircularProgress from "react-native-circular-progress-indicator";
 import { Button, Text } from "react-native-ui-lib";
 
 import globalStyles, { colors, sizes } from "../assets/styles/globalStyles";
 import BottomSheet from "../components/BottomSheet";
 import InfoSheetContent from "../components/InfoSheetContent";
+import TaskCompletedModal from "../components/TaskCompletedModal";
 import dashedStrokeConfig from "../consts/progressConfig";
 import TaskTypes from "../consts/taskTypes";
 import useCurrentProgress from "../hooks/useCurrentProgress";
@@ -17,26 +23,23 @@ import convertSecToMin from "../utils/convertSecToMin";
 import getTaskUnit from "../utils/getTaskUnit";
 
 const ActiveTask = ({ navigation, route }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const infoSheetRef = useRef(null);
+
   const task = route.params?.task;
 
   const { currentProgress, completedAt } = useCurrentProgress();
 
-  const infoSheetRef = useRef(null);
-
   const onAnimationComplete = useCallback(() => {
     if (completedAt) {
-      Burnt.alert({
-        title: "Goal Reached",
-        message: "Congratulations! You've earned 10 points.",
-        preset: "custom",
-        icon: { ios: { name: "medal" } },
-        duration: 1,
-      });
+      setIsModalVisible(true);
     }
   }, [completedAt]);
 
   const onFriendWalk = useCallback(() => {
     console.log("Walk with a friend");
+    Alert.alert("Coming soon!");
   }, []);
 
   const onShareTask = useCallback(() => {
@@ -91,6 +94,10 @@ const ActiveTask = ({ navigation, route }) => {
     },
     [convertedProgress]
   );
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalVisible(false);
+  }, []);
 
   const handleInfoButton = useCallback(() => {
     infoSheetRef.current?.close();
@@ -174,6 +181,12 @@ const ActiveTask = ({ navigation, route }) => {
           onButtonPress={handleInfoButton}
         />
       </BottomSheet>
+
+      <TaskCompletedModal
+        item={task}
+        visible={isModalVisible}
+        onClose={handleCloseModal}
+      />
     </>
   );
 };

@@ -108,6 +108,22 @@ type RewardWithId =
    name: text;
    points: float64;
  };
+type Result_3 = 
+ variant {
+   err: MessageResult;
+   ok: record {
+         message: text;
+         userAchievement: UserAchievement;
+       };
+ };
+type Result_2 = 
+ variant {
+   err: MessageResult;
+   ok: record {
+         message: text;
+         userCompletedTask: UserCompletedTask;
+       };
+ };
 type Result_1 = 
  variant {
    err: MessageResult;
@@ -212,14 +228,14 @@ service : {
    (record {
       achievementId: Id;
       userId: opt principal;
-    }) -> (Result);
+    }) -> (Result_3);
   awardPost: (record {
                 awardType: AwardType;
                 postId: Id;
               }) -> (Result);
   claimAllPoints: () -> (Result);
   claimPointsByPost: (record {postId: Id;}) -> (Result);
-  completeTask: (record {taskId: Id;}) -> (Result);
+  completeTask: (record {taskId: Id;}) -> (Result_2);
   createPost: (PostPayload) -> (Result);
   createTask: (CreateTaskPayload) -> (Result);
   deletePost: (record {postId: Id;}) -> (Result);

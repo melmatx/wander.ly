@@ -19,6 +19,7 @@ Typography.loadTypographies({
   h2: { fontSize: 24 },
   h3: { fontSize: 20 },
   h4: { fontSize: 16 },
+  bold: { fontWeight: "bold" },
   semibold: { fontWeight: "500" },
   body: { fontSize: 14 },
   emoji: { fontSize: 40 },

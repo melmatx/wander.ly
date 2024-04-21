@@ -3,7 +3,7 @@ import * as Location from "expo-location";
 import { Pedometer } from "expo-sensors";
 import * as TaskManager from "expo-task-manager";
 import { getDistance } from "geolib";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { colors } from "../assets/styles/globalStyles";
@@ -21,6 +21,9 @@ const useCurrentProgress = () => {
       setCancelFn: state.setCancelFn,
     }))
   );
+
+  const showAlertRef = useRef(true);
+  const pedometerAvailableRef = useRef(false);
 
   // Show toast when task starts
   useEffect(() => {
@@ -43,7 +46,7 @@ const useCurrentProgress = () => {
   // Update progress for distance-based tasks
   useEffect(() => {
     if (currentTask.taskType === TaskTypes.DISTANCE && !cancelFn) {
-      const subscribeToLocation = async () => {
+      const subscribeToLocationBackground = async () => {
         let permissionsGranted = false;
 
         const { status: foregroundStatus } =
@@ -76,7 +79,7 @@ const useCurrentProgress = () => {
         });
       };
 
-      subscribeToLocation();
+      subscribeToLocationBackground();
 
       setCancelFn(() => {
         if (currentTask.taskType === TaskTypes.DISTANCE) {
@@ -146,6 +149,34 @@ const useCurrentProgress = () => {
       const interval = setInterval(() => {
         const task = useTaskStore.getState().getCurrentTask();
 
+        // If user hasn't started walking, show alert
+        if (
+          (!task.stepCountUpdatedAt ||
+            Date.now() - task.stepCountUpdatedAt > 10000) &&
+          pedometerAvailableRef.current // Check if pedometer is available
+        ) {
+          // Show alert only once
+          if (showAlertRef.current) {
+            Burnt.toast({
+              title: "Start Walking",
+              message: "You need to walk to complete this task!",
+              preset: "custom",
+              duration: 10,
+              icon: {
+                ios: {
+                  name: "location.fill",
+                  color: colors.primary,
+                },
+              },
+            });
+          }
+
+          // Set the ref to false after showing the alert
+          showAlertRef.current = false;
+          return;
+        }
+
+        // Update progress every second
         updateProgress(task.id, task.progress + 1);
 
         if (task.progress + 1 >= task.maxValue) {
@@ -153,12 +184,53 @@ const useCurrentProgress = () => {
         }
       }, 1000);
 
-      setCancelFn(() => {
-        if (interval) {
-          console.log("Stopping timer");
-          clearInterval(interval);
+      const subscribeToPedometer = async () => {
+        const isAvailable = await Pedometer.isAvailableAsync();
+
+        if (isAvailable) {
+          console.log("Subscribing to pedometer");
+          return Pedometer.watchStepCount((result) => {
+            Burnt.dismissAllAlerts();
+
+            useTaskStore
+              .getState()
+              .updateStepCount(currentTask.id, result.steps);
+
+            // Show alert again if user stops walking
+            if (!showAlertRef.current) {
+              showAlertRef.current = true;
+            }
+
+            // Set pedometer availability to true
+            if (!pedometerAvailableRef.current) {
+              pedometerAvailableRef.current = true;
+            }
+          });
+        } else {
+          Burnt.toast({
+            title: "Pedometer Unavailable",
+            message: "Unable to track steps :(",
+            preset: "error",
+            duration: 1.5,
+          });
         }
-      });
+      };
+
+      (async () => {
+        const subscription = await subscribeToPedometer();
+
+        setCancelFn(() => {
+          if (interval) {
+            console.log("Stopping timer");
+            clearInterval(interval);
+          }
+
+          if (subscription) {
+            console.log("Unsubscribing from pedometer");
+            subscription.remove();
+          }
+        });
+      })();
     }
   }, []);
 

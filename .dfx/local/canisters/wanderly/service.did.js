@@ -1,11 +1,37 @@
 export const idlFactory = ({ IDL }) => {
   const Id = IDL.Text;
+  const UserAchievement = IDL.Record({
+    'completedAt' : IDL.Text,
+    'achievementId' : Id,
+    'userId' : IDL.Principal,
+    'receivedPoints' : IDL.Float64,
+  });
   const MessageResult = IDL.Record({ 'message' : IDL.Text });
-  const Result = IDL.Variant({ 'ok' : MessageResult, 'err' : MessageResult });
+  const Result_3 = IDL.Variant({
+    'ok' : IDL.Record({
+      'userAchievement' : UserAchievement,
+      'message' : IDL.Text,
+    }),
+    'err' : MessageResult,
+  });
   const AwardType = IDL.Variant({
     'Gold' : IDL.Null,
     'Bronze' : IDL.Null,
     'Silver' : IDL.Null,
+  });
+  const Result = IDL.Variant({ 'ok' : MessageResult, 'err' : MessageResult });
+  const UserCompletedTask = IDL.Record({
+    'completedAt' : IDL.Text,
+    'userId' : IDL.Principal,
+    'taskId' : Id,
+    'receivedPoints' : IDL.Float64,
+  });
+  const Result_2 = IDL.Variant({
+    'ok' : IDL.Record({
+      'userCompletedTask' : UserCompletedTask,
+      'message' : IDL.Text,
+    }),
+    'err' : MessageResult,
   });
   const PostPayload = IDL.Record({
     'title' : IDL.Text,
@@ -45,12 +71,6 @@ export const idlFactory = ({ IDL }) => {
     'achievementId' : Id,
     'userId' : IDL.Principal,
     'achievement' : Achievement,
-    'receivedPoints' : IDL.Float64,
-  });
-  const UserAchievement = IDL.Record({
-    'completedAt' : IDL.Text,
-    'achievementId' : Id,
-    'userId' : IDL.Principal,
     'receivedPoints' : IDL.Float64,
   });
   const AchievementResult = IDL.Record({
@@ -99,12 +119,6 @@ export const idlFactory = ({ IDL }) => {
     'code' : IDL.Text,
     'name' : IDL.Text,
     'points' : IDL.Float64,
-  });
-  const UserCompletedTask = IDL.Record({
-    'completedAt' : IDL.Text,
-    'userId' : IDL.Principal,
-    'taskId' : Id,
-    'receivedPoints' : IDL.Float64,
   });
   const UserWithId = IDL.Record({
     'id' : IDL.Principal,
@@ -179,7 +193,7 @@ export const idlFactory = ({ IDL }) => {
             'userId' : IDL.Opt(IDL.Principal),
           }),
         ],
-        [Result],
+        [Result_3],
         [],
       ),
     'awardPost' : IDL.Func(
@@ -193,7 +207,7 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
-    'completeTask' : IDL.Func([IDL.Record({ 'taskId' : Id })], [Result], []),
+    'completeTask' : IDL.Func([IDL.Record({ 'taskId' : Id })], [Result_2], []),
     'createPost' : IDL.Func([PostPayload], [Result], []),
     'createTask' : IDL.Func([CreateTaskPayload], [Result], []),
     'deletePost' : IDL.Func([IDL.Record({ 'postId' : Id })], [Result], []),

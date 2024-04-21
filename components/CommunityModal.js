@@ -232,7 +232,7 @@ const CommunityModal = ({ item, visible, onClose, isUser = false }) => {
             />
 
             <View style={{ rowGap: sizes.medium }}>
-              <Text style={{ fontWeight: "bold", fontSize: 22 }}>
+              <Text bold style={{ fontSize: 22 }}>
                 Completed Task
               </Text>
               <TaskItem item={item.task} isUser={isUser} />
