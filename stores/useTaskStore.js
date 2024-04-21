@@ -150,8 +150,10 @@ const useTaskStore = create((set, get) => ({
         message: ok.message,
         preset: "custom",
         icon: { ios: { name: "medal" } },
-        duration: 1,
+        duration: 1.5,
       });
+
+      await useProfileStore.getState().fetchProfile();
 
       // Complete task locally
       set((state) => ({
@@ -165,6 +167,7 @@ const useTaskStore = create((set, get) => ({
             : t
         ),
       }));
+      return;
     }
 
     // Update progress locally

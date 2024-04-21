@@ -343,7 +343,9 @@ const usePostActions = ({ item, setPostsFromArg, setSelectedPostFromArg }) => {
       message: ok.message,
       duration: 0.8,
     });
-  }, [item?.id, identity]);
+
+    await fetchProfile();
+  }, [item?.id, identity, fetchProfile]);
 
   const claimAllPostPoints = useCallback(async () => {
     Burnt.alert({
@@ -381,7 +383,9 @@ const usePostActions = ({ item, setPostsFromArg, setSelectedPostFromArg }) => {
       message: ok.message,
       duration: 0.8,
     });
-  }, [identity]);
+
+    await fetchProfile();
+  }, [identity, fetchProfile]);
 
   const sharePost = useCallback(async () => {
     Share.open({

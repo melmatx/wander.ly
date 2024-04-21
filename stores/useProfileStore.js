@@ -24,7 +24,6 @@ const useProfileStore = create((set, get) => ({
 
     try {
       const data = await getBackendActor(identity).getUser({ id: [] }); // Pass null to id so it uses caller
-
       const profile = normalizeUserData(data);
 
       set({ identity, profile });
