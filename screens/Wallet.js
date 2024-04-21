@@ -58,7 +58,7 @@ const Wallet = ({ navigation }) => {
     () => (
       <GradientShimmer
         LinearGradientComponent={LinearGradient}
-        height={height / 2}
+        height={height / 3.35}
         width={width}
         duration={4000}
         highlightWidth={140}

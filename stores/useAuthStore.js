@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
+import { Platform } from "react-native";
 import { create } from "zustand";
 
 import useProfileStore from "./useProfileStore";
@@ -83,7 +84,9 @@ const useAuthStore = create((set, get) => ({
     await AsyncStorage.setItem("delegation", JSON.stringify(chain.toJSON()));
 
     // Dismiss the browser
-    WebBrowser.dismissBrowser();
+    if (Platform.OS === "ios") {
+      WebBrowser.dismissBrowser();
+    }
 
     // Initialize the data
     try {

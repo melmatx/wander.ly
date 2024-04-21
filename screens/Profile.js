@@ -18,6 +18,7 @@ import {
   Keyboard,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   View,
 } from "react-native";
 import { AnimatedScanner, Avatar, Button, Text } from "react-native-ui-lib";
@@ -289,9 +290,8 @@ const Profile = ({ navigation }) => {
         contentContainerStyle={{
           rowGap: sizes.large,
           padding: sizes.large,
-          // paddingBottom: bottomTabHeight + StatusBar.currentHeight,
+          paddingBottom: bottomTabHeight + StatusBar.currentHeight,
         }}
-        contentInset={{ bottom: bottomTabHeight }}
       >
         <View
           style={{

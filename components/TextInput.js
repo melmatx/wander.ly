@@ -64,6 +64,7 @@ const TextInput = (props) => {
       validationMessageStyle={{
         paddingVertical: sizes.medium,
       }}
+      placeholderTextColor="rgba(255,255,255,0.26)"
       {...props}
     />
   );

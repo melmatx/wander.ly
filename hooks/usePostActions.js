@@ -184,6 +184,11 @@ const usePostActions = ({ item, setPostsFromArg, setSelectedPostFromArg }) => {
     async ({ onFail }) => {
       Alert.alert("Award Type", "Select the type of award you want to give", [
         {
+          text: "Cancel",
+          style: "cancel",
+          onPress: onFail,
+        },
+        {
           text: "Gold (30)",
           onPress: () => handleAwardPost(AwardTypes.GOLD, onFail),
         },
@@ -194,11 +199,6 @@ const usePostActions = ({ item, setPostsFromArg, setSelectedPostFromArg }) => {
         {
           text: "Bronze (10)",
           onPress: () => handleAwardPost(AwardTypes.BRONZE, onFail),
-        },
-        {
-          text: "Cancel",
-          style: "cancel",
-          onPress: onFail,
         },
       ]);
     },
