@@ -90,6 +90,25 @@ const ShareJourney = ({ navigation, route }) => {
     setIsCameraReady(true);
   }, []);
 
+  const fetchLocationTitle = useCallback(async () => {
+    // Get the location of the user
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    });
+    const address = await Location.reverseGeocodeAsync({
+      ...location.coords,
+      accuracy: 1,
+    });
+
+    // Set the title to the location
+    const { street, city, region } = address[0];
+
+    const otherLocationData = [city, region].filter(Boolean).join(", ");
+    const title = [street, otherLocationData].filter(Boolean).join(" ");
+
+    setTitle(title);
+  }, []);
+
   const handleCameraButton = useCallback(async () => {
     if (!isCameraReady) {
       Alert.alert("Camera is not ready.");
@@ -112,17 +131,8 @@ const ShareJourney = ({ navigation, route }) => {
       }
       setPreview(picture);
 
-      // Get the location of the user
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-      const address = await Location.reverseGeocodeAsync({
-        ...location.coords,
-        accuracy: 1,
-      });
-
       // Set the title to the location
-      setTitle(`${address[0].street} ${address[0].city}, ${address[0].region}`);
+      await fetchLocationTitle();
 
       detailsSheetRef.current?.expand();
     } catch (error) {
@@ -131,7 +141,7 @@ const ShareJourney = ({ navigation, route }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isCameraReady, type]);
+  }, [fetchLocationTitle, isCameraReady, type]);
 
   const uploadJourney = useCallback(
     async (file) => {

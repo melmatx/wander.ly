@@ -1,4 +1,5 @@
-(Ø:‡Â
+ó
+(¨ûÿÿÿÿÿÿÿ:‡Â
 œÆ”
 ´Æ”
 áŸ¡
@@ -36,7 +37,8 @@ $authn_method_registration_mode_enter%
 remove	
 replace
 update
-verify_tentative_deviceget_anchor_credentialsget_delegationget_id_aliasget_principalhttp_requestidentity_authn_infolookupstats *ãº
+verify_tentative_deviceget_anchor_credentialsget_delegationget_id_aliasget_principalhttp_requestidentity_authn_infolookupstats ó
+*ãº
 O
 candid:args@(opt InternetIdentityInit) ˆÂ‘ö¶Q&1ñå)…€ÿ¨˜”®pĞÂY’á~
 ‹¶
@@ -665,14 +667,14 @@ service : (opt InternetIdentityInit) -> {
 dfx«„{"pullable":{"wasm_url":"https://github.com/dfinity/internet-identity/releases/download/release-2024-04-16/internet_identity_dev.wasm.gz","wasm_hash_url":"https://github.com/dfinity/internet-identity/releases/download/release-2024-04-16/internet_identity_dev.wasm.gz.sha256","dependencies":[],"init_guide":"Use '(null)' for sensible defaults. See the candid interface for more details."}} ¤‹P½b2·«²ğ«òèÖoÔ'Ã1÷¤Ğ'Úoñl$äŸ{
 K
 supported_certificate_versions)1,2 Ô»bØ—øÑŒ;ZâFATbà€'¨ø_¿M»'‡&û—2 ƒ®ÆÄÅ·ä,¢´Z “ÚNhúˆÆœM(ı‘z$Ú8Z
-xˆ²¢ 5&@n{î"<_ï²Å*+4÷v17ÃÀŞNVÌ©²û€Ñ«¸€šÊ
+xˆ±¢  ±â	(¡xi}ĞCYßßñ£yßÂì–HûY<u)²ÉçĞ«¸€šÊ
 
 €      Ê
-°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛíÒ…×ñàÏ          Ø‚ú
-ğáìæœ¸—ä‚                ¢‘â¢
-şØı¢	œ°¾U¢äû¢
+°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛíÒ7äñàÏ          Ø‚ú
+ø‚³¹Ää‚                ¢âÈ¢
+şØı¢	™°¾U¢äû¢
 ì™ıÓª¦
-Kˆ”·¦è“—ä"
+Køƒ¢´‹ ä"
 
 
 €      */
@@ -681,7 +683,7 @@ Kˆ”·¦è“—ä"
 €      
 
 °INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛí
-UÈ¡•ê•—ä!
+UĞ£îÙ§¡ä!
 
 °INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛí:$ ƒ®ÆÄÅ·ä,¢´Z “ÚNhúˆÆœM(ı‘z$Ú²                º P9'Œ          Â ÊP
 
