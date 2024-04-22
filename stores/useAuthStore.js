@@ -51,14 +51,18 @@ const useAuthStore = create((set, get) => ({
       if (isDelegationValid(chain)) {
         const id = new DelegationIdentity(baseKey, chain);
 
-        // Get principal
-        const principal = await getBackendActor(id).whoami();
+        try {
+          // Get principal
+          const principal = await getBackendActor(id).whoami();
 
-        // Set identity and fetch profile
-        await useProfileStore.getState().fetchProfile(id);
+          // Set identity and fetch profile
+          await useProfileStore.getState().fetchProfile(id);
 
-        // Set identity with the base key
-        set({ principal: principal.toText() });
+          // Set identity with the base key
+          set({ principal: principal.toText() });
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         await AsyncStorage.removeItem("delegation");
       }
@@ -88,21 +92,21 @@ const useAuthStore = create((set, get) => ({
       WebBrowser.dismissBrowser();
     }
 
-    // Initialize the data
     try {
-      await getBackendActor(id)._init();
+      // Initialize the data
       console.log("Populating with data...");
+      await getBackendActor(id)._init();
+
+      // Get principal
+      const principal = await getBackendActor(id).whoami();
+
+      // Set identity and fetch profile
+      await useProfileStore.getState().fetchProfile(id);
+
+      set({ principal: principal.toText(), isFetching: false });
     } catch (err) {
       console.log(err);
     }
-
-    // Get principal
-    const principal = await getBackendActor(id).whoami();
-
-    // Set identity and fetch profile
-    await useProfileStore.getState().fetchProfile(id);
-
-    set({ principal: principal.toText(), isFetching: false });
   },
   login: async () => {
     if (!get().baseKey) {
