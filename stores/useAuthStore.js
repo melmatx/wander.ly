@@ -96,7 +96,11 @@ const useAuthStore = create((set, get) => ({
       // Initialize the data
       console.log("Populating with data...");
       await getBackendActor(id)._init();
+    } catch (err) {
+      console.log(err);
+    }
 
+    try {
       // Get principal
       const principal = await getBackendActor(id).whoami();
 
@@ -104,8 +108,8 @@ const useAuthStore = create((set, get) => ({
       await useProfileStore.getState().fetchProfile(id);
 
       set({ principal: principal.toText(), isFetching: false });
-    } catch (err) {
-      console.log(err);
+    } finally {
+      set({ isFetching: false });
     }
   },
   login: async () => {
