@@ -14,7 +14,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  LogBox,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Share from "react-native-share";
 import { Button, Text } from "react-native-ui-lib";
@@ -51,6 +57,11 @@ const FILTERS = [
   TimeOfDay.AFTERNOON,
   TimeOfDay.EVENING,
 ];
+
+// Workaround for mapbox error
+LogBox.ignoreLogs([
+  "Mapbox [error] MapLoad error Failed to load tile: HTTP status code 504",
+]);
 
 const Explore = ({ navigation }) => {
   const [selectedGoal, setSelectedGoal] = useState(null);
