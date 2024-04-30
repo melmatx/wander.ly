@@ -121,7 +121,9 @@ const useTaskStore = create((set, get) => ({
       return;
     }
 
-    if (value >= task.maxValue) {
+    if (value >= task.maxValue && !get().isFetching) {
+      set({ isFetching: true });
+
       // Complete task in ICP
       Burnt.alert({
         title: "Completing Task...",
@@ -135,6 +137,7 @@ const useTaskStore = create((set, get) => ({
       });
 
       Burnt.dismissAllAlerts();
+      set({ isFetching: false });
 
       if (err) {
         Burnt.alert({
