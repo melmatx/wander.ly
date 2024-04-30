@@ -161,6 +161,11 @@ const Profile = ({ navigation }) => {
         icon: "heart",
         onPress: () => navigation.navigate(Routes.LIKED_POSTS),
       },
+      {
+        label: "Top Patrons",
+        icon: "medal",
+        color: colors.tertiary,
+      },
     ],
     [navigation]
   );
@@ -360,11 +365,15 @@ const Profile = ({ navigation }) => {
               key={`tab-${index}`}
               label={tab.label}
               outline
-              outlineColor={colors.primary}
+              outlineColor={tab.color || colors.primary}
               style={{ columnGap: sizes.small }}
               onPress={tab.onPress}
             >
-              <Ionicons name={tab.icon} size={20} color={colors.primary} />
+              <Ionicons
+                name={tab.icon}
+                size={20}
+                color={tab.color || colors.primary}
+              />
             </Button>
           ))}
         </View>
