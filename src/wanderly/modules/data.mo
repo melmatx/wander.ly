@@ -147,18 +147,6 @@ module {
       {
         id = "task-11";
         timeOfDay = #Evening;
-        title = "Evening Steps";
-        description = "Gather the last 2,000 steps to meet your daily goal.";
-        emoji = "🎯";
-        timeStart = today.add(#hours(18)).toTextFormatted(textFormat);
-        timeEnd = today.add(#hours(21)).toTextFormatted(textFormat);
-        taskType = #StepBased;
-        maxValue = 2000;
-        difficultyFactor = 1.5;
-      },
-      {
-        id = "task-12";
-        timeOfDay = #Evening;
         title = "Night Sky Gazer";
         description = "15-minute walk under the night sky, stargazing and decompressing.";
         emoji = "🌌";
@@ -169,27 +157,39 @@ module {
         difficultyFactor = 1.4;
       },
       {
+        id = "task-12";
+        timeOfDay = #Evening;
+        title = "Evening Steps";
+        description = "Gather the last 250 steps to meet your daily goal.";
+        emoji = "🎯";
+        timeStart = today.add(#hours(17)).toTextFormatted(textFormat);
+        timeEnd = today.add(#hours(21)).toTextFormatted(textFormat);
+        taskType = #StepBased;
+        maxValue = 250;
+        difficultyFactor = 1.3;
+      },
+      {
         id = "task-13";
         timeOfDay = #Evening;
         title = "Reflective Walk";
-        description = "A peaceful 500-meter walk to reflect on your day and plan for tomorrow.";
+        description = "A peaceful 150-meter walk to reflect on your day and plan for tomorrow.";
         emoji = "🤔";
         timeStart = today.add(#hours(17)).toTextFormatted(textFormat);
         timeEnd = today.add(#hours(21)).toTextFormatted(textFormat);
         taskType = #DistanceBased;
-        maxValue = 500;
+        maxValue = 150;
         difficultyFactor = 1.2;
       },
       {
         id = "task-14";
         timeOfDay = #Evening;
         title = "Moonlit Serenity";
-        description = "End your day with a 1-minute serene walk under the moonlight.";
+        description = "End your day with a 2-minute serene walk under the moonlight.";
         emoji = "🌜";
-        timeStart = today.add(#hours(20)).toTextFormatted(textFormat);
+        timeStart = today.add(#hours(17)).toTextFormatted(textFormat);
         timeEnd = today.add(#hours(23)).toTextFormatted(textFormat);
         taskType = #TimeBased;
-        maxValue = 60;
+        maxValue = 120;
         difficultyFactor = 1.1;
       },
     ];
