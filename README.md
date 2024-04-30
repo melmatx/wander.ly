@@ -66,4 +66,4 @@ You can view your password by visiting: https://whatismyipaddress.com/
 # Programmers
 
 - Mel Mathew C. Palaña (Full-stack developer)
-- Alexander John Cammado (Backend developer)
+- Alexander John Cammado (QA specialist)
