@@ -175,7 +175,7 @@ const useCurrentProgress = () => {
           showAlertRef.current = false;
           return;
         }
-        Burnt.dismissAllAlerts();
+        // Burnt.dismissAllAlerts();
 
         // Update progress every second
         updateProgress(task.id, task.progress + 1);
