@@ -96,7 +96,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 3. npx expo start --clear
 ```
 
-- Note: If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
+> **Note:** If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
 
 4. Get started by pressing the Login with **Internet Identity button**.
 
