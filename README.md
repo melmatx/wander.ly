@@ -65,11 +65,13 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ```
 1. yarn install
-2. dfx start --clean
-3. dfx deploy
-4. dfx generate
-5. Open .env file and copy the canister ids to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
-6. npx expo prebuild --clean
+2. cd src/ii_integration
+3. npm install
+4. dfx start --clean
+5. dfx deploy
+6. dfx generate
+7. Open .env file and copy the canister ids to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
+8. npx expo prebuild --clean
 ```
 
 # ⚙️ Usage
