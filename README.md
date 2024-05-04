@@ -64,14 +64,22 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 ### Install
 
 ```
+// Install required dependencies of the app
 1. yarn install
+
+// Go to the ii_integration canister and install its dependencies too
 2. cd src/ii_integration
 3. npm install
+4. npm run build
 4. cd ../..
+
+// Dfx commands to run
 5. dfx start --clean
 6. dfx deploy
 7. dfx generate
-8. Open .env file and copy the canister ids to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
+8. Open .env file and copy the canister ids to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION to sync ids.
+
+// Prebuild the app to generate android and ios directories
 9. npx expo prebuild --clean
 ```
 
