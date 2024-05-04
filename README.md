@@ -164,7 +164,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [x] Tinder-style Community Feed
 - [x] Upload images to share for walking journeys
 - [x] Manage Posts (CRUD)
-- [ ] Beta Testing
+- [ ] Beta Testing with Expo Dev Client
 - [ ] Physical Airdrop Events IC implementation
 - [ ] Walk with a friend
 - [ ] Crypto Wallets Integration
