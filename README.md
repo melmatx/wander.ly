@@ -50,7 +50,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ```
 2. npx expo run:ios (or run:android)
-   --device (to select device)
+   Add --device (to select device)
 ```
 
 ```
