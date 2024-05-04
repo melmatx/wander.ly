@@ -103,6 +103,27 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 > Source: https://docs.expo.dev/eas-update/expo-dev-client/
 
+## Tech Stack
+
+- DFINITY IC (**`@dfinity/agent`**, **`@dfinity/candid`**, **`@dfinity/identity`**, **`@dfinity/principal`)**
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [React Navigation](https://reactnavigation.org/)
+- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)
+- [react-native-ui-lib](https://wix.github.io/react-native-ui-lib/)
+- [gorhom/react-native-bottom-sheet](https://github.com/gorhom/react-native-bottom-sheet)
+- [nandorojo/burnt](https://github.com/nandorojo/burnt)
+- [rnmapbox](https://github.com/rnmapbox/maps?tab=readme-ov-file)
+- [geolib](https://github.com/manuelbieh/geolib)
+- [date-fns](https://date-fns.org/)
+- [react-native-blob-jsi-helper](https://github.com/mrousavy/react-native-blob-jsi-helper)
+- [Zustand](https://github.com/pmndrs/zustand)
+- [Mops](https://mops.one/)
+- [motoko-hash-map](https://github.com/ZhenyaUsenko/motoko-hash-map)
+- [aviate-labs/uuid](https://github.com/aviate-labs/uuid.mo)
+- [motoko_datetime](https://github.com/edjCase/motoko_datetime/blob/main/docs/DateTime.md)
+
 ## Roadmap
 
 - [x] Internet Identity Login
