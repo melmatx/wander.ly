@@ -86,15 +86,9 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 # ⚙️ Usage
 
 1. Connect your physical device or open a simulator through Android Studio or Xcode.
-
-```
-2. npx expo run:ios (or run:android)
-   Add --device (to select device)
-```
-
-```
-3. npx expo start --clear
-```
+2. `npx expo run:ios` (or `run:android`)
+      Add `--device` (to select device)
+4. `npx expo start --clear`
 
 > **Note:** If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
 
@@ -105,20 +99,13 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 ### Optional: Make Internet Identity work with Physical Devices Locally
 
 1. Make sure Localtunnel is installed.
-
-```
-2. lt --port 4943 (copy link to EXPO_PUBLIC_TUNNEL_URL1)
-```
-
+2. `lt --port 4943` (copy link to `EXPO_PUBLIC_TUNNEL_URL1`)
 - 4943 is based on the port specified on dfx.json
-
-```
-3. lt --port 4943 again (copy link to EXPO_PUBLIC_TUNNEL_URL2)
-```
+3. `lt --port 4943` again (copy link to `EXPO_PUBLIC_TUNNEL_URL2`)
 
 - We need two tunnels of the localhost because internet identity and the integration won't work with the same url
 
-4. If you decide to only use it with simulators, just remove the **EXPO_PUBLIC_TUNNEL_URL1** and **EXPO_PUBLIC_TUNNEL_URL2** in the .env file.
+4. If you decide to only use it with simulators, just remove the `EXPO_PUBLIC_TUNNEL_URL1` and `EXPO_PUBLIC_TUNNEL_URL2` in the .env file.
 
 > **Note:** To run the app on physical iOs devices, open the **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, remove **Push Notifications** capability and then add your free team for signing. Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).
 
@@ -128,17 +115,10 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 1. Make sure both **expo-dev-client** and **expo-updates** is installed before you build the app.
 2. Configure expo-updates on the project so that it ties to your Expo account.
-
-```
-3. npx expo prebuild --clean
-```
-
-```
-4. npx expo run:ios/android --device (This will build the development build with eas update on your device)
-```
-
+3. `npx expo prebuild --clean`
+4. `npx expo run:ios/android --device` (This will build the development build with eas update on your device)
 5. After installing the dev build, login to your Expo account on the launcher screen of the app. (If it does not appear, shake or three-tap your screen)
-6. Run **eas update** on the root directory of the project and insert update message.
+6. Run `eas update` on the root directory of the project and insert update message.
 7. The update will be be stored on the EAS servers. You can view it on the [Expo Dashboard](https://expo.dev/), and then selecting the project (e.g. Wanderly) -> Updates.
 8. Open the app on your device and view the update on the Extensions tab of the launcher screen. Open it and voila! Turn off your internet connection and it will still work.
 
