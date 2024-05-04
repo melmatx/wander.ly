@@ -1,12 +1,14 @@
-# Wander.ly
+# 🌍 Wander.ly
 
-Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines. By merging mobile health tech with blockchain technology, Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint. [Check out the website!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
+Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines. By merging mobile health tech with blockchain technology, Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
 
-## Introduction
+[Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
+
+## 📖 Introduction
 
 Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by incentivizing physical activity through a rewarding system that also supports local economies and encourages eco-friendly behaviors. This app is for anyone looking to improve their health, support local businesses, and make a positive environmental impact.
 
-### Highlighted Features:
+### ✨ Highlighted Features:
 
 - **AI-Generated Walking Goals:** Personalized morning, afternoon, and evening walking targets help users stay active throughout the day.
 - **Community Sharing through Swipe Cards:** After completing tasks or participating in airdrops, users can share and interact with posts in a Tinder-style community feed.
@@ -14,7 +16,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - **Environmental Impact Tracking:** Tracks and displays the positive environmental impact of users’ walking activities, like carbon emission savings and trees preserved.
 - **Exploration and Leveling Up:** Encourages exploration and personal growth by leveling up users as they discover new places and complete tasks.
 
-## How It Works
+## 🚀 How It Works
 
 1. **Personalized Tasks:** Users select from AI-generated, personalized walking tasks on the Explore screen, tailored to fit their fitness goals and daily schedules.
 2. **Rewards for Activity:** Completing tasks helps users level up and unlock new features, keeping them engaged and motivated.
@@ -103,28 +105,29 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 > Source: https://docs.expo.dev/eas-update/expo-dev-client/
 
-## Tech Stack
+## 💻 Tech Stack
 
-- DFINITY IC (**`@dfinity/agent`**, **`@dfinity/candid`**, **`@dfinity/identity`**, **`@dfinity/principal`)**
-- [React Native](https://reactnative.dev/)
-- [Expo](https://expo.dev/)
-- [React Navigation](https://reactnavigation.org/)
-- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
-- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)
-- [react-native-ui-lib](https://wix.github.io/react-native-ui-lib/)
-- [gorhom/react-native-bottom-sheet](https://github.com/gorhom/react-native-bottom-sheet)
-- [nandorojo/burnt](https://github.com/nandorojo/burnt)
-- [rnmapbox](https://github.com/rnmapbox/maps?tab=readme-ov-file)
-- [geolib](https://github.com/manuelbieh/geolib)
-- [date-fns](https://date-fns.org/)
-- [react-native-blob-jsi-helper](https://github.com/mrousavy/react-native-blob-jsi-helper)
-- [Zustand](https://github.com/pmndrs/zustand)
-- [Mops](https://mops.one/)
-- [motoko-hash-map](https://github.com/ZhenyaUsenko/motoko-hash-map)
-- [aviate-labs/uuid](https://github.com/aviate-labs/uuid.mo)
-- [motoko_datetime](https://github.com/edjCase/motoko_datetime/blob/main/docs/DateTime.md)
+- **DFINITY IC:** Utilizes several modules like `@dfinity/agent`, `@dfinity/candid`, `@dfinity/identity`, and `@dfinity/principal` to harness the power of the Internet Computer. 🌐
+- **React Native:** Enables cross-platform mobile app development. 📱
+- **Expo:** Streamlines the development process with an open-source platform for making universal native apps. 🛠️
+- **React Navigation:** Handles navigation logic in the app. 🧭
+- **React Native Reanimated:** Provides a more fluid user interface experience. 🌊
+- **React Native Gesture Handler:** Manages touch interactions. 👆
+- **react-native-ui-lib:** Offers a UI toolset and components for building a polished design. 🎨
+- **gorhom/react-native-bottom-sheet:** Implements smooth and highly-customizable bottom sheets. 📉
+- **nandorojo/burnt:** Allows support for beautiful toast notifications. 🔥
+- **rnmapbox:** Integrates maps for geographical features. 🗺️
+- **geolib:** Assists in geolocation and distance calculations between coordinates. 📍
+- **date-fns:** Helps with manipulating JavaScript dates in a simple way. 📅
+- **react-native-blob-jsi-helper:** Aids in handling large binary data. 📊
+- **Zustand:** Manages state in React with simplicity and performance. 📈
+- **Mops:** A package manager for Motoko with fully on-chain package registry. 🎈
+- **motoko-hash-map:** Provides a hash map data structure in Motoko for the Internet Computer. 🔍
+- **aviate-labs/uuid:** Generates unique identifiers in Motoko. 🔖
+- **motoko_datetime:** Deals with date and time operations in Motoko. 🕒
 
-## Roadmap
+
+## 🛣️ Roadmap
 
 - [x] Internet Identity Login
 - [ ] AI-Generated Walking Goals
@@ -139,10 +142,10 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [ ] Local Business Collaboration
 - [ ] Sustainability Initiatives and New Opportunities
 
-## License
+## 📜 License
 
 This project is licensed under the MIT license, see LICENSE.md for details.
 
-## References
+## 🔗 References
 
 - [Internet Computer](https://internetcomputer.org)
