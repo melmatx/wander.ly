@@ -1,6 +1,8 @@
-# 🌍 Wander.ly
+![logo-200h](https://github.com/spcf-coMeLex/wander.ly/assets/87235413/7856577a-d4e8-4f20-b1aa-913e2652aded)
 
-Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines. By merging mobile health tech with blockchain technology, Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
+# 🌍 Wander.ly: Get Rewarded For Every Step You Take
+
+Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines. By merging mobile health tech with blockchain technology, Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the community. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
 
 [Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
 
@@ -24,7 +26,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 4. **Support Local Businesses:** Users participate in airdrop events at local businesses, where walking to a designated area and scanning a QR code yields rewards.
 5. **Track Environmental Impact:** The app tracks the environmental savings from walking, raising awareness and fostering a mindset geared towards sustainability.
 
-# Installation
+# 🛠️ Installation
 
 ### Prerequisites
 
@@ -46,7 +48,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 6. npx expo prebuild --clean
 ```
 
-# Usage
+# ⚙️ Usage
 
 1. Connect your physical device or open a simulator through Android Studio or Xcode.
 
@@ -63,7 +65,9 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 4. Get started by pressing the Login with **Internet Identity button**.
 
-## Optional: Make Internet Identity work with Physical Devices Locally
+***
+
+### Optional: Make Internet Identity work with Physical Devices Locally
 
 1. Make sure Localtunnel is installed.
 
@@ -83,7 +87,9 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 > **Note:** To run the app on physical iOs devices, open the **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, remove **Push Notifications** capability and then add your free team for signing. Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).
 
-## Bonus: Use the app offline with Expo Dev Client and EAS Update
+***
+
+### Bonus: Use the app offline with Expo Dev Client and EAS Update
 
 1. Make sure both **expo-dev-client** and **expo-updates** is installed before you build the app.
 2. Configure expo-updates on the project so that it ties to your Expo account.
