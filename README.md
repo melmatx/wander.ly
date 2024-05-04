@@ -40,7 +40,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 2. dfx start --clean
 3. dfx deploy
 4. dfx generate
-5. Open .env file and copy the canister ids to **EXPO_PUBLIC_CANISTER_ID_WANDERLY**, **EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY**, and **EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION**
+5. Open .env file and copy the canister ids to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION
 6. npx expo prebuild --clean
 ```
 
@@ -66,13 +66,13 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 1. Make sure Localtunnel is installed.
 
 ```
-2. lt --port 4943 (copy link to **EXPO_PUBLIC_TUNNEL_URL1**)
+2. lt --port 4943 (copy link to EXPO_PUBLIC_TUNNEL_URL1)
 ```
 
 - 4943 is based on the port specified on dfx.json
 
 ```
-3. lt --port 4943 again (copy link to **EXPO_PUBLIC_TUNNEL_URL2**)
+3. lt --port 4943 again (copy link to EXPO_PUBLIC_TUNNEL_URL2)
 ```
 
 - We need two tunnels of the localhost because internet identity and the integration won't work with the same url
