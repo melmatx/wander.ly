@@ -50,7 +50,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ```
 2. npx expo run:ios (or run:android)
-   - --device (to select device)
+   --device (to select device)
 ```
 
 ```
@@ -87,11 +87,11 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 2. Configure expo-updates on the project so that it ties to your Expo account.
 
 ```
-3. **npx expo prebuild --clean**
+3. npx expo prebuild --clean
 ```
 
 ```
-4. **npx expo run:ios/android --device** (This will build the development build with eas update on your device)
+4. npx expo run:ios/android --device (This will build the development build with eas update on your device)
 ```
 
 5. After installing the dev build, login to your Expo account on the launcher screen of the app. (If it does not appear, shake or three-tap your screen)
