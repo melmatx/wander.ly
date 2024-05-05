@@ -32,23 +32,23 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 <img src="assets/gifs/Login%20with%20Internet%20Identity.gif" width="25%"/>
 
-- Login with Internet Identity
+- Login with Internet Identity 👤
 
 <img src="assets/gifs/Tasks.gif" width="25%"/>
 
-- See all tasks
+- See all tasks ✅
 
 <img src="assets/gifs/Complete%20Task.gif" width="25%"/>
 
-- Completing a task
+- Completing a task 💯
 
 <img src="assets/gifs/Community.gif" width="25%"/>
 
-- Community feature
+- Community feature 🌐
 
 <img src="assets/gifs/Business%20Interaction.gif" width="25%"/>
 
-- Business Interaction
+- Business Interaction 💼
 
 # 🛠️ Installation
 
