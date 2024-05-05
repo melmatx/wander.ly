@@ -131,6 +131,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 ## 💻 Tech Stack
 
 - **DFINITY IC:** Utilizes several modules like `@dfinity/agent`, `@dfinity/candid`, `@dfinity/identity`, and `@dfinity/principal` to harness the power of the Internet Computer. 🌐
+- **Motoko:** A programming language for building decentralized apps on the Internet Computer. 🔮
 - **React Native:** Enables cross-platform mobile app development. 📱
 - **Expo:** Streamlines the development process with an open-source platform for making universal native apps. 🛠️
 - **React Navigation:** Handles navigation logic in the app. 🧭
