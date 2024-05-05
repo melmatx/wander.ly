@@ -160,6 +160,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [ ] Beta Testing with Expo Dev Client
 - [ ] Physical Airdrop Events IC implementation
 - [ ] Walk with a friend
+- [ ] AR Businesses View
 - [ ] Crypto Wallets Integration
 - [ ] Donate Points to NGOs/Charity
 - [ ] Local Business Collaboration
