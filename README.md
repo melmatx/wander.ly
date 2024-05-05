@@ -26,6 +26,14 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 4. **Support Local Businesses:** Users participate in airdrop events at local businesses, where walking to a designated area and scanning a QR code yields rewards.
 5. **Track Environmental Impact:** The app tracks the environmental savings from walking, raising awareness and fostering a mindset geared towards sustainability.
 
+## 📱 Architecture
+
+<img src="assets/images/diagrams/architecture.png" />
+
+<img src="assets/images/diagrams/task-completion.png" width="60%"/>
+
+<img src="assets/images/diagrams/business-interaction.png" width="60%" />
+
 ## 😎 See It In Action
 
 > Please wait for it to load >.<
