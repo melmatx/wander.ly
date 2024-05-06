@@ -66,7 +66,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## 🛠️ Installation
 
-### Prerequisites
+### 📋 Prerequisites
 
 - [DFX](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/)
 - [Mops for Motoko](https://mops.one/docs/install)
@@ -75,7 +75,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [Android Studio](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#0) (for Android) or [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for iOS)
 - [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud)) for sharing local development environment
 
-### Install
+### ➡️ Install
 
 ```
 // Install required dependencies of the app
