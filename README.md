@@ -110,7 +110,8 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ***
 
-### Optional: Make Internet Identity work with Physical Devices Locally
+<details>
+<summary><b>Optional: Make Internet Identity work with Physical Devices Locally</b></summary><br>
 
 > This mini-guide uses Localtunnel for easier setup, but I recommend using **Telebit** for long-term development of the app.
 
@@ -125,9 +126,10 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 > **Note:** To run the app on physical iOS devices, open the **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, remove **Push Notifications** capability and then add your free team for signing. Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).
 
-***
+</details>
 
-### Bonus: Use the app offline with Expo Dev Client and EAS Update
+<details>
+<summary><b>Bonus: Use the app offline with Expo Dev Client and EAS Update</b></summary><br>
 
 1. Make sure both **expo-dev-client** and **expo-updates** is installed before you build the app.
 2. Configure expo-updates on the project so that it ties to your Expo account.
@@ -141,6 +143,8 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 > **Note:** After doing this, you don't need to run prebuild and run:ios/android all the time anymore after making changes. You just need to run **eas update** and select the update on the launcher screen of the app.
 
 > Source: https://docs.expo.dev/eas-update/expo-dev-client/
+
+</details>
 
 ## 💻 Tech Stack
 
