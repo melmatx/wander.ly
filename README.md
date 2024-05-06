@@ -64,7 +64,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 <img src="assets/gifs/Business%20Interaction.gif" width="25%"/>
 
-## 🛠️ Installation
+# 🛠️ Installation
 
 ### Prerequisites
 
