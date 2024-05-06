@@ -64,7 +64,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 <img src="assets/gifs/Business%20Interaction.gif" width="25%"/>
 
-# 🛠️ Installation
+## 🛠️ Installation
 
 ### Prerequisites
 
@@ -97,7 +97,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 9. npx expo prebuild --clean
 ```
 
-# ⚙️ Usage
+## ⚙️ Usage
 
 1. Connect your physical device or open a simulator through **Android Studio** or **Xcode**.
 2. `npx expo run:ios` (or `run:android`)
