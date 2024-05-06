@@ -28,9 +28,15 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## 📱 Architecture
 
-<img src="assets/images/diagrams/arch.png" />
+<img src="assets/images/diagrams/architecture.png" />
 
-<img src="assets/images/diagrams/task.png" width="60%"/>
+**Image Storage:**
+- Wander.ly canister stores images by keys.
+- User gets images by keys.
+
+<br>
+
+<img src="assets/images/diagrams/task-complete.png" width="60%"/>
 
 <img src="assets/images/diagrams/business.png" width="60%" />
 
@@ -154,7 +160,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - **react-native-blob-jsi-helper:** Aids in handling large binary data. 📊
 - **Zustand:** Manages state in React with simplicity and performance. 📈
 - **Mops:** A package manager for Motoko with fully on-chain package registry. 🎈
-- **motoko-hash-map:** Provides a hash map data structure in Motoko for the Internet Computer. 🔍
+- **motoko-hash-map:** Provides a stable hash map data structure in Motoko for the Internet Computer. 🔍
 - **aviate-labs/uuid:** Generates unique identifiers in Motoko. 🔖
 - **motoko_datetime:** Deals with date and time operations in Motoko. 🕒
 
