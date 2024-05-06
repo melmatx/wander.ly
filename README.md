@@ -42,7 +42,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## 😎 See It In Action
 
-> Please wait for it to load >.<
+> Please wait for the gifs to load >.<
 
 - 👤 Login with Internet Identity
 
