@@ -189,6 +189,11 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 This project is licensed under the MIT license, see LICENSE.md for details.
 
+## 🙌 Acknowledgements
+
+- **Sypth (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and for providing invaluable blockchain advice. While he may not have been directly involved in development, his guidance was crucial in steering the project in the right direction.
+- **ICTDU (Systems Plus College Foundation)**: I am deeply grateful to ICTDU for providing a platform that allowed me to showcase and further develop my skills. Their support has been instrumental in my professional growth.
+
 ## 🔗 References
 
 - [Internet Computer](https://internetcomputer.org)
