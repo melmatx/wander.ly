@@ -14,8 +14,8 @@ module {
 
   // Check if user is anonymous
   public func isUserAnonymous(caller : Principal) : Bool {
-    // return Principal.isAnonymous(caller);
-    return false;
+    return Principal.isAnonymous(caller);
+    // return false;
   };
 
   // Removes time from DateTime
