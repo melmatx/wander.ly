@@ -2,7 +2,7 @@
 
 # 🌍 Wander.ly: Get Rewarded For Every Step You Take
 
-Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines 🇵🇭. By merging mobile health tech with blockchain technology, Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the local scene. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
+Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines 🇵🇭. By merging mobile health tech with blockchain technology (ICP), Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the local scene. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
 
 [Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
 
@@ -26,17 +26,27 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 4. **Support Local Businesses:** Users participate in airdrop events at local businesses, where walking to a designated area and scanning a QR code yields rewards.
 5. **Track Environmental Impact:** The app tracks the environmental savings from walking, raising awareness and fostering a mindset geared towards sustainability.
 
+[Watch the demo video](https://youtu.be/tDQ_lggSqeU)
+
+[View the presentation](https://drive.google.com/file/d/1IQG5nUyiykmj9l6aTj6e9kDB2kCj3Zoq/view?usp=drive_link)
+
 ## 📱 Architecture
 
-<img src="assets/images/diagrams/arch.png" />
+<img src="assets/images/diagrams/architecture.png" />
 
-<img src="assets/images/diagrams/task.png" width="60%"/>
+**Image Storage:**
+- Wander.ly canister stores images by keys.
+- User gets images by keys.
+
+<br>
+
+<img src="assets/images/diagrams/task-complete.png" width="60%"/>
 
 <img src="assets/images/diagrams/business.png" width="60%" />
 
 ## 😎 See It In Action
 
-> Please wait for it to load >.<
+> Please wait for the gifs to load >.<
 
 - 👤 Login with Internet Identity
 
@@ -58,9 +68,9 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 <img src="assets/gifs/Business%20Interaction.gif" width="25%"/>
 
-# 🛠️ Installation
+## 🛠️ Installation
 
-### Prerequisites
+### 📋 Prerequisites
 
 - [DFX](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/)
 - [Mops for Motoko](https://mops.one/docs/install)
@@ -69,7 +79,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [Android Studio](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#0) (for Android) or [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for iOS)
 - [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud)) for sharing local development environment
 
-### Install
+### ➡️ Install
 
 ```
 // Install required dependencies of the app
@@ -91,7 +101,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 9. npx expo prebuild --clean
 ```
 
-# ⚙️ Usage
+## ⚙️ Usage
 
 1. Connect your physical device or open a simulator through **Android Studio** or **Xcode**.
 2. `npx expo run:ios` (or `run:android`)
@@ -104,7 +114,8 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ***
 
-### Optional: Make Internet Identity work with Physical Devices Locally
+<details>
+<summary><b>Optional: Make Internet Identity work with Physical Devices Locally</b></summary><br>
 
 > This mini-guide uses Localtunnel for easier setup, but I recommend using **Telebit** for long-term development of the app.
 
@@ -119,9 +130,10 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 > **Note:** To run the app on physical iOS devices, open the **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, remove **Push Notifications** capability and then add your free team for signing. Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).
 
-***
+</details>
 
-### Bonus: Use the app offline with Expo Dev Client and EAS Update
+<details>
+<summary><b>Bonus: Use the app offline with Expo Dev Client and EAS Update</b></summary><br>
 
 1. Make sure both **expo-dev-client** and **expo-updates** is installed before you build the app.
 2. Configure expo-updates on the project so that it ties to your Expo account.
@@ -135,6 +147,8 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 > **Note:** After doing this, you don't need to run prebuild and run:ios/android all the time anymore after making changes. You just need to run **eas update** and select the update on the launcher screen of the app.
 
 > Source: https://docs.expo.dev/eas-update/expo-dev-client/
+
+</details>
 
 ## 💻 Tech Stack
 
@@ -154,7 +168,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - **react-native-blob-jsi-helper:** Aids in handling large binary data. 📊
 - **Zustand:** Manages state in React with simplicity and performance. 📈
 - **Mops:** A package manager for Motoko with fully on-chain package registry. 🎈
-- **motoko-hash-map:** Provides a hash map data structure in Motoko for the Internet Computer. 🔍
+- **motoko-hash-map:** Provides a stable hash map data structure in Motoko for the Internet Computer. 🔍
 - **aviate-labs/uuid:** Generates unique identifiers in Motoko. 🔖
 - **motoko_datetime:** Deals with date and time operations in Motoko. 🕒
 
@@ -178,6 +192,11 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 ## 📜 License
 
 This project is licensed under the MIT license, see LICENSE.md for details.
+
+## 🙌 Acknowledgements
+
+- **[ICTDU](https://www.facebook.com/spcf.ictdu) (Systems Plus College Foundation)**: I am deeply grateful to ICTDU for providing a platform that allowed me to showcase and further develop my skills. Their support has been instrumental in my professional growth.
+- **[Sypth](https://github.com/Sypth) (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and for providing invaluable blockchain advice. While he may not have been directly involved in development, his guidance was crucial in steering the project in the right direction.
 
 ## 🔗 References
 
