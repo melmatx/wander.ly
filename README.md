@@ -2,7 +2,7 @@
 
 # 🌍 Wander.ly: Get Rewarded For Every Step You Take
 
-Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines 🇵🇭. By merging mobile health tech with blockchain technology (ICP), Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the local scene. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
+Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines 🇵🇭. By merging mobile health tech with blockchain technology (ICP), Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the local community. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
 
 [Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
 
