@@ -102,7 +102,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 9. npx expo prebuild --clean
 ```
 
-> **Note**: If 0.0.0.0 for Candid UI does not work, use "localhost" instead on the url. (Ex: http://0.0.0.0:4943/ => http://localhost:4943/)
+> **Note**: If 0.0.0.0 for Candid UI does not work, use "localhost" instead on the url. (Ex: http://0.0.0.0:4943 => http://localhost:4943)
 
 ## ⚙️ Usage
 
