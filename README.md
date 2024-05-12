@@ -1,4 +1,4 @@
-![logo-200h](https://github.com/spcf-coMeLex/wander.ly/assets/87235413/7856577a-d4e8-4f20-b1aa-913e2652aded)
+<img src="https://github.com/melmatx/wander.ly/assets/87235413/04daa4d2-486c-4b8f-b5c0-faac12328225" width="30%"/>
 
 # 🌍 Wander.ly: Get Rewarded For Every Step You Take
 
@@ -40,7 +40,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 <br>
 
-<img src="assets/images/diagrams/task-complete.png" width="60%"/>
+<img src="assets/images/diagrams/task-complete.png" width="60%" />
 
 <img src="assets/images/diagrams/business.png" width="60%" />
 
@@ -50,23 +50,23 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 - 👤 Login with Internet Identity
 
-<img src="assets/gifs/Login%20with%20Internet%20Identity.gif" width="25%"/>
+<img src="assets/gifs/Login%20with%20Internet%20Identity.gif" width="25%" />
 
 - ✅ See all tasks
 
-<img src="assets/gifs/Tasks.gif" width="25%"/>
+<img src="assets/gifs/Tasks.gif" width="25%" />
 
 - 💯 Completing a task
 
-<img src="assets/gifs/Complete%20Task.gif" width="25%"/>
+<img src="assets/gifs/Complete%20Task.gif" width="25%" />
 
 - 🌐 Community feature
 
-<img src="assets/gifs/Community.gif" width="25%"/>
+<img src="assets/gifs/Community.gif" width="25%" />
 
 - 💼 Business Interaction
 
-<img src="assets/gifs/Business%20Interaction.gif" width="25%"/>
+<img src="assets/gifs/Business%20Interaction.gif" width="25%" />
 
 ## 🛠️ Installation
 
