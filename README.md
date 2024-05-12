@@ -1,8 +1,8 @@
-![logo-200h](https://github.com/spcf-coMeLex/wander.ly/assets/87235413/7856577a-d4e8-4f20-b1aa-913e2652aded)
+<img src="https://github.com/melmatx/wander.ly/assets/87235413/04daa4d2-486c-4b8f-b5c0-faac12328225" width="30%"/><br>
 
 # 🌍 Wander.ly: Get Rewarded For Every Step You Take
 
-Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines 🇵🇭. By merging mobile health tech with blockchain technology (ICP), Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the local scene. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
+Wander.ly is a revolutionary mobile app designed to address critical health, business, and environmental challenges in the Philippines 🇵🇭. By merging mobile health tech with blockchain technology (ICP), Wander.ly creates a motivational ecosystem that encourages physical activity, supports local businesses, and promotes eco-friendly transportation in the local community. Users are rewarded for meeting walking goals, participating in local business airdrops, and reducing their carbon footprint.
 
 [Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
 
@@ -40,7 +40,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 <br>
 
-<img src="assets/images/diagrams/task-complete.png" width="60%"/>
+<img src="assets/images/diagrams/task-complete.png" width="60%" />
 
 <img src="assets/images/diagrams/business.png" width="60%" />
 
@@ -50,23 +50,23 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 - 👤 Login with Internet Identity
 
-<img src="assets/gifs/Login%20with%20Internet%20Identity.gif" width="25%"/>
+<img src="assets/gifs/Login%20with%20Internet%20Identity.gif" width="25%" />
 
 - ✅ See all tasks
 
-<img src="assets/gifs/Tasks.gif" width="25%"/>
+<img src="assets/gifs/Tasks.gif" width="25%" />
 
 - 💯 Completing a task
 
-<img src="assets/gifs/Complete%20Task.gif" width="25%"/>
+<img src="assets/gifs/Complete%20Task.gif" width="25%" />
 
 - 🌐 Community feature
 
-<img src="assets/gifs/Community.gif" width="25%"/>
+<img src="assets/gifs/Community.gif" width="25%" />
 
 - 💼 Business Interaction
 
-<img src="assets/gifs/Business%20Interaction.gif" width="25%"/>
+<img src="assets/gifs/Business%20Interaction.gif" width="25%" />
 
 ## 🛠️ Installation
 
@@ -77,6 +77,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [Expo](https://docs.expo.dev/get-started/installation/)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 - [Android Studio](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#0) (for Android) or [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for iOS)
+- [Mapbox API](https://rnmapbox.github.io/docs/install?install-module=expo&configure-module=expo) for map functionality to work
 - [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud)) for sharing local development environment
 
 ### ➡️ Install
@@ -103,6 +104,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## ⚙️ Usage
 
+1. Make sure dfx is running (`dfx start --clean`) and project is deployed (`dfx deploy`).
 1. Connect your physical device or open a simulator through **Android Studio** or **Xcode**.
 2. `npx expo run:ios` (or `run:android`)
       Add `--device` (to select device)
@@ -110,7 +112,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 > **Note:** If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
 
-4. Get started by pressing the **Login with Internet Identity button**.
+5. Get started by pressing the **Login with Internet Identity button**.
 
 ***
 
