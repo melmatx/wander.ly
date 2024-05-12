@@ -103,6 +103,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## ⚙️ Usage
 
+1. Make sure dfx is running (`dfx start --clean`) and project is deployed (`dfx deploy`).
 1. Connect your physical device or open a simulator through **Android Studio** or **Xcode**.
 2. `npx expo run:ios` (or `run:android`)
       Add `--device` (to select device)
