@@ -49,6 +49,7 @@
           }
         }
       ],
+      "expo-asset",
       "expo-secure-store"
     ],
     "updates": {

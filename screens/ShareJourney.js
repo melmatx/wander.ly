@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import * as Burnt from "burnt";
-import { Camera, CameraType, FlashMode, ImageType } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Image } from "expo-image";
 import { manipulateAsync, FlipType } from "expo-image-manipulator";
 import * as Location from "expo-location";
@@ -26,17 +26,22 @@ import useProfileStore from "../stores/useProfileStore";
 import uploadFile from "../utils/uploadFile";
 
 const flashReducer = (state) => {
-  // switch between torch, auto, and off
+  // Switch between on, auto, and off
   switch (state) {
-    case FlashMode.torch:
-      return FlashMode.auto;
-    case FlashMode.auto:
-      return FlashMode.off;
-    case FlashMode.off:
-      return FlashMode.torch;
+    case "on":
+      return "auto";
+    case "auto":
+      return "off";
+    case "off":
+      return "on";
     default:
-      return FlashMode.off;
+      return "off";
   }
+};
+
+const cameraTypeReducer = (state) => {
+  // Switch between front and back camera
+  return state === "back" ? "front" : "back";
 };
 
 const ShareJourney = ({ navigation, route }) => {
@@ -45,13 +50,10 @@ const ShareJourney = ({ navigation, route }) => {
   const [preview, setPreview] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [flashMode, toggleFlashMode] = useReducer(flashReducer, FlashMode.off);
-  const [type, toggleType] = useReducer(
-    (state) => (state === CameraType.back ? CameraType.front : CameraType.back),
-    CameraType.back
-  );
+  const [flashMode, toggleFlashMode] = useReducer(flashReducer, "auto");
+  const [type, toggleType] = useReducer(cameraTypeReducer, "back");
 
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
   const identity = useProfileStore((state) => state.identity);
   const insets = useSafeAreaInsets();
 
@@ -66,20 +68,18 @@ const ShareJourney = ({ navigation, route }) => {
 
   const flashIcon = useMemo(() => {
     switch (flashMode) {
-      case FlashMode.torch:
-        return "flashlight";
-      case FlashMode.auto:
-        return "flash";
-      default:
+      case "off":
         return "flash-off";
+      default:
+        return "flash";
     }
   }, [flashMode]);
 
   const flashColor = useMemo(() => {
     switch (flashMode) {
-      case FlashMode.torch:
+      case "on":
         return colors.primary;
-      case FlashMode.off:
+      case "off":
         return colors.gray;
       default:
         return "white";
@@ -118,11 +118,11 @@ const ShareJourney = ({ navigation, route }) => {
 
     try {
       let picture = await cameraRef.current?.takePictureAsync({
-        imageType: ImageType.jpg,
+        imageType: "jpg",
       });
 
       // Flip the image if the camera is front
-      if (type === CameraType.front) {
+      if (type === "front") {
         picture = await manipulateAsync(
           picture.uri,
           [{ flip: FlipType.Horizontal }],
@@ -220,12 +220,12 @@ const ShareJourney = ({ navigation, route }) => {
         ]}
       >
         {permission?.granted ? (
-          <Camera
+          <CameraView
             ref={cameraRef}
             style={globalStyles.flexFull}
             onCameraReady={onCameraReady}
-            flashMode={flashMode}
-            type={type}
+            flash={flashMode}
+            facing={type}
           >
             <View
               style={[
@@ -241,7 +241,7 @@ const ShareJourney = ({ navigation, route }) => {
               <Button
                 onPress={toggleFlashMode}
                 backgroundColor={
-                  flashMode === FlashMode.torch && type === CameraType.back
+                  flashMode === "on" && type === "back"
                     ? "white"
                     : "rgba(255,255,255,0.2)"
                 }
@@ -274,7 +274,7 @@ const ShareJourney = ({ navigation, route }) => {
                 <Ionicons name="camera-reverse" size={35} color="white" />
               </Button>
             </View>
-          </Camera>
+          </CameraView>
         ) : (
           <View style={globalStyles.flexCenter}>
             <Text h3 color={colors.gray}>

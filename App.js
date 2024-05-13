@@ -5,6 +5,7 @@ import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import Mapbox from "@rnmapbox/maps";
 import { useAssets } from "expo-asset";
 import * as Linking from "expo-linking";
+import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
 import * as TaskManager from "expo-task-manager";
 import { useEffect } from "react";
@@ -66,7 +67,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Ask to logout after waiting in splash screen for 15 seconds
+    // Ask to logout after waiting in splash screen for 30 seconds
     const timer = setTimeout(() => {
       Alert.alert(
         "Error",
@@ -75,9 +76,13 @@ export default function App() {
           {
             text: "OK",
             onPress: async () => {
-              // Log out the previous user
               console.log("Logging out...");
+
+              // Log out the previous user
               await logout();
+
+              // Delete base key
+              await SecureStore.deleteItemAsync("baseKey");
 
               // Try to fetch key and principal again
               await fetchKeyAndPrincipal();
@@ -85,7 +90,7 @@ export default function App() {
           },
         ]
       );
-    }, 15000);
+    }, 30000);
 
     if (isReady && assets) {
       clearTimeout(timer);

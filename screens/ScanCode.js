@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Burnt from "burnt";
-import { CameraView, useCameraPermissions } from "expo-camera/next";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { Alert, View } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
