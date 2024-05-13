@@ -4,16 +4,16 @@
   "config": {
     "http_handler": {
       "port": null,
-      "write_port_to": "/Users/melmathewpalana/WebstormProjects/Wander.ly/.dfx/network/local/replica-configuration/replica-1.port"
+      "write_port_to": "/Users/melmathewpalana/WebstormProjects/wander.ly/.dfx/network/local/replica-configuration/replica-1.port"
     },
     "state_manager": {
-      "state_root": "/Users/melmathewpalana/WebstormProjects/Wander.ly/.dfx/network/local/state/replicated_state"
+      "state_root": "/Users/melmathewpalana/WebstormProjects/wander.ly/.dfx/network/local/state/replicated_state"
     },
     "crypto": {
-      "crypto_root": "/Users/melmathewpalana/WebstormProjects/Wander.ly/.dfx/network/local/state/crypto_store"
+      "crypto_root": "/Users/melmathewpalana/WebstormProjects/wander.ly/.dfx/network/local/state/crypto_store"
     },
     "artifact_pool": {
-      "consensus_pool_path": "/Users/melmathewpalana/WebstormProjects/Wander.ly/.dfx/network/local/state/consensus_pool"
+      "consensus_pool_path": "/Users/melmathewpalana/WebstormProjects/wander.ly/.dfx/network/local/state/consensus_pool"
     },
     "subnet_type": "application",
     "btc_adapter": {
@@ -22,7 +22,7 @@
     },
     "canister_http_adapter": {
       "enabled": true,
-      "socket_path": "/var/folders/2m/762y2jfx1cngptdvg3_6k5900000gn/T/ic-https-outcalls-adapter-socket.11241.1714630787"
+      "socket_path": "/var/folders/2m/762y2jfx1cngptdvg3_6k5900000gn/T/ic-https-outcalls-adapter-socket.15384.1715556741"
     },
     "log_level": "error",
     "artificial_delay": 600,
