@@ -195,7 +195,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## 📜 License
 
-This project is licensed under the MIT license, see LICENSE.md for details.
+This project is licensed under the MIT license, see [LICENSE.md](https://github.com/melmatx/wander.ly/blob/main/LICENSE) for details.
 
 ## 🙌 Acknowledgements
 
