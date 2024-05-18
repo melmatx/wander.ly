@@ -193,6 +193,11 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [ ] Local Business Collaboration
 - [ ] Sustainability Initiatives and New Opportunities
 
+## Deployed Canisters (Mainnet)
+
+- [Backend via Candid UI](https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=6gath-tiaaa-aaaap-qhjnq-cai)
+- [Storage via Candid UI](https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=6thck-saaaa-aaaap-qhjoa-cai)
+
 ## 📜 License
 
 This project is licensed under the MIT license, see [LICENSE.md](https://github.com/melmatx/wander.ly/blob/main/LICENSE) for details.
