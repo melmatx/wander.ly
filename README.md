@@ -21,7 +21,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 ## 🚀 How It Works
 
 1. **Task Selection:** Users start their journey on the Explore screen, where they are presented with AI-generated, personalized walking tasks. These tasks are tailored to align with individual fitness goals and daily schedules, ensuring that each walk is both enjoyable and beneficial.
-2. **Progression and Rewards:** By completing walking tasks, users earn points that help them level up. Advancing through levels unlocks exciting new features and rewards, which keeps users engaged and motivated to maintain an active lifestyle.
+2. **Progression and Rewards:** By completing walking tasks, users earn points that they can exchange for exclusive rewards. Advancing through levels also unlocks exciting achievements and benefits, which keeps users engaged and motivated to maintain an active lifestyle.
 3. **Journey Sharing:** After walking, users can share their experiences on the community feed. This platform allows them to interact with other wanderers by liking, sharing, and awarding their journeys and showing support. It's a space for encouragement and social engagement.
 4. **Local Business Airdrops:** The app encourages local exploration and support of MSMEs through airdrop events. Users can participate by walking to specific local businesses and scanning QR codes to receive exclusive rewards and discounts, promoting community economic growth.
 5. **Environmental Impact Tracking:** Every step taken by users is converted into data that tracks environmental savings, such as carbon emission reductions and trees preserved. This feature educates users about the ecological benefits of walking and encourages sustainable practices.
