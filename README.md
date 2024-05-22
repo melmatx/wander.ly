@@ -13,18 +13,18 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 ### ✨ Highlighted Features:
 
 - **AI-Generated Walking Goals:** Personalized morning, afternoon, and evening walking targets help users stay active throughout the day.
-- **Community Sharing through Swipe Cards:** After completing tasks or participating in airdrops, users can share and interact with posts in a Tinder-style community feed.
+- **Journey Sharing through Swipe Cards:** After completing tasks or participating in airdrops, users can share journeys and interact with others in a Tinder-style community feed.
 - **Local Business Airdrops:** Supports small businesses by driving physical traffic through rewarding walking tasks that unlock special offers.
 - **Environmental Impact Tracking:** Tracks and displays the positive environmental impact of users’ walking activities, like carbon emission savings and trees preserved.
 - **Exploration and Leveling Up:** Encourages exploration and personal growth by leveling up users as they discover new places and complete tasks.
 
 ## 🚀 How It Works
 
-1. **Personalized Tasks:** Users select from AI-generated, personalized walking tasks on the Explore screen, tailored to fit their fitness goals and daily schedules.
-2. **Rewards for Activity:** Completing tasks helps users level up and unlock new features, keeping them engaged and motivated.
-3. **Community Interaction:** Users post their walking experiences to the community feed, where they can interact with other users' posts through likes, shares, and awards.
-4. **Support Local Businesses:** Users participate in airdrop events at local businesses, where walking to a designated area and scanning a QR code yields rewards.
-5. **Track Environmental Impact:** The app tracks the environmental savings from walking, raising awareness and fostering a mindset geared towards sustainability.
+1. **Task Selection:** Users start their journey on the Explore screen, where they are presented with AI-generated, personalized walking tasks. These tasks are tailored to align with individual fitness goals and daily schedules, ensuring that each walk is both enjoyable and beneficial.
+2. **Progression and Rewards:** By completing walking tasks, users earn points that help them level up. Advancing through levels unlocks exciting new features and rewards, which keeps users engaged and motivated to maintain an active lifestyle.
+3. **Journey Sharing:** After walking, users can share their experiences on the community feed. This platform allows them to interact with other wanderers by liking, sharing, and awarding their journeys and showing support. It's a space for encouragement and social engagement.
+4. **Local Business Airdrops:** The app encourages local exploration and support of MSMEs through airdrop events. Users can participate by walking to specific local businesses and scanning QR codes to receive exclusive rewards and discounts, promoting community economic growth.
+5. **Environmental Impact Tracking:** Every step taken by users is converted into data that tracks environmental savings, such as carbon emission reductions and trees preserved. This feature educates users about the ecological benefits of walking and encourages sustainable practices.
 
 [Watch the demo video](https://youtu.be/tDQ_lggSqeU)
 
