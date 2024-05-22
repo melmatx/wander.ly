@@ -12,7 +12,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ### ✨ Highlighted Features:
 
-- **AI-Generated Walking Goals:** Personalized morning, afternoon, and evening walking tasks is the bread and butter of Wander.ly, helping users stay active throughout the day in various ways (e.g., step-based, distance-based or time-based).
+- **AI-Generated Walking Goals:** Personalized morning, afternoon, and evening walking tasks is the bread and butter of Wander.ly, helping users stay active throughout the day in a plethora of ways (e.g., step-based, distance-based or time-based).
 - **Journey Sharing through Swipe Cards:** After completing tasks or participating in airdrops, users can share journeys and interact with others in a Tinder-style community feed.
 - **Local Business Airdrops:** Supports small businesses by driving physical traffic through rewarding walking tasks that unlock special offers.
 - **Environmental Impact Tracking:** Tracks and displays the positive environmental impact of users’ walking activities, like carbon emission savings and trees preserved.
