@@ -28,7 +28,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 [Watch the demo video](https://youtu.be/tDQ_lggSqeU)
 
-[View the presentation](https://drive.google.com/file/d/1IQG5nUyiykmj9l6aTj6e9kDB2kCj3Zoq/view?usp=drive_link)
+[View the pitch deck](https://drive.google.com/file/d/1IQG5nUyiykmj9l6aTj6e9kDB2kCj3Zoq/view?usp=drive_link)
 
 ## 📱 Architecture
 
