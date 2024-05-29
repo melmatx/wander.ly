@@ -77,7 +77,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [Expo](https://docs.expo.dev/get-started/installation/)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 - [Android Studio](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#0) (for Android) or [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for iOS)
-- [Mapbox API](https://rnmapbox.github.io/docs/install?install-module=expo&configure-module=expo) for map functionality to work
+- [Mapbox API](https://rnmapbox.github.io/docs/install?install-module=expo&configure-module=expo) for map functionality to work (Copy to .env file)
 - [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud)) for sharing local development environment
 
 ### ➡️ Install
