@@ -111,7 +111,6 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 1. Connect your physical device or open a simulator through **Android Studio** or **Xcode**.
 2. `npx expo run:ios` (or `run:android`)
       Add `--device` (to select device)
-4. `npx expo start --clear`
 
 > **Note:** If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
 
