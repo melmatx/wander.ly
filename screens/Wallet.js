@@ -4,7 +4,13 @@ import { format } from "date-fns";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useMemo, useRef } from "react";
-import { SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  StyleSheet,
+  Dimensions,
+  LogBox,
+} from "react-native";
 import GradientShimmer from "react-native-gradient-shimmer";
 import QRCode from "react-native-qrcode-svg";
 import { Button, Text } from "react-native-ui-lib";
@@ -16,6 +22,11 @@ import Routes from "../navigation/Routes";
 import useAuthStore from "../stores/useAuthStore";
 import useProfileStore from "../stores/useProfileStore";
 import authenticateLocally from "../utils/authenticateLocally";
+
+// Workaround for GradientShimmer defaultProps warning
+LogBox.ignoreLogs([
+  "Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.",
+]);
 
 const { width, height } = Dimensions.get("window");
 

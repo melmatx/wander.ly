@@ -1,5 +1,5 @@
 {
-  "replica_rev": "044cfd5147fc97d7e5a214966941b6580c325d72",
+  "replica_rev": "5e285dcaf77db014ac85d6f96ff392fe461945f5",
   "type": "replica",
   "config": {
     "http_handler": {
@@ -22,7 +22,7 @@
     },
     "canister_http_adapter": {
       "enabled": true,
-      "socket_path": "/var/folders/2m/762y2jfx1cngptdvg3_6k5900000gn/T/ic-https-outcalls-adapter-socket.15384.1715556741"
+      "socket_path": "/var/folders/2m/762y2jfx1cngptdvg3_6k5900000gn/T/ic-https-outcalls-adapter-socket.44222.1717347348"
     },
     "log_level": "error",
     "artificial_delay": 600,

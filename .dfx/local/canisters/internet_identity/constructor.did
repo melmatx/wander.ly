@@ -178,7 +178,6 @@ type IdentityRegisterError = variant {
   InvalidMetadata : text;
 };
 type InternetIdentityInit = record {
-  max_num_latest_delegation_origins : opt nat64;
   assigned_user_number_range : opt record { nat64; nat64 };
   max_inflight_captchas : opt nat64;
   archive_config : opt ArchiveConfig;
@@ -188,11 +187,10 @@ type InternetIdentityInit = record {
 type InternetIdentityStats = record {
   storage_layout_version : nat8;
   users_registered : nat64;
-  max_num_latest_delegation_origins : nat64;
   assigned_user_number_range : record { nat64; nat64 };
-  latest_delegation_origins : vec FrontendHostname;
   archive_info : ArchiveInfo;
   canister_creation_cycles_cost : nat64;
+  event_aggregations : vec record { text; vec record { text; nat64 } };
 };
 type KeyType = variant {
   platform;
@@ -335,6 +333,7 @@ service : (opt InternetIdentityInit) -> {
       variant { Ok : IdentityNumber; Err : IdentityRegisterError },
     );
   init_salt : () -> ();
+  inject_prune_event : (Timestamp) -> ();
   lookup : (UserNumber) -> (vec DeviceData) query;
   prepare_delegation : (
       UserNumber,
@@ -345,6 +344,7 @@ service : (opt InternetIdentityInit) -> {
   prepare_id_alias : (PrepareIdAliasRequest) -> (
       variant { Ok : PreparedIdAlias; Err : PrepareIdAliasError },
     );
+  prune_events_if_necessary : () -> ();
   register : (DeviceData, ChallengeResult, opt principal) -> (RegisterResponse);
   remove : (UserNumber, DeviceKey) -> ();
   replace : (UserNumber, DeviceKey, DeviceData) -> ();

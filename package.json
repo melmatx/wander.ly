@@ -74,5 +74,8 @@
     "prettier": "^3.2.5",
     "prettier-plugin-motoko": "^0.8.4"
   },
+  "resolutions": {
+    "yargs": "^17"
+  },
   "private": true
 }

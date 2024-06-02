@@ -1,10 +1,11 @@
-ï.(¨ûÿÿÿÿÿÿÿ:‡Â
-¼½—
-Ô½—
-—¤
-—¤
+Ö3$:ÄÄ
+¸°˜
+Ğ°˜
+É‹¥
+Ğ‹¥
 €€@
-µŞ»¹H
+”‡Õ¹I"
+ <ic-cdk internal> timer_executor
 acknowledge_entries
 add
 add_tentative_device
@@ -29,18 +30,20 @@ $authn_method_registration_mode_enter%
 identity_metadata_replace
 identity_register
 	init_salt
+inject_prune_event
 prepare_delegation
-prepare_id_alias
+prepare_id_alias
+prune_events_if_necessary
 
 register
 remove	
 replace
 update
-verify_tentative_deviceget_anchor_credentialsget_delegationget_id_aliasget_principalhttp_requestidentity_authn_infolookupstats ï.*ãº
+verify_tentative_deviceget_anchor_credentialsget_delegationget_id_aliasget_principalhttp_requestidentity_authn_infolookupstats Ö3*Å¼
 O
 candid:args@(opt InternetIdentityInit) ˆÂ‘ö¶Q&1ñå)…€ÿ¨˜”®pĞÂY’á~
-‹¶
-candid:service÷µÏµtype UserNumber = nat64;
+í·
+candid:serviceÙ·±·type UserNumber = nat64;
 type PublicKey = blob;
 type CredentialId = blob;
 type DeviceKey = PublicKey;
@@ -213,8 +216,9 @@ type InternetIdentityStats = record {
     };
     archive_info: ArchiveInfo;
     canister_creation_cycles_cost: nat64;
-    max_num_latest_delegation_origins: nat64;
-    latest_delegation_origins: vec FrontendHostname
+    // Map from event aggregation to a sorted list of top 100 sub-keys to their weights.
+    // Example: {"prepare_delegation_count 24h ic0.app": [{"https://dapp.com", 100}, {"https://dapp2.com", 50}]}
+    event_aggregations: vec record {text; vec record {text; nat64}};
 };
 
 // Configuration parameters related to the archive.
@@ -269,9 +273,6 @@ type InternetIdentityInit = record {
     canister_creation_cycles_cost : opt nat64;
     // Rate limit for the `register` call.
     register_rate_limit : opt RateLimitConfig;
-    // Maximum number of latest delegation origins to track.
-    // Default: 1000
-    max_num_latest_delegation_origins : opt nat64;
     // Maximum number of inflight captchas.
     // Default: 500
     max_inflight_captchas: opt nat64;
@@ -580,11 +581,16 @@ service : (opt InternetIdentityInit) -> {
     http_request_update: (request: HttpRequest) -> (HttpResponse);
 
     deploy_archive: (wasm: blob) -> (DeployArchiveResult);
-    /// Returns a batch of entries _sorted by sequence number_ to be archived.
-    /// This is an update call because the archive information _must_ be certified.
-    /// Only callable by this IIs archive canister.
+    // Returns a batch of entries _sorted by sequence number_ to be archived.
+    // This is an update call because the archive information _must_ be certified.
+    // Only callable by this IIs archive canister.
     fetch_entries: () -> (vec BufferedArchiveEntry);
     acknowledge_entries: (sequence_number: nat64) -> ();
+
+    // Calls used for event stats housekeeping.
+    // Only callable by the canister itself.
+    prune_events_if_necessary: () -> ();
+    inject_prune_event: (timestamp: Timestamp) -> ();
 
     // V2 API
     // WARNING: The following methods are experimental and may change in the future.
@@ -660,19 +666,21 @@ service : (opt InternetIdentityInit) -> {
     prepare_id_alias : (PrepareIdAliasRequest) -> (variant {Ok: PreparedIdAlias; Err: PrepareIdAliasError;});
     get_id_alias : (GetIdAliasRequest) -> (variant {Ok: IdAliasCredentials; Err: GetIdAliasError;}) query;
 }
- ‰Ñúz‘Èºf¹Ù£ùğ0Áz ¦ôŸÚ`à§›
+ \¦å 	Æˆò
+Ç¢_ÆïÀ‰@>ÓÿñğŸXãì#»>
 ³
-dfx«„{"pullable":{"wasm_url":"https://github.com/dfinity/internet-identity/releases/download/release-2024-04-26/internet_identity_dev.wasm.gz","wasm_hash_url":"https://github.com/dfinity/internet-identity/releases/download/release-2024-04-26/internet_identity_dev.wasm.gz.sha256","dependencies":[],"init_guide":"Use '(null)' for sensible defaults. See the candid interface for more details."}} £'ìB·8›` ’¯rÙd¨#±[ÏUäÄ¿ÆY
+dfx«„{"pullable":{"wasm_url":"https://github.com/dfinity/internet-identity/releases/download/release-2024-05-13/internet_identity_dev.wasm.gz","wasm_hash_url":"https://github.com/dfinity/internet-identity/releases/download/release-2024-05-13/internet_identity_dev.wasm.gz.sha256","dependencies":[],"init_guide":"Use '(null)' for sensible defaults. See the candid interface for more details."}} 	ÃüLs÷J—û[ÆĞö/ø?„{/²å"±êÈ¹&
 K
-supported_certificate_versions)1,2 Ô»bØ—øÑŒ;ZâFATbà€'¨ø_¿M»'‡&û—2 vLÿVš˜£ÄÕLºgPı¦?UOÅ>}B¦6]›ŞÃ(cÃ8Z
-xˆŠ6¢ HYjQÅ¸À‡Â€u–™¬ÍÜç¢ò—$^ sôµÂ4Î²¥†¹¯¸€šÊ
+supported_certificate_versions)1,2 Ô»bØ—øÑŒ;ZâFATbà€'¨ø_¿M»'‡&û—2 #WØ"ÍE%Àí«>EÛR«
+*ÈÄ°ÇŠÌ[Áy8Z
+$xˆ‚65¢ ‹‡aŞç[÷ßr­i«g%Æ¼€¤ÁWù6òlÄG|­ î²Ÿâ«¿¸€šÊ
 
 €      Ê
-°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛíÒÛÔwàÏ          Ø‚ú
-À§ÑÎÉ€ºç‚                ¢ëâW¢
-äâ„¢	†ışU¢äû¢
+æn^9cüáÅ\³Ã ‰IŒ6^ğïò7	GÛ7Òá&{ŞÏ          Ø‚ú
+ ’µàÂÎĞê‚                ˆ¸˜†ë˜ĞĞê9¢Õ¡d¢
+Ó®°ˆ¢	îÛüa¢œ¢
 ì™ıÓª¦
-Kèûˆµ‡º¸ç"
+KÈÎÊ—ïËÏê"
 
 
 €      */
@@ -680,12 +688,13 @@ Kèûˆµ‡º¸ç"
 
 €      
 
-°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛí
-UˆëÏ–¤»¸ç!
+æn^9cüáÅ\³Ã ‰IŒ6^ğïò7	GÛ7
+UĞÔ¸‰ÍÏê!
 
-°INï,ù[/*ÃYM†n¾uñ‹nå‹³‘ãÛí:$ vLÿVš˜£ÄÕLºgPı¦?UOÅ>}B¦6]›ŞÃ(cÃ²                º P9'Œ          Â ÊP
+æn^9cüáÅ\³Ã ‰IŒ6^ğïò7	GÛ7:$ #WØ"ÍE%Àí«>EÛR«
+*ÈÄ°ÇŠÌ[Áy²                º P9'Œ          Â ÊP
 
                 
                 
                 "
-                Ğ
+                ĞÚBˆŞ˜£ıµĞê6Injecting prune event at timestamp 1717351056350261000ÚD åØ¡Û¾Ğê6Injecting prune event at timestamp 1717351356457956000ÚD¸¨óŸ»ÇĞê6Injecting prune event at timestamp 1717351657101907000à
