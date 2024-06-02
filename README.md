@@ -96,7 +96,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 5. dfx start --clean
 6. dfx deploy
 7. dfx generate
-8. Open the auto-generated .env file and copy all the CANISTER_ID_EQUIVALENT_NAME to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION to sync ids.
+8. Open the auto-generated .env file and copy all the CANISTER_ID_EQUIVALENT_NAMES to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION to sync ids.
 (See .env.example for more details)
 
 // Prebuild the app to generate android and ios directories
