@@ -78,7 +78,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 - [Android Studio](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#0) (for Android) or [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for iOS)
 - [Mapbox API](https://rnmapbox.github.io/docs/install?install-module=expo&configure-module=expo) for map functionality to work (Copy to .env file)
-- [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud)) for sharing local development environment
+- [LocalTunnel](https://localtunnel.me) (or [Telebit Cloud](https://telebit.cloud)) for sharing local development environment
 
 ### ➡️ Install
 
@@ -112,27 +112,23 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 2. `npx expo run:ios` (or `run:android`)
       Add `--device` (to select device)
 
-> **Note:** If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
-
-5. Get started by pressing the **Login with Internet Identity button**.
+> **Note:** If you are using an Android device or planning to use it on a physical device, local **Internet Identity** won't work unless you secure it with [Localtunnel](https://localtunnel.me) or [Telebit Cloud](https://telebit.cloud) (or similar). Follow the guide below.
 
 ***
 
 <details>
-<summary><b>Optional: Make Internet Identity work with Physical Devices Locally</b></summary><br>
+<summary><b>Make Internet Identity work with Android and Physical Devices locally</b></summary><br>
 
-> This mini-guide uses Localtunnel for easier setup, but I recommend using **Telebit** for long-term development of the app.
+> This mini-guide uses Localtunnel for easier setup, but I recommend using **Telebit Cloud** for long-term development of the app.
 
-1. Make sure Localtunnel is installed.
+1. Make sure [Localtunnel](https://localtunnel.me) is installed.
 2. `lt --port 4943` (copy link to `EXPO_PUBLIC_TUNNEL_URL1`)
 - 4943 is based on the port specified on dfx.json
 3. `lt --port 4943` again (copy link to `EXPO_PUBLIC_TUNNEL_URL2`)
 
 - We need two tunnels of the localhost because internet identity and the integration won't work with the same url
 
-4. If you decide to only use it with simulators, just remove the `EXPO_PUBLIC_TUNNEL_URL1` and `EXPO_PUBLIC_TUNNEL_URL2` in the .env file.
-
-> ~~**Note:** To run the app on physical iOS devices, open the **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, remove **Push Notifications** capability and then add your free team for signing. Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).~~ **(Fixed on Expo v51, no need to do this anymore)**
+4. If you decide to only use it with simulators, just remove the `EXPO_PUBLIC_TUNNEL_URL1` and `EXPO_PUBLIC_TUNNEL_URL2` in the .env file. (May not take effect immediately)
 
 </details>
 
