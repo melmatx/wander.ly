@@ -92,7 +92,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 4. npm run build
 4. cd ../..
 
-// Dfx commands to run
+// Dfx commands to run on another terminal
 5. dfx start --clean
 6. dfx deploy
 7. dfx generate
