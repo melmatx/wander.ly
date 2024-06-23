@@ -205,8 +205,8 @@ This project is licensed under the MIT license, see [LICENSE.md](https://github.
 
 ## 📲 Follow us!
 
-Facebook: https://facebook.com/wanderly.icp
-Twitter: https://x.com/WanderlyICP
+- Facebook: https://facebook.com/wanderly.icp
+- Twitter: https://x.com/WanderlyICP
 
 ## 🔗 References
 
