@@ -30,7 +30,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 [View the pitch deck](https://drive.google.com/file/d/1IQG5nUyiykmj9l6aTj6e9kDB2kCj3Zoq/view?usp=drive_link)
 
-## 📱 Architecture
+## ⚙️ Architecture
 
 <img src="assets/images/diagrams/architecture.png" />
 
@@ -202,6 +202,11 @@ This project is licensed under the MIT license, see [LICENSE.md](https://github.
 
 - **[ICTDU](https://www.facebook.com/spcf.ictdu) (Systems Plus College Foundation)**: I am deeply grateful to ICTDU for providing a platform that allowed me to showcase and further develop my skills. Their support has been instrumental in my professional growth.
 - **[Sypth](https://github.com/Sypth) (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and for providing invaluable blockchain advice. While he may not have been directly involved in development, his guidance was crucial in steering the project in the right direction.
+
+## 📲 Follow us!
+
+Facebook: https://facebook.com/wanderly.icp
+Twitter: https://x.com/WanderlyICP
 
 ## 🔗 References
 
