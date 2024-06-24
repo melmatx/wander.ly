@@ -201,7 +201,7 @@ This project is licensed under the MIT license, see [LICENSE.md](https://github.
 ## 🙌 Acknowledgements
 
 - **[ICTDU](https://www.facebook.com/spcf.ictdu) (Systems Plus College Foundation)**: I am deeply grateful to ICTDU for providing a platform that allowed me to showcase and further develop my skills. Their support has been instrumental in my professional growth.
-- **[Sypth](https://github.com/Sypth) (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and for providing invaluable blockchain advice. While he may not have been directly involved in development, his guidance was crucial in steering the project in the right direction.
+- **[Sypth](https://github.com/Sypth) (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and backend developer, and for providing invaluable blockchain advice. His guidance and expertise was also crucial in steering the project in the right direction.
 
 ## 📲 Follow us!
 
