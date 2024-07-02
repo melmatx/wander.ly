@@ -6,6 +6,10 @@ Wander.ly is a revolutionary mobile app designed to address critical health, bus
 
 [Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
 
+### 🏆 iThink "Push to the Limits" Nationwide Hackathon: 2nd Place
+
+✅ [Read the article!](https://medium.com/@ICPHubPH/ithink-push-to-the-limits-nationwide-hackathon-a-showcase-of-filipino-innovation-and-talent-9f3f770e0164)
+
 ## 📖 Introduction
 
 Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by incentivizing physical activity through a rewarding system that also supports local economies and encourages eco-friendly behaviors. This app is for anyone looking to improve their health, support local businesses, and make a positive environmental impact.
