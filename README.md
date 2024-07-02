@@ -8,7 +8,7 @@ Wander.ly is a revolutionary mobile app designed to address critical health, bus
 
 ### 🏆 iThink "Push to the Limits" Nationwide Hackathon: 2nd Place
 
-✅ [Read the article!](https://medium.com/@ICPHubPH/ithink-push-to-the-limits-nationwide-hackathon-a-showcase-of-filipino-innovation-and-talent-9f3f770e0164)
+[Read the article](https://medium.com/@ICPHubPH/ithink-push-to-the-limits-nationwide-hackathon-a-showcase-of-filipino-innovation-and-talent-9f3f770e0164)
 
 ## 📖 Introduction
 
