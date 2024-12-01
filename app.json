@@ -49,6 +49,12 @@
           }
         }
       ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsVersion": "11.8.0"
+        }
+      ],
       "expo-asset",
       "expo-secure-store"
     ],
