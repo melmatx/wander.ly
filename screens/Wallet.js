@@ -205,10 +205,12 @@ const Wallet = ({ navigation }) => {
           onPress={() => cardRef.current?.flip()}
           style={{ height: "48%", width: "100%" }}
         >
-          <CardFlip ref={cardRef} style={StyleSheet.absoluteFill}>
-            {renderWalletFront}
-            {renderWalletBack}
-          </CardFlip>
+          {profile && (
+            <CardFlip ref={cardRef} style={StyleSheet.absoluteFill}>
+              {renderWalletFront}
+              {renderWalletBack}
+            </CardFlip>
+          )}
         </Button>
 
         <View style={{ marginTop: sizes.xlarge, rowGap: sizes.xlarge }}>
