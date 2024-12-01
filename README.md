@@ -6,6 +6,10 @@ Wander.ly is a revolutionary mobile app designed to address critical health, bus
 
 [Check out the landing page!](https://mc6mb-riaaa-aaaan-qmafa-cai.icp0.io/)
 
+### 🏆 iThink "Push to the Limits" Nationwide Hackathon: 2nd Place
+
+[Read the article](https://medium.com/@ICPHubPH/ithink-push-to-the-limits-nationwide-hackathon-a-showcase-of-filipino-innovation-and-talent-9f3f770e0164)
+
 ## 📖 Introduction
 
 Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by incentivizing physical activity through a rewarding system that also supports local economies and encourages eco-friendly behaviors. This app is for anyone looking to improve their health, support local businesses, and make a positive environmental impact.
@@ -30,7 +34,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 [View the pitch deck](https://drive.google.com/file/d/1IQG5nUyiykmj9l6aTj6e9kDB2kCj3Zoq/view?usp=drive_link)
 
-## 📱 Architecture
+## ⚙️ Architecture
 
 <img src="assets/images/diagrams/architecture.png" />
 
@@ -78,7 +82,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
 - [Android Studio](https://developer.android.com/codelabs/basic-android-kotlin-compose-install-android-studio#0) (for Android) or [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for iOS)
 - [Mapbox API](https://rnmapbox.github.io/docs/install?install-module=expo&configure-module=expo) for map functionality to work (Copy to .env file)
-- [LocalTunnel](https://localtunnel.me) (or [telebit.cloud](https://telebit.cloud)) for sharing local development environment
+- [LocalTunnel](https://localtunnel.me) (or [Telebit Cloud](https://telebit.cloud)) for sharing local development environment
 
 ### ➡️ Install
 
@@ -106,18 +110,16 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 2. `npx expo run:ios` (or `run:android`)
       Add `--device` (to select device)
 
-> **Note:** If it only goes to the launcher screen and not to the actual app, scan the QR code from the terminal where your started Expo with your device (if it does not show up, press **C**).
-
-5. Get started by pressing the **Login with Internet Identity button**.
+> **Note:** If you are using an Android device or planning to use it on a physical device, local **Internet Identity** won't work unless you secure it with [Localtunnel](https://localtunnel.me) or [Telebit Cloud](https://telebit.cloud) (or similar). Follow the guide below.
 
 ***
 
 <details>
-<summary><b>Optional: Make Internet Identity work with Physical Devices Locally</b></summary><br>
+<summary><b>Make Internet Identity work with Android and Physical Devices locally</b></summary><br>
 
-> This mini-guide uses Localtunnel for easier setup, but I recommend using **Telebit** for long-term development of the app.
+> This mini-guide uses Localtunnel for easier setup, but I recommend using **Telebit Cloud** for long-term development of the app.
 
-1. Make sure Localtunnel is installed.
+1. Make sure [Localtunnel](https://localtunnel.me) is installed.
 2. `lt --port 4943` (copy link to `EXPO_PUBLIC_TUNNEL_URL1`)
 - 4943 is based on the port specified on dfx.json
 3. `lt --port 4943` again (copy link to `EXPO_PUBLIC_TUNNEL_URL2`)
@@ -199,7 +201,12 @@ This project is licensed under the MIT license, see [LICENSE.md](https://github.
 ## 🙌 Acknowledgements
 
 - **[ICTDU](https://www.facebook.com/spcf.ictdu) (Systems Plus College Foundation)**: I am deeply grateful to ICTDU for providing a platform that allowed me to showcase and further develop my skills. Their support has been instrumental in my professional growth.
-- **[Sypth](https://github.com/Sypth) (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and for providing invaluable blockchain advice. While he may not have been directly involved in development, his guidance was crucial in steering the project in the right direction.
+- **[Sypth](https://github.com/Sypth) (Alexander John Cammado)**: A special thanks to Sypth for his role as QA and backend developer, and for providing invaluable blockchain advice. His guidance and expertise was also crucial in steering the project in the right direction.
+
+## 📲 Follow us!
+
+- **Facebook:** https://facebook.com/wanderly.icp
+- **Twitter:** https://x.com/WanderlyICP
 
 ## 🔗 References
 
