@@ -126,7 +126,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 - We need two tunnels of the localhost because internet identity and the integration won't work with the same url
 
-4. If you decide to only use it with simulators, just remove the `EXPO_PUBLIC_TUNNEL_URL1` and `EXPO_PUBLIC_TUNNEL_URL2` in the .env file.
+4. If you decide to only use it with simulators, just remove the `EXPO_PUBLIC_TUNNEL_URL1` and `EXPO_PUBLIC_TUNNEL_URL2` in the .env file (May not take effect immediately).
 
 > **Note:** To run the app on physical iOS devices, open the **ios** folder in your project directory, then open **Wanderly.xcworkspace** with Xcode. Click on Wanderly on the side bar then go to the **Signing & Capabilities** Tab. Once in there, add your team (you can use your personal team if you dont have an apple developer account). Afterwards, close Xcode and run app again with run:ios (use --device to select your physical device).
 
