@@ -66,7 +66,7 @@ const CommunityCard = forwardRef(({ item, onInfoPress }, buttonRef) => {
 
 export const style = {
   container: {
-    height: "85%",
+    height: "80%",
     padding: sizes.xlarge,
     borderRadius: sizes.medium,
     overflow: "hidden",
