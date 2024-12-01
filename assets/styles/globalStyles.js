@@ -17,6 +17,7 @@ export const colors = {
   gray: "#aeaeb2",
   red: "#E63946",
   pink: "#FFCBCB",
+  yellow: "#F6FA70",
 };
 
 const globalStyles = StyleSheet.create({

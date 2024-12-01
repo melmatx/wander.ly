@@ -154,11 +154,13 @@ const Profile = ({ navigation }) => {
       {
         label: "Awarded Posts",
         icon: "star",
+        color: colors.yellow,
         onPress: () => navigation.navigate(Routes.AWARDED_POSTS),
       },
       {
         label: "Liked Posts",
         icon: "heart",
+        color: colors.red,
         onPress: () => navigation.navigate(Routes.LIKED_POSTS),
       },
       {
