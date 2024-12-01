@@ -84,19 +84,13 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ```
 // Install required dependencies of the app
-1. yarn install
+1. npm run setup
+2. dfx start --clean
 
-// Go to the ii_integration canister and install its dependencies too
-2. cd src/ii_integration
-3. npm install
-4. npm run build
-4. cd ../..
+// In another terminal
+3. npm run deploy
 
-// Dfx commands to run on another terminal
-5. dfx start --clean
-6. dfx deploy
-7. dfx generate
-8. Open the auto-generated .env file and copy all the CANISTER_ID_EQUIVALENT_NAMES to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION to sync ids.
+4. Open the auto-generated .env file and copy all the CANISTER_ID_EQUIVALENT_NAMES to EXPO_PUBLIC_CANISTER_ID_WANDERLY, EXPO_PUBLIC_CANISTER_ID_INTERNET_IDENTITY, and EXPO_PUBLIC_CANISTER_ID_II_INTEGRATION to sync ids.
 (See .env.example for more details)
 
 // Prebuild the app to generate android and ios directories
@@ -107,7 +101,7 @@ Wander.ly aims to combat the rising sedentary lifestyle in the Philippines by in
 
 ## ⚙️ Usage
 
-1. Make sure dfx is running (`dfx start --clean`) and project is deployed (`dfx deploy`).
+1. Make sure dfx is running (`dfx start --clean`) and project is deployed (`npm run deploy`).
 1. Connect your physical device or open a simulator through **Android Studio** or **Xcode**.
 2. `npx expo run:ios` (or `run:android`)
       Add `--device` (to select device)
